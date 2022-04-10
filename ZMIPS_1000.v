@@ -79,8 +79,8 @@ wire avr;
 //  Structural coding
 //=======================================================
 
-// Generate 85.86 MHZ pixel clock
-pll25175 PLL_85(
+// Generate 65 MHZ pixel clock
+pll65 PLL_65(
 		.refclk(CLOCK_50),   //  refclk.clk
 		.rst(!RESET_N),      //   reset.reset
 		.outclk_0(pxl_clk) // outclk0.clk
@@ -90,8 +90,8 @@ pll25175 PLL_85(
 vga_gen VGAG(.h_sync(VGA_HS), .v_sync(VGA_VS), .avr(avr), .line_num(line_num), .pixel_num(pixel_num), .clk(pxl_clk));
 
 assign VGA_R = line_num[3:0] & {4{avr}};
-assign VGA_G = 4'b0000; //line_num[7:4];
-assign VGA_B = 4'b0000; //{line_num[9:8], pixel_num[1:0]};
+assign VGA_G = line_num[7:4] & {4{avr}};
+assign VGA_B = {line_num[9:8], pixel_num[1:0]} & {4{avr}};
 assign LEDR[3:0] = {VGA_HS, VGA_VS, !VGA_HS, !VGA_VS};
 
 
