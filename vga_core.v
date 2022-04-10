@@ -6,71 +6,69 @@ output h_sync, v_sync, avr; // AVR = Avtive Video Region
 output [9:0] line_num, pixel_num;
 input clk;
 
-// Timing parameters (1024 x 768 @ 70Hz)
-//
-// HORIZONTAL:
-// Visible area: 1024 pixels
-localparam H_S_VIZ_COUNT = 1024;
-// Back porch:   144
-localparam H_S_B_PORCH = 144;                           // Count for single timing element
-localparam H_A_B_PORCH = H_S_VIZ_COUNT - 1;             // Accumulated count value
-// Sync pulse:   136
-localparam H_S_SYNC = 136;
-localparam H_A_SYNC = H_A_B_PORCH + H_S_B_PORCH;
-// Front porch:  24
-localparam H_S_F_PORCH = 24;                            
-localparam H_A_F_PORCH = H_A_SYNC + H_S_SYNC;     
-// Whole line:   1328
-localparam H_A_ENDLINE = H_A_F_PORCH + H_S_F_PORCH;
-
-// VERTICAL:
-// Visible lines: 768 lines
-localparam V_S_VIZ_COUNT = 768;
-// Back porch:    29
-localparam V_S_B_PORCH = 29;
-localparam V_A_B_PORCH = V_S_VIZ_COUNT - 1;
-// Sync pulse:    6
-localparam V_S_SYNC = 6;
-localparam V_A_SYNC = V_A_B_PORCH + V_S_B_PORCH;
-// Front porch:   3
-localparam V_S_F_PORCH = 3;
-localparam V_A_F_PORCH = V_A_SYNC + V_S_SYNC;
-// Whole frame:   806
-localparam V_A_ENDFRAME = V_A_F_PORCH + V_S_F_PORCH;
-
-// // Timing parameters (1368 x 768 @ 70Hz)
+// // Timing parameters (1024 x 768 @ 70Hz)
 // //
 // // HORIZONTAL:
-// // Visible area: 1368 pixels
-// localparam H_S_VIZ_COUNT = 1368; // 1024
-// // Back porch:   216
-// localparam H_S_B_PORCH = 216;                     // Count for single timing element
+// // Visible area: 1024 pixels
+// localparam H_S_VIZ_COUNT = 1024;
+// // Back porch:   144
+// localparam H_S_B_PORCH = 144;                           // Count for single timing element
 // localparam H_A_B_PORCH = H_S_VIZ_COUNT - 1;             // Accumulated count value
-// // Sync pulse:   144
-// localparam H_S_SYNC = 144;
+// // Sync pulse:   136
+// localparam H_S_SYNC = 136;
 // localparam H_A_SYNC = H_A_B_PORCH + H_S_B_PORCH;
-// // Front porch:  72
-// localparam H_S_F_PORCH = 72;                            
+// // Front porch:  24
+// localparam H_S_F_PORCH = 24;                            
 // localparam H_A_F_PORCH = H_A_SYNC + H_S_SYNC;     
-// // Whole line:   1800
+// // Whole line:   1328
 // localparam H_A_ENDLINE = H_A_F_PORCH + H_S_F_PORCH;
 
 // // VERTICAL:
 // // Visible lines: 768 lines
 // localparam V_S_VIZ_COUNT = 768;
-// // Back porch:    23
-// localparam V_S_B_PORCH = 23;
+// // Back porch:    29
+// localparam V_S_B_PORCH = 29;
 // localparam V_A_B_PORCH = V_S_VIZ_COUNT - 1;
-// // Sync pulse:    3
-// localparam V_S_SYNC = 3;
+// // Sync pulse:    6
+// localparam V_S_SYNC = 6;
 // localparam V_A_SYNC = V_A_B_PORCH + V_S_B_PORCH;
-// // Front porch:   1
-// localparam V_S_F_PORCH = 1;
+// // Front porch:   3
+// localparam V_S_F_PORCH = 3;
 // localparam V_A_F_PORCH = V_A_SYNC + V_S_SYNC;
-// // Whole frame:   795
+// // Whole frame:   806
 // localparam V_A_ENDFRAME = V_A_F_PORCH + V_S_F_PORCH;
 
+// Timing parameters (640 x 480 @ 70Hz)
+//
+// HORIZONTAL:
+// Visible area: 640 pixels
+localparam H_S_VIZ_COUNT = 640;
+// Back porch:   48
+localparam H_S_B_PORCH = 48;                            // Count for single timing element
+localparam H_A_B_PORCH = H_S_VIZ_COUNT - 1;             // Accumulated count value
+// Sync pulse:   96
+localparam H_S_SYNC = 96;
+localparam H_A_SYNC = H_A_B_PORCH + H_S_B_PORCH;
+// Front porch:  16
+localparam H_S_F_PORCH = 16;                            
+localparam H_A_F_PORCH = H_A_SYNC + H_S_SYNC;     
+// Whole line:   800
+localparam H_A_ENDLINE = H_A_F_PORCH + H_S_F_PORCH;
 
+// VERTICAL:
+// Visible lines: 400 lines
+localparam V_S_VIZ_COUNT = 480;
+// Back porch:    33
+localparam V_S_B_PORCH = 33;
+localparam V_A_B_PORCH = V_S_VIZ_COUNT - 1;
+// Sync pulse:    2
+localparam V_S_SYNC = 2;
+localparam V_A_SYNC = V_A_B_PORCH + V_S_B_PORCH;
+// Front porch:   10
+localparam V_S_F_PORCH = 10;
+localparam V_A_F_PORCH = V_A_SYNC + V_S_SYNC;
+// Whole frame:   525
+localparam V_A_ENDFRAME = V_A_F_PORCH + V_S_F_PORCH;
 
 wire h_detect_fporch;           // Each of these signals goes high when the pxl count reaches the relevant localparam constant
 wire h_detect_sync;
