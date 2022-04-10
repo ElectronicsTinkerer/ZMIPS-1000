@@ -12,16 +12,16 @@ input clk;
 // Visible area: 1024 pixels
 localparam H_S_VIZ_COUNT = 1024;
 // Back porch:   144
-localparam H_S_B_PORCH = 144;
-localparam H_A_B_PORCH = H_S_VIZ_COUNT - 1;
-// Front porch:  24
-localparam H_S_F_PORCH = 24;                            // Count for single timing element
-localparam H_A_F_PORCH = H_A_B_PORCH + H_S_B_PORCH;     // Accumulated count value
+localparam H_S_B_PORCH = 144;                           // Count for single timing element
+localparam H_A_B_PORCH = H_S_VIZ_COUNT - 1;             // Accumulated count value
 // Sync pulse:   136
 localparam H_S_SYNC = 136;
-localparam H_A_SYNC = H_A_F_PORCH + H_S_F_PORCH;
+localparam H_A_SYNC = H_A_B_PORCH + H_S_B_PORCH;
+// Front porch:  24
+localparam H_S_F_PORCH = 24;                            
+localparam H_A_F_PORCH = H_A_SYNC + H_S_SYNC;     
 // Whole line:   1328
-localparam H_A_ENDLINE = H_A_SYNC + H_S_SYNC;
+localparam H_A_ENDLINE = H_A_F_PORCH + H_S_F_PORCH;
 
 // VERTICAL:
 // Visible lines: 768 lines
@@ -29,14 +29,14 @@ localparam V_S_VIZ_COUNT = 768 - 1;
 // Back porch:    29
 localparam V_S_B_PORCH = 29;
 localparam V_A_B_PORCH = V_S_VIZ_COUNT;
-// Front porch:   3
-localparam V_S_F_PORCH = 3;
-localparam V_A_F_PORCH = V_A_B_PORCH + V_S_B_PORCH;
 // Sync pulse:    6
 localparam V_S_SYNC = 6;
-localparam V_A_SYNC = V_A_F_PORCH + V_S_F_PORCH;
+localparam V_A_SYNC = V_A_B_PORCH + V_S_B_PORCH;
+// Front porch:   3
+localparam V_S_F_PORCH = 3;
+localparam V_A_F_PORCH = V_A_SYNC + V_S_SYNC;
 // Whole frame:   806
-localparam V_A_ENDFRAME = V_A_SYNC + V_S_SYNC;
+localparam V_A_ENDFRAME = V_A_F_PORCH + V_S_F_PORCH;
 
 wire h_detect_fporch;           // Each of these signals goes high when the pxl count reaches the relevant localparam constant
 wire h_detect_sync;
@@ -134,25 +134,25 @@ always @(posedge clk)
 begin
     case (state_p_line)
     SM_LINE_SYN: begin
-        if (h_detect_fporch == 1'b1)
+        if (v_detect_fporch == 1'b1)
         begin
             state_p_line <= SM_LINE_FP;
         end
     end
     SM_LINE_FP: begin
-        if (h_detect_end == 1'b1)
+        if (v_detect_end == 1'b1)
         begin
             state_p_line <= SM_LINE_VIZ;
         end
     end
     SM_LINE_VIZ: begin
-        if (h_detect_bporch == 1'b1)
+        if (v_detect_bporch == 1'b1)
         begin
             state_p_line <= SM_LINE_BP;
         end
     end
     SM_LINE_BP: begin
-        if (h_detect_sync == 1'b1)
+        if (v_detect_sync == 1'b1)
         begin
             state_p_line <= SM_LINE_SYN;
         end
