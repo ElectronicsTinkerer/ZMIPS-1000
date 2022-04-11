@@ -92,19 +92,14 @@ wire [3:0] vga_vindex;
 
 // Generate 65 MHZ pixel clock
 pll65 PLL_65(
-		.refclk(CLOCK_50),   //  refclk.clk
+		.refclk(CLOCK2_50),   //  refclk.clk
 		.rst(!RESET_N),      //   reset.reset
 		.outclk_0(pxl_clk), // outclk0.clk
-		.outclk_1(pxl_mem_clk), // outclk1.clk
+		.outclk_1(pxl_mem_clk) // outclk1.clk
 		//.locked()    //  locked.export
 	);
 	
 vga_gen VGAG(.h_sync(VGA_HS), .v_sync(VGA_VS), .avr(avr), .line_num(line_num), .pixel_num(pixel_num), .clk(pxl_clk));
-
-// assign VGA_R = line_num[3:0] & {4{avr}};
-// assign VGA_G = line_num[7:4] & {4{avr}};
-// assign VGA_B = {line_num[9:8], pixel_num[1:0]} & {4{avr}};
-assign LEDR[3:0] = {VGA_HS, VGA_VS, !VGA_HS, !VGA_VS};
 
 // Resolution: 512 x 512 (via pixel doubling)
 assign vmem_vga_addr = {line_num[8:1], pixel_num[9:1]}; // Pixel doubling in v- and h-direction
@@ -131,14 +126,17 @@ assign VGA_G = vga_pre_g & {4{avr}};
 assign VGA_B = vga_pre_b & {4{avr}};
 
 // CPU connections
-pll_cpu_50 PLL_CPU(
+pll_cpu_40 PLL_CPU(
 		.refclk(CLOCK_50),   //  refclk.clk
 		.rst(!RESET_N),      //   reset.reset
 		.outclk_0(cpu_clk), // outclk0.clk
-		.outclk_1(cpu_mem_clk), // outclk1.clk
+		.outclk_1(cpu_mem_clk) // outclk1.clk
 		//.locked()    //  locked.export
 	);
 	
+// assign cpu_clk = KEY[0];
+// assign cpu_mem_clk = KEY[1];
+// assign HEX0 = cpu_i_data[31:26];
 
 assign cpu_rst = !RESET_N;
 
@@ -155,9 +153,11 @@ zmips CPU0(.i_data(cpu_i_data),
 
 // CPU ROM
 cpurom ROM0(
-	.address(cpu_i_addr[10:0]),
+	.address(cpu_i_addr[12:2]),
 	.clock(cpu_mem_clk),
 	.q(cpu_i_data)
 );
+
+assign LEDR = cpu_i_addr[11:2];
 
 endmodule
