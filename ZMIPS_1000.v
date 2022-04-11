@@ -91,14 +91,11 @@ wire [3:0] vga_vindex;
 //=======================================================
 
 // Generate 65 MHZ pixel clock
-// As well as the CPU and CPU_VMEM clocks
 pll65 PLL_65(
 		.refclk(CLOCK_50),   //  refclk.clk
 		.rst(!RESET_N),      //   reset.reset
 		.outclk_0(pxl_clk), // outclk0.clk
-		.outclk_1(pxl_mem_clk), // outclk0.clk
-		.outclk_2(cpu_clk), // outclk1.clk
-		.outclk_3(cpu_mem_clk), // outclk2.clk
+		.outclk_1(pxl_mem_clk), // outclk1.clk
 		//.locked()    //  locked.export
 	);
 	
@@ -134,6 +131,15 @@ assign VGA_G = vga_pre_g & {4{avr}};
 assign VGA_B = vga_pre_b & {4{avr}};
 
 // CPU connections
+pll_cpu_50 PLL_CPU(
+		.refclk(CLOCK_50),   //  refclk.clk
+		.rst(!RESET_N),      //   reset.reset
+		.outclk_0(cpu_clk), // outclk0.clk
+		.outclk_1(cpu_mem_clk), // outclk1.clk
+		//.locked()    //  locked.export
+	);
+	
+
 assign cpu_rst = !RESET_N;
 
 zmips CPU0(.i_data(cpu_i_data),

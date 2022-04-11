@@ -4,6 +4,7 @@ ADDRESS_RADIX = HEX;
 DATA_RADIX = BIN;
 CONTENT
 BEGIN
+                                        -- ; Test data file
    0 : 00000000000000000000000000000000;    -- nop
    1 : 00000000000000000000000000000000;    -- nop
    2 : 00000000000000000000000000000000;    -- nop
@@ -14,6 +15,7 @@ BEGIN
    7 : 01010100000000000000000000001001;    -- LI 9
    8 : 00010100000000000001000000000000;    -- MOV r2, r0
    9 : 00010100001000000000000000000000;    -- MOV r0, r1
+                                        -- :loop_start
    a : 00001100000000000000000000000010;    -- FFL C              ; Set carry
    b : 00010000001000000000100000001000;    -- SUB r1, r1, r0
    c : 00100100001000010000000000000000;    -- SW r1, r1          ; mem[r1] = r1
@@ -27,8 +29,10 @@ BEGIN
   14 : 00001100000000000000000000000010;    -- FFL C              ; Set carry
   15 : 00010000001000110000100000001000;    -- SUB r1, r1, r3
   16 : 00100100001111100000000000000000;    -- SW r1, r30         ; mem[r1] = r30 -> Test reading of PC shadow reg
-  17 : 11000000000000000000000000011001;    -- JPL 0x64           ; Checking to see if r30 is set by jump (should be $60 since that is the next instruction address)
+  17 : 11000000000000000000000000000110;    -- JPL shadow         ; Checking to see if r30 is set by jump (should be $60 since that is the next instruction address)
   18 : 00100100001000110000000000000000;    -- SW r1, r3          ; mem[r1] = r3 -> This should be skipped
+                                        -- :shadow
   19 : 00100100001111100000000000000000;    -- SW r1, r30         ; mem[r1] = r30 -> Test reading of PC shadow reg
-  1a : 11000000000000000000000000011010;    -- JPL 0x68           ; Spin
+                                        -- :spin
+  1a : 11000000000000000000000000000110;    -- JPL spin           ; Spin
 END;
