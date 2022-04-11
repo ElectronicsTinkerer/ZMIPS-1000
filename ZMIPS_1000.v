@@ -71,28 +71,87 @@ module ZMIPS_1000(
 //  REG/WIRE declarations
 //=======================================================
 
-wire pxl_clk;
+
+// Signals for VGA generation
+wire pxl_clk, pxl_mem_clk;
 wire [9:0] line_num, pixel_num;
 wire avr;
+wire [16:0] vmem_vga_addr;
+wire [3:0] vga_pre_r, vga_pre_g, vga_pre_b; // Color signals from the LUT, before being ANDed with the AVR
+
+// Signals for CPU interface
+wire [31:0] cpu_i_data, cpu_i_addr, cpu_d_i_data, cpu_d_o_data, cpu_d_addr;
+wire cpu_clk, cpu_mem_clk;
+wire cpu_rst;
+wire cpu_wren;
+wire [3:0] vga_vindex;
 
 //=======================================================
 //  Structural coding
 //=======================================================
 
 // Generate 65 MHZ pixel clock
+// As well as the CPU and CPU_VMEM clocks
 pll65 PLL_65(
 		.refclk(CLOCK_50),   //  refclk.clk
 		.rst(!RESET_N),      //   reset.reset
-		.outclk_0(pxl_clk) // outclk0.clk
-		//.locked    //  locked.export
+		.outclk_0(pxl_clk), // outclk0.clk
+		.outclk_1(pxl_mem_clk), // outclk0.clk
+		.outclk_2(cpu_clk), // outclk1.clk
+		.outclk_3(cpu_mem_clk), // outclk2.clk
+		//.locked()    //  locked.export
 	);
 	
 vga_gen VGAG(.h_sync(VGA_HS), .v_sync(VGA_VS), .avr(avr), .line_num(line_num), .pixel_num(pixel_num), .clk(pxl_clk));
 
-assign VGA_R = line_num[3:0] & {4{avr}};
-assign VGA_G = line_num[7:4] & {4{avr}};
-assign VGA_B = {line_num[9:8], pixel_num[1:0]} & {4{avr}};
+// assign VGA_R = line_num[3:0] & {4{avr}};
+// assign VGA_G = line_num[7:4] & {4{avr}};
+// assign VGA_B = {line_num[9:8], pixel_num[1:0]} & {4{avr}};
 assign LEDR[3:0] = {VGA_HS, VGA_VS, !VGA_HS, !VGA_VS};
 
+// Resolution: 512 x 512 (via pixel doubling)
+assign vmem_vga_addr = {line_num[8:1], pixel_num[9:1]}; // Pixel doubling in v- and h-direction
+
+// Video memory
+vmem VMEM0(
+	.address_a(cpu_d_addr[13:0]),
+	.address_b(vmem_vga_addr),
+	.clock_a(cpu_mem_clk),
+	.clock_b(pxl_mem_clk), // Latch address on falling clock edge since data is read on rising
+	.data_a(cpu_d_o_data),
+	.data_b(4'b0000),
+	.wren_a(cpu_wren),
+	.wren_b(1'b0), // Video circuit does not need to write to mem
+	.q_a(cpu_d_i_data),
+	.q_b(vga_vindex)
+	);
+
+// Color LUT
+vga_clut VGA_LUT(.index(vga_vindex), .r(vga_pre_r), .g(vga_pre_g), .b(vga_pre_b));
+
+assign VGA_R = vga_pre_r & {4{avr}};
+assign VGA_G = vga_pre_g & {4{avr}};
+assign VGA_B = vga_pre_b & {4{avr}};
+
+// CPU connections
+assign cpu_rst = !RESET_N;
+
+zmips CPU0(.i_data(cpu_i_data),
+	.i_addr(cpu_i_addr), 
+	.d_data_o(cpu_d_o_data),
+	.d_data_i(cpu_d_i_data),
+	.d_addr(cpu_d_addr),
+	.clk(cpu_clk),
+	.d_wr(cpu_wren),
+	// .d_rw(),
+	.rst(cpu_rst)
+	);
+
+// CPU ROM
+cpurom ROM0(
+	.address(cpu_i_addr[10:0]),
+	.clock(cpu_mem_clk),
+	.q(cpu_i_data)
+);
 
 endmodule

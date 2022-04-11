@@ -25,15 +25,15 @@ localparam H_A_ENDLINE = H_A_F_PORCH + H_S_F_PORCH;
 
 // VERTICAL:
 // Visible lines: 768 lines
-localparam V_S_VIZ_COUNT = 768;
+localparam V_S_VIZ_COUNT = 768 - 256; // Offsets on V are to center a 512-line image
 // Back porch:    29
-localparam V_S_B_PORCH = 29;
+localparam V_S_B_PORCH = 29 + 128;
 localparam V_A_B_PORCH = V_S_VIZ_COUNT - 1;
 // Sync pulse:    6
 localparam V_S_SYNC = 6;
 localparam V_A_SYNC = V_A_B_PORCH + V_S_B_PORCH;
 // Front porch:   3
-localparam V_S_F_PORCH = 3;
+localparam V_S_F_PORCH = 3 + 128;
 localparam V_A_F_PORCH = V_A_SYNC + V_S_SYNC;
 // Whole frame:   806
 localparam V_A_ENDFRAME = V_A_F_PORCH + V_S_F_PORCH;
