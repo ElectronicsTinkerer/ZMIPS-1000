@@ -8,6 +8,7 @@
 
 import re
 import sys
+import os
 import traceback
 from colorama import Fore
 from enum import Enum
@@ -34,21 +35,22 @@ class OpType(Enum):
     IFRT = 1, # I-format load (R-type)
     IFBR = 2, # I-format branch
     JFMT = 3  # J-format
+    RAW  = 4  # .WORD directive
 
 
 class MneType(Enum):
     R3F  = 0,  # rd, rs, rt, [flags]
-    R2FC = 1,  #~ rs, rt, [flags]
-    R2FN = 2,  #~ rd, rs, [flags]
-    R2FS = 3,  #~ rd, rs, shamt, [flags]
-    R2FD = 4,  #~ rd, rs
-    R2FT = 5,  #~ rs, rt
-    ADDR = 6,  #~ label/address
-    IMMD = 7,  #~ #se_immd
-    BADR = 8,  #~ flag, label/address
-    FLAG = 9,  #~ flag
-    JREG = 10, #~ rs
-    NOP  = 11  #~ <nothing>
+    R2FC = 1,  # rs, rt, [flags]
+    R2FN = 2,  # rd, rs, [flags]
+    R2FS = 3,  # rd, rs, shamt, [flags]
+    R2FD = 4,  # rd, rs
+    R2FT = 5,  # rs, rt
+    ADDR = 6,  # label/address
+    IMMD = 7,  # se_immd
+    BADR = 8,  # flag, label/address
+    FLAG = 9,  # flag
+    JREG = 10, # rs
+    NOP  = 11  # <nothing>
 
 class Opcode:
     def __init__(self, mne:str, opcode:int, op_type:OpType, mne_type:MneType, shamt=0, funct=0, rs=0, rt=0, rd=0, immd=0, jaddr=0, flags=0, cc=0):
@@ -85,7 +87,8 @@ OPS = {
     "BFC" : Opcode("BFC", 0b100000, OpType.IFBR, MneType.BADR),
     "BFS" : Opcode("BFS", 0b101000, OpType.IFBR, MneType.BADR),
     "JPL" : Opcode("JPL", 0b110000, OpType.JFMT, MneType.ADDR),
-    "FFL" : Opcode("FFL", 0b000011, OpType.RFMT, MneType.FLAG, funct = 0b000000)
+    "FFL" : Opcode("FFL", 0b000011, OpType.RFMT, MneType.FLAG, funct = 0b000000),
+    ".WORD" : Opcode(".WORD", 0,    OpType.RAW,  MneType.IMMD)
 }
 
 def op2bin(opcode:Opcode):
@@ -97,6 +100,8 @@ def op2bin(opcode:Opcode):
         return f"{opcode.opcode|opcode.cc:06b}_{((1 << 26) - 1) & opcode.immd:026b}"
     elif opcode.op_type == OpType.JFMT:
         return f"11_{opcode.jaddr:030b}"
+    elif opcode.op_type == OpType.RAW:
+        return f"{opcode.immd:032b}"
 
 # Get the register number from a string.
 # Definitely could use some error handling
@@ -172,6 +177,9 @@ if __name__ == "__main__":
 
         if line[0] == ':':
             lables[line[1:]] = pc << 2 # word size = 4 bytes
+        elif line[0] == '=':
+            parts = line.split(maxsplit=1)
+            lables[parts[0][1:]] = eval(parts[1], globals(), lables)
         else:
             pc += 1
 
@@ -189,7 +197,7 @@ if __name__ == "__main__":
             continue
 
         # Ignore comments and labels
-        if line.startswith("//") or line.startswith(":") or line.startswith(";"):
+        if line.startswith("//") or line.startswith(":") or line.startswith(";") or line.startswith("="):
             listing.append(ListingLine(line, pc, nocode=True))
             continue
 
@@ -225,6 +233,7 @@ if __name__ == "__main__":
             pass
         elif op.mne_type == MneType.FLAG:
             try:
+                op.flags = 0
                 for c in args[0]:
                     op.flags |= FLAG_BITS[c.upper()]
             except IndexError:
@@ -257,6 +266,7 @@ if __name__ == "__main__":
                 op.rt = getReg(args[1])
                 op.rs = getReg(args[0])
 
+                op.flags = 0
                 if len(args) > 2:
                     for c in args[2]:
                         op.flags |= FLAG_BITS[c.upper()]
@@ -272,6 +282,7 @@ if __name__ == "__main__":
                 op.rs = getReg(args[1])
                 op.rd = getReg(args[0])
 
+                op.flags = 0
                 if len(args) > 3:
                     for c in args[3]:
                         op.flags |= FLAG_BITS[c.upper()]
@@ -288,6 +299,7 @@ if __name__ == "__main__":
                 op.rs = getReg(args[1])
                 op.rd = getReg(args[0])
 
+                op.flags = 0
                 if len(args) > 2:
                     for c in args[2]:
                         op.flags |= FLAG_BITS[c.upper()]
@@ -303,6 +315,7 @@ if __name__ == "__main__":
                 op.rs = getReg(args[1])
                 op.rd = getReg(args[0])
 
+                op.flags = 0
                 if len(args) > 3:
                     for c in args[3]:
                         op.flags |= FLAG_BITS[c.upper()]
@@ -320,19 +333,22 @@ if __name__ == "__main__":
                 pmsg(ERROR, f"Syntax error", line_num)
             except IndexError:
                 pmsg(ERROR, f"Expected target", line_num)
+            except NameError:
+                pmsg(ERROR, f"Unknown symbol in '{args[0]}'", line_num)
                 
         elif op.mne_type == MneType.BADR:
             try:
                 op.cc = CONDITIONCODES[args[0].upper()]
                 # "Even more Very Secure"
-                print(eval(args[1], globals(), lables), pc)
                 op.immd = (eval(args[1], globals(), lables) - (pc << 2) - 4) >> 2 # -4 since PC is the (current PC - 4) in the IF pipeline regs
             except SyntaxError:
                 pmsg(ERROR, f"Syntax error", line_num)
             except IndexError:
                 pmsg(ERROR, f"Expected flag and target or unknown flag", line_num)
             except KeyError:
-                pmsg(ERROR, f"Unknown condition {args[0]}", line_num)
+                pmsg(ERROR, f"Unknown condition '{args[0]}'", line_num)
+            except NameError:
+                pmsg(ERROR, f"Unknown symbol in '{args[1]}'", line_num)
 
         elif op.mne_type == MneType.IMMD:
             try:
@@ -342,6 +358,8 @@ if __name__ == "__main__":
                 pmsg(ERROR, f"Syntax error", line_num)
             except IndexError:
                 pmsg(ERROR, f"Expected value", line_num)
+            except NameError:
+                pmsg(ERROR, f"Unknown symbol in '{args[0]}'", line_num)
 
         opbin = op2bin(op)
         listing.append(ListingLine(
@@ -376,11 +394,11 @@ if __name__ == "__main__":
     mif_output += f"END;\n"
 
     # Write results
-    with open("asm-output.mif", "w") as file:
+    with open(f"{os.path.splitext(infile)[0]}.mif", "w") as file:
         file.write(mif_output)
 
     # Write file for use in simulation
-    with open("asm-output.dat", "w") as file:
+    with open(f"{os.path.splitext(infile)[0]}.dat", "w") as file:
         for line in listing:
             file.write(f"{line.fbin}{' '*(LISTING_COMMENT_COL-len(line.fbin))} // {line.src}\n")
 
