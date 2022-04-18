@@ -107,13 +107,13 @@ assign vmem_vga_addr = {line_num[8:1], pixel_num[9:1]}; // Pixel doubling in v- 
 
 // Video memory
 vmem VMEM0(
-	.address_a(cpu_d_addr[13:0]),
-	.address_b(vmem_vga_addr),
+	.address_a(cpu_d_addr[14:0]),
+	.address_b({1'b0, vmem_vga_addr}),
 	.clock_a(cpu_mem_clk),
 	.clock_b(pxl_mem_clk), // Latch address on falling clock edge since data is read on rising
 	.data_a(cpu_d_o_data),
 	.data_b(4'b0000),
-	.wren_a(cpu_wren & (~|cpu_d_addr[31:13])), // Lowest portion of memory is video
+	.wren_a(cpu_wren & (~|cpu_d_addr[31:15])), // Lowest portion of memory is video
 	.wren_b(1'b0), // Video circuit does not need to write to mem
 	.q_a(cpu_vga_i_data),
 	.q_b(vga_vindex)
@@ -160,7 +160,7 @@ cpurom ROM0(
 );
 
 // Game data rom
-cpurom ROM1(
+gdrom ROM1(
 	.address(cpu_i_addr[10:0]),
 	.clock(cpu_mem_clk),
 	.q(cpu_romdata)
@@ -168,13 +168,14 @@ cpurom ROM1(
 
 
 // Memory map:
-// 0x00000000 - 0x00001fff => Video memory
-// 0x00002000 - 0x00003fff => ROM data (not code)
+// 0x00000000 - 0x00001fff => Video memory (Buffer 0)
+// 0x00002000 - 0x00003fff => Video memory (Buffer 1)
+// 0x00004000 - 0x00005fff => ROM data (not code)
 // Select which data to send to CPU
 zmips_mux232 MUX_MEMSEL(
 	.a(cpu_vga_i_data),
 	.b(cpu_romdata),
-	.sel(cpu_d_addr[13]),
+	.sel(cpu_d_addr[14]),
 	.y(cpu_d_i_data)
 );
 

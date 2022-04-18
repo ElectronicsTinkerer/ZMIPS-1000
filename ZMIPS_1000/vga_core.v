@@ -1,5 +1,5 @@
 
-// Input frequency: 75 MHz
+// Input frequency: 65 MHz
 module vga_gen(h_sync, v_sync, avr, line_num, pixel_num, clk);
 
 output h_sync, v_sync, avr; // AVR = Avtive Video Region

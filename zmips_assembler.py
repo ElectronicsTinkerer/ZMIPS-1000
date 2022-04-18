@@ -135,7 +135,7 @@ def printhelp():
     print("  Zach Baldwin Spring 2022")
     print("")
     print(" USAGE:")
-    print("$ python zmips_assembler.py input_file.asm")
+    print("$ python zmips_assembler.py input_file.asm outputfile")
     print("")
 
 if __name__ == "__main__":
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     print("  Zach Baldwin Spring 2022")
     print("")
 
-    if len(sys.argv) == 1:
+    if len(sys.argv) != 3:
         printhelp()
         exit(-1)
 
@@ -155,6 +155,13 @@ if __name__ == "__main__":
     except:
         printhelp()
         pmsg(ERROR, "I need an input file!")
+    
+    outfile = ""
+    try:
+        outfile = argv[1]
+    except:
+        printhelp()
+        pmsg(ERROR, "I need an output file!")
     
     pmsg(INFO, f"Assembling {infile}")
 
@@ -394,11 +401,11 @@ if __name__ == "__main__":
     mif_output += f"END;\n"
 
     # Write results
-    with open(f"{os.path.splitext(infile)[0]}.mif", "w") as file:
+    with open(f"{outfile}.mif", "w") as file:
         file.write(mif_output)
 
     # Write file for use in simulation
-    with open(f"{os.path.splitext(infile)[0]}.dat", "w") as file:
+    with open(f"{outfile}.dat", "w") as file:
         for line in listing:
             file.write(f"{line.fbin}{' '*(LISTING_COMMENT_COL-len(line.fbin))} // {line.src}\n")
 
