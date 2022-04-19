@@ -1,5 +1,6 @@
 zmips_assembler.py
-*.flock
+Setup.bash
 mifdata
+*.flock
 *.log
 *.bak
