@@ -182,6 +182,9 @@ if __name__ == "__main__":
         if len(line) < 2 or line.startswith("//") or line.startswith(";"):
             continue
 
+        line = line.split(';')[0]
+        line = line.split('//')[0]
+
         if line[0] == ':':
             lables[line[1:]] = pc << 2 # word size = 4 bytes
         elif line[0] == '=':

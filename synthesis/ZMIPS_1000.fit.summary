@@ -1,16 +1,16 @@
-Fitter Status : Successful - Mon Apr 18 10:00:24 2022
+Fitter Status : Successful - Thu Apr 21 23:39:43 2022
 Quartus Prime Version : 21.1.0 Build 842 10/21/2021 SJ Lite Edition
 Revision Name : ZMIPS_1000
 Top-level Entity Name : ZMIPS_1000
 Family : Cyclone V
 Device : 5CEBA4F23C7
 Timing Models : Final
-Logic utilization (in ALMs) : 1,084 / 18,480 ( 6 % )
-Total registers : 1397
+Logic utilization (in ALMs) : 1,420 / 18,480 ( 8 % )
+Total registers : 1448
 Total pins : 170 / 224 ( 76 % )
 Total virtual pins : 0
-Total block memory bits : 590,784 / 3,153,920 ( 19 % )
-Total RAM Blocks : 72 / 308 ( 23 % )
+Total block memory bits : 1,639,360 / 3,153,920 ( 52 % )
+Total RAM Blocks : 200 / 308 ( 65 % )
 Total DSP Blocks : 0 / 66 ( 0 % )
 Total HSSI RX PCSs : 0
 Total HSSI PMA RX Deserializers : 0

@@ -1,38 +1,56 @@
-; Test data file
-
+; Game source code
+; Reserved regs:
+;   R29 - SP
 
 ; DEFINES
-=game_data_base         0x2000
-=sprite_player_data      game_data_base + 0
-=sprite_player_mask      game_data_base + 8
+=RAM_BASE               0x2000
+=RAM_SIZE               0x2000
+
+=GAME_DATA_BASE         0x4000
+=SPRITE_MASK_OFFSET     8
+=SPRITE_PLAYER_DATA     GAME_DATA_BASE + 0
+=SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
+
+=LINE_WIDTH             0x20 ; In px
 
 ; ENTRY POINT
-;     li 0
-;     mov r28, r0
-;     li 0x4000            ; Half of video memory
-;     mov r2, r0          
-;     li 0
-;     mov r1, r0          ; i = 0
-; :loop_start
-;     ffl c               ; Set carry
-;     add r1, r1, r28     ; i += 1
-;     sw r1, r1           ; mem[i] = 0
-;     cmp r2, r1, Z       ; Count == 0x2000?
-;     bfc z, loop_start   ; No, keep going
+;     nop
+    li RAM_BASE+RAM_SIZE-1         ; Init SP
+    mov r29, r0
+    li 0
+    mov r28, r0
+    li 0x0800            ; All of video memory
+    mov r2, r0          
+    li 0
+    mov r1, r0          ; i = 0
+:loop_start
+    ffl c               ; Set carry
+    add r1, r1, r28     ; i += 1
+    sw r1, r1           ; mem[i] = 0
+    cmp r2, r1, Z       ; Count == 0x2000?
+    bfc z, loop_start   ; No, keep going
 
-    li 0x40
+    li 0
     mov r2, r0
     li 0xbbbbbbbb   ; cyan
     sw r2, r0
 
-    li 4                ; Line 4
+    li 3                ; Line 4
     mov r21, r0
     li 76               ; Pixel 76
     mov r20, r0
-    li sprite_player_data    ; Sprite to display
+    li SPRITE_PLAYER_DATA    ; Sprite to display
     mov r22, r0
-
     jpl draw_sprite
+
+    ; li 0x60
+    ; mov r20, r0
+    ; li 0
+    ; lw r0, r0
+    ; sw r20, r0
+
+
+    nop
 
 :spin
     jpl spin           ; Spin
@@ -51,13 +69,17 @@
 ; Return:
 ;   NONE
 :draw_sprite
+    sw r29, r30         ; Save return address
+    li -1
+    ffl x
+    add r29, r29, r0
     
     ; Save X
     mov r12, r20
 
     ; calculate line
-    ; y * 0x40
-    li 0x40             ; Line width
+    ; y * line_width
+    li LINE_WIDTH
     mov r20, r0
     jpl mult
     
@@ -68,45 +90,58 @@
 
     ; Currently, r20 stores the base offset of the video data word
     lw r13, r22         ; Get the sprite's line of data
-    lw r14, r22         ; Get the sprite's corresponding line mask
+    lw r14, r22         ; Get the sprite's corresponding line mask - FIX
     and r13, r13, r14
 
-;     li 7
-;     and r12, r12, r0    ; Mask off index into word
-;     eor r21, r12, r0    ; Invert index bits (reverse count direction)
-;     sll r21, r21, 3     ; jump index * 2 * 4
-;     li sprite_shift_lut
-;     add r21, r21, r0
-;     jmp r21
+    li 7
+    and r12, r12, r0    ; Mask off index into word
+    eor r21, r12, r0    ; Invert index bits (reverse count direction)
+    sll r21, r21, 3     ; jump index * 2 * 4
+    li sprite_shift_lut
+    ffl x
+    add r21, r21, r0
+    jmp r21
 
-; :sprite_shift_lut
-;     sll r13, r13, 4     ; 28 Shift both the data
-;     sll r14, r14, 4     ;  and the mask
-;     sll r13, r13, 4     ; 24
-;     sll r14, r14, 4
-;     sll r13, r13, 4     ; 20
-;     sll r14, r14, 4
-;     sll r13, r13, 4     ; 16
-;     sll r14, r14, 4 
-;     sll r13, r13, 4     ; 12
-;     sll r14, r14, 4
-;     sll r13, r13, 4     ; 8
-;     sll r14, r14, 4
-;     sll r13, r13, 4     ; 4
-;     sll r14, r14, 4
-;     nop                 ; 0
-;     nop
+:sprite_shift_lut
+    sll r13, r13, 4     ; 28 Shift both the data
+    sll r14, r14, 4     ;  and the mask
+    sll r13, r13, 4     ; 24
+    sll r14, r14, 4
+    sll r13, r13, 4     ; 20
+    sll r14, r14, 4
+    sll r13, r13, 4     ; 16
+    sll r14, r14, 4 
+    sll r13, r13, 4     ; 12
+    sll r14, r14, 4
+    sll r13, r13, 4     ; 8
+    sll r14, r14, 4
+    sll r13, r13, 4     ; 4
+    sll r14, r14, 4
+    nop                 ; 0
+    nop
     
 
 
-    li sprite_player_data    ; Sprite to display
-    lw r0, r0
-    ; li 0x60
-    ; mov r20, r0
+    ; li SPRITE_PLAYER_DATA     ; Sprite to display
+    lw r12, r22
+    li SPRITE_PLAYER_MASK       ; Calculate mask address
+    ffl x
+    add r22, r22, r0
+    lw r0, r22
+    ; and r12, r12, r0            ; Mask off sprite data
+;     li 0x60
+;     mov r20, r0
     ; li 0xffffffff
-    sw r20, r0
+;     li 0
+    and r13, r14, r13
+    sw r20, r13
 
-    jpl spin
+    
+    li 1                ; Return
+    ffl x
+    add r29, r29, r0
+    lw r0, r29
+    jmp r0
 
 
     

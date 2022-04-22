@@ -76,7 +76,7 @@ module ZMIPS_1000(
 wire pxl_clk, pxl_mem_clk;
 wire [9:0] line_num, pixel_num;
 wire avr;
-wire [16:0] vmem_vga_addr;
+wire [14:0] vmem_vga_addr;
 wire [3:0] vga_pre_r, vga_pre_g, vga_pre_b; // Color signals from the LUT, before being ANDed with the AVR
 
 // Signals for CPU interface
@@ -102,13 +102,13 @@ pll65 PLL_65(
 	
 vga_gen VGAG(.h_sync(VGA_HS), .v_sync(VGA_VS), .avr(avr), .line_num(line_num), .pixel_num(pixel_num), .clk(pxl_clk));
 
-// Resolution: 512 x 512 (via pixel doubling)
-assign vmem_vga_addr = {line_num[8:1], pixel_num[9:1]}; // Pixel doubling in v- and h-direction
+// Resolution: 256 x 256 (via pixel doubling)
+assign vmem_vga_addr = {line_num[8:2], pixel_num[9:2]}; // Pixel quadrupling in v- and h-direction
 
 // Video memory
 vmem VMEM0(
 	.address_a(cpu_d_addr[14:0]),
-	.address_b({1'b0, vmem_vga_addr}),
+	.address_b({3'b0, vmem_vga_addr}),
 	.clock_a(cpu_mem_clk),
 	.clock_b(pxl_mem_clk), // Latch address on falling clock edge since data is read on rising
 	.data_a(cpu_d_o_data),
@@ -139,9 +139,10 @@ pll_cpu_40 PLL_CPU(
 // assign cpu_mem_clk = KEY[1];
 // assign HEX0 = cpu_i_data[31:26];
 
-assign cpu_rst = !RESET_N;
+assign cpu_rst = !KEY[3];
 
-zmips CPU0(.i_data(cpu_i_data),
+zmips CPU0(
+	.i_data(cpu_i_data),
 	.i_addr(cpu_i_addr), 
 	.d_data_o(cpu_d_o_data),
 	.d_data_i(cpu_d_i_data),
@@ -161,7 +162,7 @@ cpurom ROM0(
 
 // Game data rom
 gdrom ROM1(
-	.address(cpu_i_addr[10:0]),
+	.address(cpu_d_addr[13:0]),
 	.clock(cpu_mem_clk),
 	.q(cpu_romdata)
 );

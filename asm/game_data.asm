@@ -1,6 +1,6 @@
 
 :sprite_player
-    .word 0xfedcab98    ; Sprite data
+    .word 0xcccccccc    ; Sprite data
     .word 0xfedcab98
     .word 0xfedcab98
     .word 0xfedcab98
