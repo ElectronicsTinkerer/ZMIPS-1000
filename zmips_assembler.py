@@ -173,10 +173,12 @@ if __name__ == "__main__":
             src.append(line)
 
     pc = 0
-    lables = {}
+    line_num = 0
+    labels = {}
 
     # Resolve forward labels
     for line in src:
+        line_num += 1
         line = line.strip()
 
         if len(line) < 2 or line.startswith("//") or line.startswith(";"):
@@ -186,15 +188,22 @@ if __name__ == "__main__":
         line = line.split('//')[0]
 
         if line[0] == ':':
-            lables[line[1:]] = pc << 2 # word size = 4 bytes
+            label = line[1:]
+            if label not in labels:
+                labels[label] = pc << 2 # word size = 4 bytes
+            else:
+                pmsg(ERROR, f"Multiple define label '{label}'", line_num)
         elif line[0] == '=':
             parts = line.split(maxsplit=1)
-            lables[parts[0][1:]] = eval(parts[1], globals(), lables)
+            equate = parts[0][1:]
+            if equate not in labels:
+                labels[equate] = eval(parts[1], globals(), labels)
+            else:
+                pmsg(ERROR, f"Multiple define equate '{equate}'", line_num)
         else:
             pc += 1
 
     listing:ListingLine = []
-    line_num = 0
     pc = 0
 
     for line in src:
@@ -338,7 +347,7 @@ if __name__ == "__main__":
         elif op.mne_type == MneType.ADDR:
             try:
                 # "Very Secure"
-                op.jaddr = eval(args[0], globals(), lables) >> 2 # >> 2 since the immediate value is the word address, not the full address
+                op.jaddr = eval(args[0], globals(), labels) >> 2 # >> 2 since the immediate value is the word address, not the full address
             except SyntaxError:
                 pmsg(ERROR, f"Syntax error", line_num)
             except IndexError:
@@ -350,7 +359,7 @@ if __name__ == "__main__":
             try:
                 op.cc = CONDITIONCODES[args[0].upper()]
                 # "Even more Very Secure"
-                op.immd = (eval(args[1], globals(), lables) - (pc << 2) - 4) >> 2 # -4 since PC is the (current PC - 4) in the IF pipeline regs
+                op.immd = (eval(args[1], globals(), labels) - (pc << 2) - 4) >> 2 # -4 since PC is the (current PC - 4) in the IF pipeline regs
             except SyntaxError:
                 pmsg(ERROR, f"Syntax error", line_num)
             except IndexError:
@@ -363,7 +372,7 @@ if __name__ == "__main__":
         elif op.mne_type == MneType.IMMD:
             try:
                 # "Considerably Even more Very Secure"
-                op.immd = eval(args[0], globals(), lables)
+                op.immd = eval(args[0], globals(), labels)
             except SyntaxError:
                 pmsg(ERROR, f"Syntax error", line_num)
             except IndexError:
