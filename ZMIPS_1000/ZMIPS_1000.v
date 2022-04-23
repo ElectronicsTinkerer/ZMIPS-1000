@@ -173,10 +173,12 @@ gdrom ROM1(
 // 0x00002000 - 0x00003fff => Video memory (Buffer 1)
 // 0x00004000 - 0x00005fff => ROM data (not code)
 // Select which data to send to CPU
-zmips_mux232 MUX_MEMSEL(
+zmips_mux432 MUX_MEMSEL(
 	.a(cpu_vga_i_data),
 	.b(cpu_romdata),
-	.sel(cpu_d_addr[14]),
+	.c({VGA_VS, 28'b0, KEY[2:0]}),	// Allow CPU to read input keys and screen state
+	.d(32'b0),
+	.sel(cpu_d_addr[15:14]),
 	.y(cpu_d_i_data)
 );
 

@@ -5,13 +5,14 @@
 ; DEFINES
 =RAM_BASE               0x2000
 =RAM_SIZE               0x2000
-
 =GAME_DATA_BASE         0x4000
+=INPUT_OFFSET           0x8000
+
 =SPRITE_MASK_OFFSET     8
 =SPRITE_PLAYER_DATA     GAME_DATA_BASE + 0
 =SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
 
-=LINE_WIDTH             0x20 ; In words (px/8)
+=LINE_WIDTH             0x20 ; In words (8px/word)
 
 ; ENTRY POINT
 ;     nop
@@ -19,29 +20,29 @@
     mov r29, r0
     li 0
     mov r28, r0
-    li 0x0800            ; All of video memory
+    li 0x0800               ; Half of video memory
     mov r2, r0          
     li 0
-    mov r1, r0          ; i = 0
+    mov r1, r0              ; i = 0
 :loop_start
-    ffl c               ; Set carry
-    add r1, r1, r28     ; i += 1
-    sw r1, r1           ; mem[i] = 0
-    cmp r2, r1, Z       ; Count == 0x2000?
-    bfc z, loop_start   ; No, keep going
+    ffl c                   ; Set carry
+    add r1, r1, r28         ; i += 1
+    sw r1, r1               ; mem[i] = 0
+    cmp r2, r1, Z           ; Count == 0x2000?
+    bfc z, loop_start       ; No, keep going
 
     li 0
     mov r2, r0
-    li 0xbbbbbbbb   ; cyan
+    li 0xbbbbbbbb           ; cyan
     sw r2, r0
 
-    li 120                ; Line 4
-    mov r21, r0
-    li 76               ; Pixel 76
-    mov r20, r0
-    li SPRITE_PLAYER_DATA    ; Sprite to display
-    mov r22, r0
-    jpl draw_sprite
+    ; li 120                  ; Line 4
+    ; mov r21, r0
+    ; li 76                   ; Pixel 76
+    ; mov r20, r0
+    ; li SPRITE_PLAYER_DATA   ; Sprite to display
+    ; mov r22, r0
+    ; jpl draw_sprite
 
 
     li 120
@@ -49,8 +50,23 @@
     li 0
     mov r2, r0
 :player_loop
+    li INPUT_OFFSET
+    lw r3, r0
     li 1
+    and r31, r3, r0, Z          ; Can't write to r31, so use as dummy
+    bfs z, player_go_right
+    li 2
+    and r31, r3, r0, Z
+    bfc Z,loop
+    li 1
+    ffl c
+    sub r2, r2, r0
+    jpl player_move
+:player_go_right
+    li 1
+    ffl x
     add r2, r2, r0
+:player_move
     li 0xff
     and r2, r2, r0
     mov r20, r2
@@ -59,7 +75,7 @@
     and r0, r2, r0, Z
     bfc Z,player_on
 :player_off
-    li SPRITE_PLAYER_DATA    ; Sprite to display
+    li SPRITE_PLAYER_DATA       ; Sprite to display
     jpl player_draw
 :player_on
     li SPRITE_PLAYER_DATA+16    ; Sprite to display
@@ -78,13 +94,6 @@
     jpl player_loop
 
 
-    ; li 0x60
-    ; mov r20, r0
-    ; li 0
-    ; lw r0, r0
-    ; sw r20, r0
-
-
     nop
 
 :spin
@@ -92,15 +101,12 @@
 
 
 ; Draw a 8x8 pixel sprite to a position on screen
-; Args: 
+; Args: (destructive)
 ;   r20 - X posiiton
 ;   r21 - Y position
 ;   r22 - Base address of sprite data (pointer)
 ; Uses:
-;   mult:
-;       R0, R10, R11
-;   self:
-;       R12, R13, R14
+;   r0, r10, r11, r12, r13, r14, r15, r16, r17, r20, r21, r22
 ; Return:
 ;   NONE
 :draw_sprite
