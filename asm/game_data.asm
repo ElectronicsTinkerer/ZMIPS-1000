@@ -1,18 +1,19 @@
 
 :sprite_player
-    .word 0xcccccccc    ; Sprite data
-    .word 0xfedcab98
-    .word 0xfedcab98
-    .word 0xfedcab98
-    .word 0xfedcab98
-    .word 0xfedcab98
-    .word 0xfedcab98
-    .word 0xfedcab98
-    .word 0xff0000ff    ; Mask
-    .word 0xfff00fff
+    .word 0x00000000    ; Sprite data
+    .word 0x000001b0
+    .word 0x000cfff0
+    .word 0x0fff3f00
+    .word 0x0fff3f00
+    .word 0x000cfff0
+    .word 0x000001b0
+    .word 0x00000000
+
+    .word 0x0000ffff    ; Mask
+    .word 0x00ffffff
     .word 0xffffffff
-    .word 0x0ffffff0
-    .word 0x0ffffff0
     .word 0xffffffff
-    .word 0xfff00fff
-    .word 0xff0000ff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0x00ffffff
+    .word 0x0000ffff

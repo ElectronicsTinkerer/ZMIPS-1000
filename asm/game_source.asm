@@ -11,7 +11,7 @@
 =SPRITE_PLAYER_DATA     GAME_DATA_BASE + 0
 =SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
 
-=LINE_WIDTH             0x20 ; In px
+=LINE_WIDTH             0x20 ; In words (px/8)
 
 ; ENTRY POINT
 ;     nop
@@ -35,13 +35,40 @@
     li 0xbbbbbbbb   ; cyan
     sw r2, r0
 
-    li 3                ; Line 4
+    li 120                ; Line 4
     mov r21, r0
     li 76               ; Pixel 76
     mov r20, r0
     li SPRITE_PLAYER_DATA    ; Sprite to display
     mov r22, r0
     jpl draw_sprite
+
+
+    li 120
+    mov r1, r0
+    li 0
+    mov r2, r0
+:player_loop
+    li 1
+    add r2, r2, r0
+    li 0xff
+    and r2, r2, r0
+    mov r20, r2
+    mov r21, r1
+    li SPRITE_PLAYER_DATA    ; Sprite to display
+    mov r22, r0
+    jpl draw_sprite
+
+:loop
+    li 300000
+    mov r3, r0
+    li -1
+:ll
+    ffl x
+    add r3, r3, r0, Z
+    bfc Z, ll
+    jpl player_loop
+
 
     ; li 0x60
     ; mov r20, r0
