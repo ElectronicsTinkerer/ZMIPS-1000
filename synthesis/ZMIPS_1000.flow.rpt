@@ -1,5 +1,5 @@
 Flow report for ZMIPS_1000
-Fri Apr 22 22:16:32 2022
+Fri Apr 22 22:20:05 2022
 Quartus Prime Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition
 
 
@@ -41,7 +41,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------+
 ; Flow Summary                                                                  ;
 +---------------------------------+---------------------------------------------+
-; Flow Status                     ; Successful - Fri Apr 22 22:16:32 2022       ;
+; Flow Status                     ; Successful - Fri Apr 22 22:20:05 2022       ;
 ; Quartus Prime Version           ; 21.1.0 Build 842 10/21/2021 SJ Lite Edition ;
 ; Revision Name                   ; ZMIPS_1000                                  ;
 ; Top-level Entity Name           ; ZMIPS_1000                                  ;
@@ -149,7 +149,9 @@ https://fpgasoftware.intel.com/eula.
 ; Assembler            ; 00:00:06     ; 1.0                     ; 4923 MB             ; 00:00:06                           ;
 ; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4880 MB             ; 00:00:07                           ;
 ; Assembler            ; 00:00:06     ; 1.0                     ; 4932 MB             ; 00:00:06                           ;
-; Total                ; 00:08:42     ; --                      ; --                  ; 00:21:05                           ;
+; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4894 MB             ; 00:00:08                           ;
+; Assembler            ; 00:00:05     ; 1.0                     ; 4925 MB             ; 00:00:06                           ;
+; Total                ; 00:08:54     ; --                      ; --                  ; 00:21:19                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -198,6 +200,8 @@ https://fpgasoftware.intel.com/eula.
 ; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
 ; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
 ; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
 +----------------------+------------------+------------+------------+----------------+
 
 
@@ -208,6 +212,8 @@ quartus_map --read_settings_files=on --write_settings_files=off ZMIPS_1000 -c ZM
 quartus_fit --read_settings_files=off --write_settings_files=off ZMIPS_1000 -c ZMIPS_1000
 quartus_asm --read_settings_files=off --write_settings_files=off ZMIPS_1000 -c ZMIPS_1000
 quartus_sta ZMIPS_1000 -c ZMIPS_1000
+quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
+quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
 quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
 quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
 quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif

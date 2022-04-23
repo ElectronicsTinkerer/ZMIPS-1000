@@ -55,7 +55,15 @@
     and r2, r2, r0
     mov r20, r2
     mov r21, r1
+    li 0x10
+    and r0, r2, r0, Z
+    bfc Z,player_on
+:player_off
     li SPRITE_PLAYER_DATA    ; Sprite to display
+    jpl player_draw
+:player_on
+    li SPRITE_PLAYER_DATA+16    ; Sprite to display
+:player_draw
     mov r22, r0
     jpl draw_sprite
 
