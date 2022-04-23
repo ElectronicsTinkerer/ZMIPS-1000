@@ -81,11 +81,23 @@ wire [3:0] vga_pre_r, vga_pre_g, vga_pre_b; // Color signals from the LUT, befor
 
 // Signals for CPU interface
 wire [31:0] cpu_i_data, cpu_i_addr, cpu_d_i_data, cpu_d_o_data, cpu_d_addr;
-wire cpu_clk, cpu_mem_clk;
+wire cpu_clk;
 wire cpu_rst;
-wire cpu_wren;
+wire cpu_wren, cpu_rden;
 wire [3:0] vga_vindex;
 wire [31:0] cpu_vga_i_data, cpu_romdata;
+
+// CPU-Video state machine interface
+wire [31:0] vcore_state; // Passed to CPU
+reg [1:0] vcore_v_sync_state;
+reg [5:0] vcore_frame_num, vcore_frame_num_cdc_1, vcore_frame_num_cdc_2, vcore_frame_num_prev;
+reg [6:0] line_num_cdc_1, line_num_cdc_2;
+reg vcore_new_frame;
+
+// User interface
+// Neeed to do CDC on the buttons so they aren't changing when the CPU reads their state
+wire [31:0] user_input_state; // Sent to CPU
+reg [2:0] keys_cdc_1, keys_cdc_2;
 
 //=======================================================
 //  Structural coding
@@ -109,7 +121,7 @@ assign vmem_vga_addr = {line_num[8:2], pixel_num[9:2]}; // Pixel quadrupling in 
 vmem VMEM0(
 	.address_a(cpu_d_addr[14:0]),
 	.address_b({3'b0, vmem_vga_addr}),
-	.clock_a(cpu_mem_clk),
+	.clock_a(cpu_clk),
 	.clock_b(pxl_mem_clk), // Latch address on falling clock edge since data is read on rising
 	.data_a(cpu_d_o_data),
 	.data_b(4'b0000),
@@ -130,13 +142,12 @@ assign VGA_B = vga_pre_b & {4{avr}};
 pll_cpu_40 PLL_CPU(
 		.refclk(CLOCK_50),   //  refclk.clk
 		.rst(!RESET_N),      //   reset.reset
-		.outclk_0(cpu_clk), // outclk0.clk
-		.outclk_1(cpu_mem_clk) // outclk1.clk
+		.outclk_0(cpu_clk) // outclk0.clk
+		// .outclk_1(cpu_mem_clk) // outclk1.clk
 		//.locked()    //  locked.export
 	);
 	
 // assign cpu_clk = KEY[0];
-// assign cpu_mem_clk = KEY[1];
 // assign HEX0 = cpu_i_data[31:26];
 
 assign cpu_rst = !KEY[3];
@@ -149,35 +160,91 @@ zmips CPU0(
 	.d_addr(cpu_d_addr),
 	.clk(cpu_clk),
 	.d_wr(cpu_wren),
-	// .d_rw(),
+	.d_rd(cpu_rden),
 	.rst(cpu_rst)
 	);
 
 // CPU ROM
 cpurom ROM0(
 	.address(cpu_i_addr[12:2]),
-	.clock(cpu_mem_clk),
+	.clock(cpu_clk),
 	.q(cpu_i_data)
 );
 
 // Game data rom
 gdrom ROM1(
 	.address(cpu_d_addr[13:0]),
-	.clock(cpu_mem_clk),
+	.clock(cpu_clk),
 	.q(cpu_romdata)
 );
 
+
+// Keep a frame counter
+always @(negedge pxl_mem_clk) // internal line counters of the VGA_CORE are updated on posedge
+begin
+	case ({vcore_v_sync_state, VGA_VS})
+	3'b000:	vcore_v_sync_state <= 2'b01; // Input is high, go to next state
+	3'b001: vcore_v_sync_state <= 2'b00; // Stay in initial state
+	3'b011: vcore_v_sync_state <= 2'b00; // Input went low early, shut off output
+	3'b010: vcore_v_sync_state <= 2'b11; // Input is still high, go to stable state for input high
+	3'b110: vcore_v_sync_state <= 2'b11; // Stay in high steady state
+	3'b111: vcore_v_sync_state <= 2'b01; // Currently in steady state with high input, start transition to low steady state
+	// 3'b101: 
+	// 3'b100:
+	endcase
+
+	if ({vcore_v_sync_state, VGA_VS} == 3'b010)
+	begin
+		vcore_frame_num <= vcore_frame_num + 32'b1;
+	end
+end
+
+// Synchronize count with CPU
+always @(posedge cpu_clk)
+begin
+	vcore_frame_num_cdc_1 <= vcore_frame_num;
+	vcore_frame_num_cdc_2 <= vcore_frame_num_cdc_1;
+	line_num_cdc_1 <= line_num;
+	line_num_cdc_2 <= line_num_cdc_1;
+end
+
+// Handle "new frame" flag
+always @(posedge cpu_clk)
+begin
+	// If the video core data reg is accessed and the CPU is reading
+	if (cpu_d_addr[15:14] == 2'b11 && cpu_rden == 1'b1)
+	begin
+		// Then set the flag indicating if this is not the same as the one previously read
+		vcore_new_frame <= (vcore_frame_num_cdc_2 != vcore_frame_num_prev) ? 1'b0 : 1'b1;
+		// And update the previously accessed frame reg
+		vcore_frame_num_prev <= vcore_frame_num_cdc_2;
+	end
+end
+
+assign vcore_state = {vcore_new_frame, 18'b0, vcore_frame_num_cdc_2, line_num_cdc_2};
+
+// User interface CDC
+always @(posedge cpu_clk)
+begin
+	keys_cdc_1 <= KEY[2:0];
+	keys_cdc_2 <= keys_cdc_1;
+end
+
+assign user_input_state = {29'b0, keys_cdc_2};
 
 // Memory map:
 // 0x00000000 - 0x00001fff => Video memory (Buffer 0)
 // 0x00002000 - 0x00003fff => Video memory (Buffer 1)
 // 0x00004000 - 0x00005fff => ROM data (not code)
+// 0x00006000 - 0x00007fff => ROM data (not code) - Mirrored
+// 0x00008000 - 0x0000bfff => USER input
+// 0x0000c000 - 0x0000ffff => Video core state machine state
 // Select which data to send to CPU
 zmips_mux432 MUX_MEMSEL(
 	.a(cpu_vga_i_data),
 	.b(cpu_romdata),
-	.c({VGA_VS, 28'b0, KEY[2:0]}),	// Allow CPU to read input keys and screen state
-	.d(32'b0),
+	.c(user_input_state),	// Allow CPU to read input keys and screen state
+	.d(vcore_state),
 	.sel(cpu_d_addr[15:14]),
 	.y(cpu_d_i_data)
 );

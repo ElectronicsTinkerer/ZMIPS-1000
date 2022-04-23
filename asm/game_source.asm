@@ -7,6 +7,7 @@
 =RAM_SIZE               0x2000
 =GAME_DATA_BASE         0x4000
 =INPUT_OFFSET           0x8000
+=VCORE_OFFSET           0xc000
 
 =SPRITE_MASK_OFFSET     8
 =SPRITE_PLAYER_DATA     GAME_DATA_BASE + 0
@@ -50,29 +51,32 @@
     li 0
     mov r2, r0
 :player_loop
-    li INPUT_OFFSET
-    lw r3, r0
-    li 1
-    and r31, r3, r0, Z          ; Can't write to r31, so use as dummy
-    bfs z, player_go_right
-    li 2
-    and r31, r3, r0, Z
-    bfc Z,loop
-    li 1
-    ffl c
-    sub r2, r2, r0
-    jpl player_move
-:player_go_right
+;     li INPUT_OFFSET
+;     lw r3, r0
+;     li 1
+;     and r31, r3, r0, Z          ; Can't write to r31, so use as dummy
+;     bfs z, player_go_right
+;     li 2
+;     and r31, r3, r0, Z
+;     bfc Z,loop
+;     li 1
+;     ffl c
+;     sub r2, r2, r0
+;     jpl player_move
+; :player_go_right
     li 1
     ffl x
     add r2, r2, r0
 :player_move
     li 0xff
     and r2, r2, r0
-    mov r20, r2
+    mov r20, r2                 ; Setup X, Y position
     mov r21, r1
-    li 0x10
-    and r0, r2, r0, Z
+
+    li VCORE_OFFSET             ; Get the current frame number
+    lw r4, r0
+    li 0x800                    ; Bit to determine spaceship animation state
+    and r31, r4, r0, Z
     bfc Z,player_on
 :player_off
     li SPRITE_PLAYER_DATA       ; Sprite to display
@@ -84,13 +88,25 @@
     jpl draw_sprite
 
 :loop
-    li 300000
-    mov r3, r0
-    li -1
-:ll
-    ffl x
-    add r3, r3, r0, Z
-    bfc Z, ll
+    li VCORE_OFFSET
+    mov r5, r0
+; :ll
+    lw r4, r5
+    li 0
+    sw r0, r4
+    mov r4, r4, N
+    bfs N, player_move ; If it's the same frame, keep checking
+    srl r4, r4, 7 ; Remove line number
+    li 0x01
+    and r31, r4, r0, Z
+    bfc Z, player_move ; If not frame 0, keep checking
+;     li 300000
+;     mov r3, r0
+;     li -1
+; :ll
+;     ffl x
+;     add r3, r3, r0, Z
+;     bfc Z, ll
     jpl player_loop
 
 

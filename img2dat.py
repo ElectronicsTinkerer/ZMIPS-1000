@@ -18,7 +18,7 @@ if __name__ == "__main__":
         datalist = []
         masklist = []
 
-        for i in range(0, 63, 8):
+        for i in range(0, len(pixels)-1, 8):
             data:int = 0
             mask:int = 0
             for px in pixels[i:i+8]:

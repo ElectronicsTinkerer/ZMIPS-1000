@@ -132,7 +132,7 @@ begin
     end
     else
     begin
-        pxl <= pxl + 1;
+        pxl <= pxl + 32'b1;
     end
 end
 
@@ -144,7 +144,7 @@ begin
     end
     else if (h_detect_end == 1'b1)
     begin
-        line <= line + 1;
+        line <= line + 32'b1;
     end
 end
 

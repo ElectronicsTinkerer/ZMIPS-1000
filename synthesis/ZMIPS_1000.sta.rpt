@@ -1,5 +1,5 @@
 Timing Analyzer report for ZMIPS_1000
-Fri Apr 22 22:39:49 2022
+Sat Apr 23 17:36:23 2022
 Quartus Prime Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition
 
 
@@ -101,16 +101,16 @@ https://fpgasoftware.intel.com/eula.
 ; Number detected on machine ; 12          ;
 ; Maximum allowed            ; 6           ;
 ;                            ;             ;
-; Average used               ; 2.65        ;
+; Average used               ; 2.46        ;
 ; Maximum used               ; 6           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;  33.5%      ;
-;     Processor 3            ;  33.4%      ;
-;     Processor 4            ;  33.3%      ;
-;     Processor 5            ;  32.5%      ;
-;     Processor 6            ;  32.5%      ;
+;     Processor 2            ;  30.0%      ;
+;     Processor 3            ;  29.8%      ;
+;     Processor 4            ;  29.8%      ;
+;     Processor 5            ;  28.2%      ;
+;     Processor 6            ;  28.2%      ;
 +----------------------------+-------------+
 
 
@@ -119,7 +119,7 @@ https://fpgasoftware.intel.com/eula.
 +----------------+--------+--------------------------+
 ; SDC File Path  ; Status ; Read at                  ;
 +----------------+--------+--------------------------+
-; ZMIPS_1000.SDC ; OK     ; Fri Apr 22 22:39:39 2022 ;
+; ZMIPS_1000.SDC ; OK     ; Sat Apr 23 17:36:12 2022 ;
 +----------------+--------+--------------------------+
 
 
@@ -137,18 +137,18 @@ https://fpgasoftware.intel.com/eula.
 ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; Generated ; 15.384 ; 65.0 MHz  ; 0.000  ; 6.153  ; 40.00      ; 5         ; 1           ;       ;        ;           ;            ; false    ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]       ; { PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk }       ;
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; Generated ; 2.500  ; 400.0 MHz ; 0.000  ; 1.250  ; 50.00      ; 2         ; 16          ;       ;        ;           ;            ; false    ; CLOCK_50                                                                     ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin      ; { PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] }   ;
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; 25.000 ; 40.0 MHz  ; 12.500 ; 22.500 ; 40.00      ; 10        ; 1           ; 180.0 ;        ;           ;            ; false    ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0] ; { PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk } ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; 25.000 ; 40.0 MHz  ; 0.000  ; 10.000 ; 40.00      ; 10        ; 1           ;       ;        ;           ;            ; false    ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0] ; { PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk } ;
 +--------------------------------------------------------------------------------+-----------+--------+-----------+--------+--------+------------+-----------+-------------+-------+--------+-----------+------------+----------+------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+------------------------------------------------------------------------------------+
 
 
-+---------------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 85C Model Fmax Summary                                                                                  ;
-+-----------+-----------------+--------------------------------------------------------------------------------+------+
-; Fmax      ; Restricted Fmax ; Clock Name                                                                     ; Note ;
-+-----------+-----------------+--------------------------------------------------------------------------------+------+
-; 48.5 MHz  ; 48.5 MHz        ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
-; 89.65 MHz ; 89.65 MHz       ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ;      ;
-+-----------+-----------------+--------------------------------------------------------------------------------+------+
++----------------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 85C Model Fmax Summary                                                                                   ;
++------------+-----------------+--------------------------------------------------------------------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name                                                                     ; Note ;
++------------+-----------------+--------------------------------------------------------------------------------+------+
+; 42.14 MHz  ; 42.14 MHz       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
+; 103.32 MHz ; 103.32 MHz      ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ;      ;
+; 248.08 MHz ; 248.08 MHz      ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ;      ;
++------------+-----------------+--------------------------------------------------------------------------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
 
@@ -163,23 +163,21 @@ HTML report is unavailable in plain text report export.
 +--------------------------------------------------------------------------------+--------+---------------+
 ; Clock                                                                          ; Slack  ; End Point TNS ;
 +--------------------------------------------------------------------------------+--------+---------------+
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; -3.205 ; -7303.294     ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -2.564 ; -5.905        ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.347  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.692  ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -1.441 ; -16.642       ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.991  ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 2.282  ; 0.000         ;
 +--------------------------------------------------------------------------------+--------+---------------+
 
 
-+---------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 85C Model Hold Summary                                                                      ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; Clock                                                                          ; Slack  ; End Point TNS ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.233  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.358  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 8.098  ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 22.151 ; 0.000         ;
-+--------------------------------------------------------------------------------+--------+---------------+
++--------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 85C Model Hold Summary                                                                     ;
++--------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                          ; Slack ; End Point TNS ;
++--------------------------------------------------------------------------------+-------+---------------+
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.317 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.379 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.699 ; 0.000         ;
++--------------------------------------------------------------------------------+-------+---------------+
 
 
 ------------------------------------------
@@ -202,9 +200,8 @@ No paths to report.
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.250 ; 0.000         ;
 ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; 1.538 ; 0.000         ;
 ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 4.755 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.419 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.587 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.589 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.446 ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.591 ; 0.000         ;
 ; CLOCK2_50                                                                      ; 9.731 ; 0.000         ;
 ; CLOCK_50                                                                       ; 9.731 ; 0.000         ;
 +--------------------------------------------------------------------------------+-------+---------------+
@@ -213,17 +210,24 @@ No paths to report.
 -----------------------------------------------
 ; Slow 1100mV 85C Model Metastability Summary ;
 -----------------------------------------------
-No synchronizer chains to report.
+The design MTBF is not calculated because there are no specified synchronizers in the design.
+Number of Synchronizer Chains Found: 16
+Shortest Synchronizer Chain: 2 Registers
+Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+Worst Case Available Settling Time: 27.327 ns
 
 
-+---------------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 0C Model Fmax Summary                                                                                   ;
-+-----------+-----------------+--------------------------------------------------------------------------------+------+
-; Fmax      ; Restricted Fmax ; Clock Name                                                                     ; Note ;
-+-----------+-----------------+--------------------------------------------------------------------------------+------+
-; 49.41 MHz ; 49.41 MHz       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
-; 88.95 MHz ; 88.95 MHz       ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ;      ;
-+-----------+-----------------+--------------------------------------------------------------------------------+------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 0C Model Fmax Summary                                                                                    ;
++------------+-----------------+--------------------------------------------------------------------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name                                                                     ; Note ;
++------------+-----------------+--------------------------------------------------------------------------------+------+
+; 42.64 MHz  ; 42.64 MHz       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
+; 103.64 MHz ; 103.64 MHz      ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ;      ;
+; 252.46 MHz ; 252.46 MHz      ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ;      ;
++------------+-----------------+--------------------------------------------------------------------------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
 
@@ -232,23 +236,21 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 +--------------------------------------------------------------------------------+--------+---------------+
 ; Clock                                                                          ; Slack  ; End Point TNS ;
 +--------------------------------------------------------------------------------+--------+---------------+
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; -2.872 ; -6048.657     ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -2.485 ; -5.623        ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.657  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.681  ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -1.313 ; -14.564       ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.408  ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 2.294  ; 0.000         ;
 +--------------------------------------------------------------------------------+--------+---------------+
 
 
-+---------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 0C Model Hold Summary                                                                       ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; Clock                                                                          ; Slack  ; End Point TNS ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.315  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.337  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 8.080  ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 22.125 ; 0.000         ;
-+--------------------------------------------------------------------------------+--------+---------------+
++--------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 0C Model Hold Summary                                                                      ;
++--------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                          ; Slack ; End Point TNS ;
++--------------------------------------------------------------------------------+-------+---------------+
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.319 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.358 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.736 ; 0.000         ;
++--------------------------------------------------------------------------------+-------+---------------+
 
 
 -----------------------------------------
@@ -270,10 +272,9 @@ No paths to report.
 +--------------------------------------------------------------------------------+-------+---------------+
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.250 ; 0.000         ;
 ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; 1.538 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 4.710 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.334 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.550 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.554 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 4.705 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.346 ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.549 ; 0.000         ;
 ; CLOCK2_50                                                                      ; 9.741 ; 0.000         ;
 ; CLOCK_50                                                                       ; 9.741 ; 0.000         ;
 +--------------------------------------------------------------------------------+-------+---------------+
@@ -282,7 +283,13 @@ No paths to report.
 ----------------------------------------------
 ; Slow 1100mV 0C Model Metastability Summary ;
 ----------------------------------------------
-No synchronizer chains to report.
+The design MTBF is not calculated because there are no specified synchronizers in the design.
+Number of Synchronizer Chains Found: 16
+Shortest Synchronizer Chain: 2 Registers
+Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+Worst Case Available Settling Time: 27.355 ns
+
+
 
 
 +---------------------------------------------------------------------------------------------------------+
@@ -290,23 +297,21 @@ No synchronizer chains to report.
 +--------------------------------------------------------------------------------+--------+---------------+
 ; Clock                                                                          ; Slack  ; End Point TNS ;
 +--------------------------------------------------------------------------------+--------+---------------+
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; -0.762 ; -414.232      ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -0.589 ; -0.936        ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 3.655  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 3.717  ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -0.420 ; -3.500        ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 3.338  ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 3.910  ; 0.000         ;
 +--------------------------------------------------------------------------------+--------+---------------+
 
 
-+---------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 85C Model Hold Summary                                                                      ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; Clock                                                                          ; Slack  ; End Point TNS ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.180  ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.221  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 7.752  ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 22.166 ; 0.000         ;
-+--------------------------------------------------------------------------------+--------+---------------+
++--------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 85C Model Hold Summary                                                                     ;
++--------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                          ; Slack ; End Point TNS ;
++--------------------------------------------------------------------------------+-------+---------------+
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.180 ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.185 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.447 ; 0.000         ;
++--------------------------------------------------------------------------------+-------+---------------+
 
 
 ------------------------------------------
@@ -328,10 +333,9 @@ No paths to report.
 +--------------------------------------------------------------------------------+-------+---------------+
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.250 ; 0.000         ;
 ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; 1.538 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.041 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.678 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.886 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.888 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.035 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.684 ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.880 ; 0.000         ;
 ; CLOCK2_50                                                                      ; 9.336 ; 0.000         ;
 ; CLOCK_50                                                                       ; 9.336 ; 0.000         ;
 +--------------------------------------------------------------------------------+-------+---------------+
@@ -340,7 +344,13 @@ No paths to report.
 -----------------------------------------------
 ; Fast 1100mV 85C Model Metastability Summary ;
 -----------------------------------------------
-No synchronizer chains to report.
+The design MTBF is not calculated because there are no specified synchronizers in the design.
+Number of Synchronizer Chains Found: 16
+Shortest Synchronizer Chain: 2 Registers
+Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+Worst Case Available Settling Time: 30.659 ns
+
+
 
 
 +---------------------------------------------------------------------------------------------------------+
@@ -348,23 +358,21 @@ No synchronizer chains to report.
 +--------------------------------------------------------------------------------+--------+---------------+
 ; Clock                                                                          ; Slack  ; End Point TNS ;
 +--------------------------------------------------------------------------------+--------+---------------+
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -0.459 ; -0.683        ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; -0.392 ; -47.734       ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 3.885  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 4.219  ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -0.281 ; -2.226        ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 3.947  ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 4.153  ; 0.000         ;
 +--------------------------------------------------------------------------------+--------+---------------+
 
 
-+---------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 0C Model Hold Summary                                                                       ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; Clock                                                                          ; Slack  ; End Point TNS ;
-+--------------------------------------------------------------------------------+--------+---------------+
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.168  ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.227  ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 7.714  ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 22.153 ; 0.000         ;
-+--------------------------------------------------------------------------------+--------+---------------+
++--------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 0C Model Hold Summary                                                                      ;
++--------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                          ; Slack ; End Point TNS ;
++--------------------------------------------------------------------------------+-------+---------------+
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.166 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.169 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.422 ; 0.000         ;
++--------------------------------------------------------------------------------+-------+---------------+
 
 
 -----------------------------------------
@@ -386,10 +394,9 @@ No paths to report.
 +--------------------------------------------------------------------------------+-------+---------------+
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.250 ; 0.000         ;
 ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; 1.538 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.044 ; 0.000         ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.685 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.888 ; 0.000         ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.889 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.036 ; 0.000         ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 5.690 ; 0.000         ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 8.882 ; 0.000         ;
 ; CLOCK2_50                                                                      ; 9.286 ; 0.000         ;
 ; CLOCK_50                                                                       ; 9.286 ; 0.000         ;
 +--------------------------------------------------------------------------------+-------+---------------+
@@ -398,33 +405,37 @@ No paths to report.
 ----------------------------------------------
 ; Fast 1100mV 0C Model Metastability Summary ;
 ----------------------------------------------
-No synchronizer chains to report.
+The design MTBF is not calculated because there are no specified synchronizers in the design.
+Number of Synchronizer Chains Found: 16
+Shortest Synchronizer Chain: 2 Registers
+Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+Worst Case Available Settling Time: 31.116 ns
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multicorner Timing Analysis Summary                                                                                                             ;
-+---------------------------------------------------------------------------------+-----------+--------+----------+---------+---------------------+
-; Clock                                                                           ; Setup     ; Hold   ; Recovery ; Removal ; Minimum Pulse Width ;
-+---------------------------------------------------------------------------------+-----------+--------+----------+---------+---------------------+
-; Worst-case Slack                                                                ; -3.205    ; 0.168  ; N/A      ; N/A     ; 1.250               ;
-;  CLOCK2_50                                                                      ; N/A       ; N/A    ; N/A      ; N/A     ; 9.286               ;
-;  CLOCK_50                                                                       ; N/A       ; N/A    ; N/A      ; N/A     ; 9.286               ;
-;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; N/A       ; N/A    ; N/A      ; N/A     ; 1.538               ;
-;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.657     ; 0.168  ; N/A      ; N/A     ; 5.334               ;
-;  PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1.347     ; 7.714  ; N/A      ; N/A     ; 4.710               ;
-;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A       ; N/A    ; N/A      ; N/A     ; 1.250               ;
-;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -2.564    ; 0.221  ; N/A      ; N/A     ; 8.554               ;
-;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; -3.205    ; 22.125 ; N/A      ; N/A     ; 8.550               ;
-; Design-wide TNS                                                                 ; -7309.199 ; 0.0    ; 0.0      ; 0.0     ; 0.0                 ;
-;  CLOCK2_50                                                                      ; N/A       ; N/A    ; N/A      ; N/A     ; 0.000               ;
-;  CLOCK_50                                                                       ; N/A       ; N/A    ; N/A      ; N/A     ; 0.000               ;
-;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; N/A       ; N/A    ; N/A      ; N/A     ; 0.000               ;
-;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.000     ; 0.000  ; N/A      ; N/A     ; 0.000               ;
-;  PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.000     ; 0.000  ; N/A      ; N/A     ; 0.000               ;
-;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A       ; N/A    ; N/A      ; N/A     ; 0.000               ;
-;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -5.905    ; 0.000  ; N/A      ; N/A     ; 0.000               ;
-;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; -7303.294 ; 0.000  ; N/A      ; N/A     ; 0.000               ;
-+---------------------------------------------------------------------------------+-----------+--------+----------+---------+---------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------+
+; Multicorner Timing Analysis Summary                                                                                                          ;
++---------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
+; Clock                                                                           ; Setup   ; Hold  ; Recovery ; Removal ; Minimum Pulse Width ;
++---------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
+; Worst-case Slack                                                                ; -1.441  ; 0.166 ; N/A      ; N/A     ; 1.250               ;
+;  CLOCK2_50                                                                      ; N/A     ; N/A   ; N/A      ; N/A     ; 9.286               ;
+;  CLOCK_50                                                                       ; N/A     ; N/A   ; N/A      ; N/A     ; 9.286               ;
+;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; N/A     ; N/A   ; N/A      ; N/A     ; 1.538               ;
+;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 2.282   ; 0.169 ; N/A      ; N/A     ; 5.346               ;
+;  PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.991   ; 0.422 ; N/A      ; N/A     ; 4.705               ;
+;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A     ; N/A   ; N/A      ; N/A     ; 1.250               ;
+;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -1.441  ; 0.166 ; N/A      ; N/A     ; 8.549               ;
+; Design-wide TNS                                                                 ; -16.642 ; 0.0   ; 0.0      ; 0.0     ; 0.0                 ;
+;  CLOCK2_50                                                                      ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
+;  CLOCK_50                                                                       ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
+;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]         ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
+;  PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.000   ; 0.000 ; N/A      ; N/A     ; 0.000               ;
+;  PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0.000   ; 0.000 ; N/A      ; N/A     ; 0.000               ;
+;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
+;  PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; -16.642 ; 0.000 ; N/A      ; N/A     ; 0.000               ;
++---------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
 
 
 +------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -665,13 +676,13 @@ No synchronizer chains to report.
 ; GPIO[33]    ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; GPIO[34]    ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; GPIO[35]    ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
-; KEY[2]      ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; KEY[3]      ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; CLOCK_50    ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; RESET_N     ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
+; CLOCK2_50   ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
+; KEY[2]      ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; KEY[1]      ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 ; KEY[0]      ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
-; CLOCK2_50   ; 3.3-V LVTTL  ; 2640 ps         ; 2640 ps         ;
 +-------------+--------------+-----------------+-----------------+
 
 
@@ -1320,12 +1331,12 @@ No synchronizer chains to report.
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+----------+----------+----------+----------+
 ; From Clock                                                                     ; To Clock                                                                       ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+----------+----------+----------+----------+
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 330      ; 79       ; 84       ; 0        ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1699     ; 0        ; 0        ; 0        ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 0        ; 3        ; 0        ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 8916     ; 3378     ; 6953820  ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 0        ; 5942     ; 0        ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 34517    ; 0        ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 370      ; 87       ; 84       ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1698     ; 0        ; 14       ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0        ; 0        ; 0        ; 70       ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 7        ; 0        ; 0        ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 6        ; 0        ; 0        ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 34       ; 43463    ; 9948     ; 7874406  ;
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
@@ -1335,12 +1346,12 @@ Entries labeled "false path" only account for clock-to-clock false paths and not
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+----------+----------+----------+----------+
 ; From Clock                                                                     ; To Clock                                                                       ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+----------+----------+----------+----------+
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 330      ; 79       ; 84       ; 0        ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1699     ; 0        ; 0        ; 0        ;
-; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 0        ; 3        ; 0        ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 8916     ; 3378     ; 6953820  ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 0        ; 5942     ; 0        ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 34517    ; 0        ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; 370      ; 87       ; 84       ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 1698     ; 0        ; 14       ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; 0        ; 0        ; 0        ; 70       ;
+; PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 7        ; 0        ; 0        ; 0        ;
+; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 0        ; 6        ; 0        ; 0        ;
+; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 34       ; 43463    ; 9948     ; 7874406  ;
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
@@ -1365,9 +1376,9 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Illegal Clocks                  ; 0     ; 0    ;
 ; Unconstrained Clocks            ; 0     ; 0    ;
 ; Unconstrained Input Ports       ; 4     ; 4    ;
-; Unconstrained Input Port Paths  ; 42    ; 42   ;
+; Unconstrained Input Port Paths  ; 36    ; 36   ;
 ; Unconstrained Output Ports      ; 24    ; 24   ;
-; Unconstrained Output Port Paths ; 160   ; 160  ;
+; Unconstrained Output Port Paths ; 156   ; 156  ;
 +---------------------------------+-------+------+
 
 
@@ -1385,7 +1396,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk       ; Generated ; Constrained ;
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; Generated ; Constrained ;
 ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; Constrained ;
-; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; Constrained ;
 +--------------------------------------------------------------------------------+--------------------------------------------------------------------------------+-----------+-------------+
 
 
@@ -1483,7 +1493,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition
-    Info: Processing started: Fri Apr 22 22:39:37 2022
+    Info: Processing started: Sat Apr 23 17:36:10 2022
 Info: Command: quartus_sta ZMIPS_1000 -c ZMIPS_1000
 Info: qsta_default_script.tcl version: #1
 Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
@@ -1493,7 +1503,6 @@ Info (332104): Reading SDC File: 'ZMIPS_1000.SDC'
 Info (332110): Deriving PLL clocks
     Info (332110): create_generated_clock -source {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin} -divide_by 2 -multiply_by 16 -duty_cycle 50.00 -name {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]} {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]}
     Info (332110): create_generated_clock -source {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 10 -phase 180.00 -duty_cycle 40.00 -name {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk} {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}
-    Info (332110): create_generated_clock -source {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 10 -duty_cycle 40.00 -name {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk} {PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk}
     Info (332110): create_generated_clock -source {PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin} -divide_by 2 -multiply_by 13 -duty_cycle 50.00 -name {PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]} {PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]}
     Info (332110): create_generated_clock -source {PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 5 -phase 180.00 -duty_cycle 40.00 -name {PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk} {PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}
     Info (332110): create_generated_clock -source {PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 5 -duty_cycle 40.00 -name {PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk} {PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk}
@@ -1506,26 +1515,23 @@ Info (332097): The following timing edges are non-unate.  The Timing Analyzer wi
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
 Info: Found TIMING_ANALYZER_REPORT_SCRIPT_INCLUDE_DEFAULT_ANALYSIS = ON
 Info: Analyzing Slow 1100mV 85C Model
 Critical Warning (332148): Timing requirements not met
     Info (11105): For recommendations on closing timing, run Report Timing Closure Recommendations in the Timing Analyzer.
-Info (332146): Worst-case setup slack is -3.205
+Info (332146): Worst-case setup slack is -1.441
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    -3.205           -7303.294 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    -2.564              -5.905 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     1.347               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     1.692               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.233
+    Info (332119):    -1.441             -16.642 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.991               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     2.282               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.317
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.233               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     0.358               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.098               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    22.151               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.317               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.379               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.699               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.250
@@ -1534,11 +1540,17 @@ Info (332146): Worst-case minimum pulse width slack is 1.250
     Info (332119):     1.250               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
     Info (332119):     1.538               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
     Info (332119):     4.755               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     5.419               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.587               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.589               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     5.446               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     8.591               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
     Info (332119):     9.731               0.000 CLOCK2_50 
     Info (332119):     9.731               0.000 CLOCK_50 
+Info (332114): Report Metastability: Found 16 synchronizer chains.
+    Info (332114): The design MTBF is not calculated because there are no specified synchronizers in the design.
+    Info (332114): Number of Synchronizer Chains Found: 16
+    Info (332114): Shortest Synchronizer Chain: 2 Registers
+    Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+    Info (332114): Worst Case Available Settling Time: 27.327 ns
+    Info (332114): 
 Info: Analyzing Slow 1100mV 0C Model
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
@@ -1550,24 +1562,21 @@ Info (332097): The following timing edges are non-unate.  The Timing Analyzer wi
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
 Critical Warning (332148): Timing requirements not met
     Info (11105): For recommendations on closing timing, run Report Timing Closure Recommendations in the Timing Analyzer.
-Info (332146): Worst-case setup slack is -2.872
+Info (332146): Worst-case setup slack is -1.313
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    -2.872           -6048.657 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    -2.485              -5.623 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     1.657               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     1.681               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.315
+    Info (332119):    -1.313             -14.564 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     1.408               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     2.294               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.319
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.315               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     0.337               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.080               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    22.125               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.319               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.358               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.736               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.250
@@ -1575,12 +1584,18 @@ Info (332146): Worst-case minimum pulse width slack is 1.250
     Info (332119): ========= =================== =====================
     Info (332119):     1.250               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
     Info (332119):     1.538               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     4.710               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     5.334               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.550               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.554               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     4.705               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     5.346               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     8.549               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
     Info (332119):     9.741               0.000 CLOCK2_50 
     Info (332119):     9.741               0.000 CLOCK_50 
+Info (332114): Report Metastability: Found 16 synchronizer chains.
+    Info (332114): The design MTBF is not calculated because there are no specified synchronizers in the design.
+    Info (332114): Number of Synchronizer Chains Found: 16
+    Info (332114): Shortest Synchronizer Chain: 2 Registers
+    Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+    Info (332114): Worst Case Available Settling Time: 27.355 ns
+    Info (332114): 
 Info: Analyzing Fast 1100mV 85C Model
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
@@ -1592,24 +1607,21 @@ Info (332097): The following timing edges are non-unate.  The Timing Analyzer wi
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
 Critical Warning (332148): Timing requirements not met
     Info (11105): For recommendations on closing timing, run Report Timing Closure Recommendations in the Timing Analyzer.
-Info (332146): Worst-case setup slack is -0.762
+Info (332146): Worst-case setup slack is -0.420
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    -0.762            -414.232 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    -0.589              -0.936 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     3.655               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     3.717               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):    -0.420              -3.500 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     3.338               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     3.910               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332146): Worst-case hold slack is 0.180
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
     Info (332119):     0.180               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     0.221               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     7.752               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    22.166               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.185               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.447               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.250
@@ -1617,12 +1629,18 @@ Info (332146): Worst-case minimum pulse width slack is 1.250
     Info (332119): ========= =================== =====================
     Info (332119):     1.250               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
     Info (332119):     1.538               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     5.041               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     5.678               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.886               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.888               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     5.035               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     5.684               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     8.880               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
     Info (332119):     9.336               0.000 CLOCK2_50 
     Info (332119):     9.336               0.000 CLOCK_50 
+Info (332114): Report Metastability: Found 16 synchronizer chains.
+    Info (332114): The design MTBF is not calculated because there are no specified synchronizers in the design.
+    Info (332114): Number of Synchronizer Chains Found: 16
+    Info (332114): Shortest Synchronizer Chain: 2 Registers
+    Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+    Info (332114): Worst Case Available Settling Time: 30.659 ns
+    Info (332114): 
 Info: Analyzing Fast 1100mV 0C Model
 Info (332097): The following timing edges are non-unate.  The Timing Analyzer will assume pos-unate behavior for these edges in the clock network.
     Info (332098): Cell: PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
@@ -1632,24 +1650,21 @@ Info (332097): The following timing edges are non-unate.  The Timing Analyzer wi
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
     Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
 Critical Warning (332148): Timing requirements not met
     Info (11105): For recommendations on closing timing, run Report Timing Closure Recommendations in the Timing Analyzer.
-Info (332146): Worst-case setup slack is -0.459
+Info (332146): Worst-case setup slack is -0.281
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    -0.459              -0.683 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    -0.392             -47.734 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     3.885               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     4.219               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.168
+    Info (332119):    -0.281              -2.226 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     3.947               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     4.153               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.166
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.168               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     0.227               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     7.714               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):    22.153               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.166               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.169               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.422               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.250
@@ -1657,18 +1672,24 @@ Info (332146): Worst-case minimum pulse width slack is 1.250
     Info (332119): ========= =================== =====================
     Info (332119):     1.250               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
     Info (332119):     1.538               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     5.044               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     5.685               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.888               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):     8.889               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     5.036               0.000 PLL_65|pll65_inst|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     5.690               0.000 PLL_65|pll65_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     8.882               0.000 PLL_CPU|pll_cpu_40_inst|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
     Info (332119):     9.286               0.000 CLOCK2_50 
     Info (332119):     9.286               0.000 CLOCK_50 
+Info (332114): Report Metastability: Found 16 synchronizer chains.
+    Info (332114): The design MTBF is not calculated because there are no specified synchronizers in the design.
+    Info (332114): Number of Synchronizer Chains Found: 16
+    Info (332114): Shortest Synchronizer Chain: 2 Registers
+    Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 1.000
+    Info (332114): Worst Case Available Settling Time: 31.116 ns
+    Info (332114): 
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus Prime Timing Analyzer was successful. 0 errors, 4 warnings
-    Info: Peak virtual memory: 5229 megabytes
-    Info: Processing ended: Fri Apr 22 22:39:49 2022
-    Info: Elapsed time: 00:00:12
+    Info: Peak virtual memory: 5237 megabytes
+    Info: Processing ended: Sat Apr 23 17:36:23 2022
+    Info: Elapsed time: 00:00:13
     Info: Total CPU time (on all processors): 00:00:27
 
 

@@ -1,5 +1,5 @@
 Flow report for ZMIPS_1000
-Fri Apr 22 22:41:27 2022
+Sat Apr 23 17:43:43 2022
 Quartus Prime Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition
 
 
@@ -41,15 +41,15 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------+
 ; Flow Summary                                                                  ;
 +---------------------------------+---------------------------------------------+
-; Flow Status                     ; Successful - Fri Apr 22 22:41:27 2022       ;
+; Flow Status                     ; Successful - Sat Apr 23 17:43:43 2022       ;
 ; Quartus Prime Version           ; 21.1.0 Build 842 10/21/2021 SJ Lite Edition ;
 ; Revision Name                   ; ZMIPS_1000                                  ;
 ; Top-level Entity Name           ; ZMIPS_1000                                  ;
 ; Family                          ; Cyclone V                                   ;
 ; Device                          ; 5CEBA4F23C7                                 ;
 ; Timing Models                   ; Final                                       ;
-; Logic utilization (in ALMs)     ; 1,420 / 18,480 ( 8 % )                      ;
-; Total registers                 ; 1437                                        ;
+; Logic utilization (in ALMs)     ; 1,425 / 18,480 ( 8 % )                      ;
+; Total registers                 ; 1488                                        ;
 ; Total pins                      ; 170 / 224 ( 76 % )                          ;
 ; Total virtual pins              ; 0                                           ;
 ; Total block memory bits         ; 1,639,360 / 3,153,920 ( 52 % )              ;
@@ -68,7 +68,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 04/22/2022 22:34:58 ;
+; Start date & time ; 04/23/2022 17:31:51 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; ZMIPS_1000          ;
 +-------------------+---------------------+
@@ -79,7 +79,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------+----------------------------------------+---------------+-------------+------------+
 ; Assignment Name                     ; Value                                  ; Default Value ; Entity Name ; Section Id ;
 +-------------------------------------+----------------------------------------+---------------+-------------+------------+
-; COMPILER_SIGNATURE_ID               ; 91764059172.165068129717840            ; --            ; --          ; --         ;
+; COMPILER_SIGNATURE_ID               ; 91764059172.165074951111568            ; --            ; --          ; --         ;
 ; MAX_CORE_JUNCTION_TEMP              ; 85                                     ; --            ; --          ; --         ;
 ; MIN_CORE_JUNCTION_TEMP              ; 0                                      ; --            ; --          ; --         ;
 ; MISC_FILE                           ; pll65.cmp                              ; --            ; --          ; --         ;
@@ -109,13 +109,23 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:00:12     ; 1.0                     ; 4949 MB             ; 00:00:22                           ;
-; Fitter               ; 00:04:17     ; 1.1                     ; 6513 MB             ; 00:14:17                           ;
-; Assembler            ; 00:00:05     ; 1.0                     ; 4903 MB             ; 00:00:06                           ;
-; Timing Analyzer      ; 00:00:12     ; 2.6                     ; 5229 MB             ; 00:00:27                           ;
+; Analysis & Synthesis ; 00:00:12     ; 1.0                     ; 4921 MB             ; 00:00:24                           ;
+; Fitter               ; 00:03:56     ; 1.1                     ; 6511 MB             ; 00:13:23                           ;
+; Assembler            ; 00:00:06     ; 1.0                     ; 4900 MB             ; 00:00:06                           ;
+; Timing Analyzer      ; 00:00:13     ; 2.5                     ; 5237 MB             ; 00:00:27                           ;
 ; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4855 MB             ; 00:00:08                           ;
-; Assembler            ; 00:00:06     ; 1.0                     ; 4915 MB             ; 00:00:05                           ;
-; Total                ; 00:04:59     ; --                      ; --                  ; 00:15:25                           ;
+; Assembler            ; 00:00:05     ; 1.0                     ; 4908 MB             ; 00:00:05                           ;
+; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4857 MB             ; 00:00:08                           ;
+; Assembler            ; 00:00:06     ; 1.0                     ; 4920 MB             ; 00:00:05                           ;
+; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4863 MB             ; 00:00:08                           ;
+; Assembler            ; 00:00:05     ; 1.0                     ; 4903 MB             ; 00:00:05                           ;
+; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4859 MB             ; 00:00:08                           ;
+; Assembler            ; 00:00:06     ; 1.0                     ; 4900 MB             ; 00:00:05                           ;
+; MIF/HEX Update       ; 00:00:07     ; 1.0                     ; 4860 MB             ; 00:00:08                           ;
+; Assembler            ; 00:00:05     ; 1.0                     ; 4903 MB             ; 00:00:05                           ;
+; MIF/HEX Update       ; 00:00:06     ; 1.0                     ; 4862 MB             ; 00:00:08                           ;
+; Assembler            ; 00:00:05     ; 1.0                     ; 4899 MB             ; 00:00:06                           ;
+; Total                ; 00:05:40     ; --                      ; --                  ; 00:15:39                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -130,6 +140,16 @@ https://fpgasoftware.intel.com/eula.
 ; Timing Analyzer      ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
 ; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
 ; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; MIF/HEX Update       ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; generic-host   ; Windows 10 ; 10.0       ; x86_64         ;
 +----------------------+------------------+------------+------------+----------------+
 
 
@@ -140,6 +160,16 @@ quartus_map --read_settings_files=on --write_settings_files=off ZMIPS_1000 -c ZM
 quartus_fit --read_settings_files=off --write_settings_files=off ZMIPS_1000 -c ZMIPS_1000
 quartus_asm --read_settings_files=off --write_settings_files=off ZMIPS_1000 -c ZMIPS_1000
 quartus_sta ZMIPS_1000 -c ZMIPS_1000
+quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
+quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
+quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
+quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
+quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
+quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
+quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
+quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
+quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
+quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
 quartus_cdb ZMIPS_1000 -c ZMIPS_1000 --update_mif
 quartus_asm ZMIPS_1000 -c ZMIPS_1000 --read_settings_files=on --write_settings_files=off
 
