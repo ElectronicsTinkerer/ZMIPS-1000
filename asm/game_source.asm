@@ -1,6 +1,13 @@
 ; Game source code
 ; Reserved regs:
 ;   R29 - SP
+;
+; "Recommended reg usage":
+; r0  - r9  => temp
+; r10 - r19 => internal
+; r20 - r28 => args
+;
+
 
 ; DEFINES
 =RAM_BASE               0x2000
@@ -9,41 +16,49 @@
 =INPUT_OFFSET           0x8000
 =VCORE_OFFSET           0xc000
 
+=BACKGROUND_TITLE       GAME_DATA_BASE + 0
 =SPRITE_MASK_OFFSET     8
-=SPRITE_PLAYER_DATA     GAME_DATA_BASE + 0
+=SPRITE_PLAYER_DATA     GAME_DATA_BASE + 4096
 =SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
 
 =LINE_WIDTH             0x20 ; In words (8px/word)
 
+; Controls
+=BTN_DOWN               1
+=BTN_UP                 2
+=BTN_FIRE               4
+
+
 ; ENTRY POINT
-;     nop
     li RAM_BASE+RAM_SIZE-1         ; Init SP
     mov r29, r0
-    li 0
-    mov r28, r0
-    li 0x0800               ; Half of video memory
-    mov r2, r0          
-    li 0
-    mov r1, r0              ; i = 0
-:loop_start
-    ffl c                   ; Set carry
-    add r1, r1, r28         ; i += 1
-    sw r1, r1               ; mem[i] = 0
-    cmp r2, r1, Z           ; Count == 0x2000?
-    bfc z, loop_start       ; No, keep going
 
-    li 0
-    mov r2, r0
-    li 0xbbbbbbbb           ; cyan
-    sw r2, r0
+    ; Copy the start screen into video ram
+    li 0x1000               ; All of video memory (first buffer)
+    mov r10, r0
+    li BACKGROUND_TITLE + 0x1000
+    mov r11, r0
+:display_title
+    lw r1, r11              ; Get word from data memory
+    li 1
+    ffl c
+    sub r11, r11, r0
+    sw r10, r1
+    ffl c
+    sub r10, r10, r0, N
+    bfc N, display_title
 
-    ; li 120                  ; Line 4
-    ; mov r21, r0
-    ; li 76                   ; Pixel 76
-    ; mov r20, r0
-    ; li SPRITE_PLAYER_DATA   ; Sprite to display
-    ; mov r22, r0
-    ; jpl draw_sprite
+
+    li INPUT_OFFSET
+    mov r10, r0
+:start_loop
+    lw r1, r10              ; Get player inputs
+    li BTN_FIRE
+    and r1, r1, r0, Z
+    bfc Z, start_loop       ; Loop until "FIRE" has been pressed
+
+
+
 
 
     li 120
