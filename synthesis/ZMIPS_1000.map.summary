@@ -1,4 +1,4 @@
-Analysis & Synthesis Status : Successful - Sat Apr 23 17:32:04 2022
+Analysis & Synthesis Status : Successful - Sun Apr 24 13:53:24 2022
 Quartus Prime Version : 21.1.0 Build 842 10/21/2021 SJ Lite Edition
 Revision Name : ZMIPS_1000
 Top-level Entity Name : ZMIPS_1000
@@ -7,7 +7,7 @@ Logic utilization (in ALMs) : N/A
 Total registers : 1432
 Total pins : 170
 Total virtual pins : 0
-Total block memory bits : 1,639,360
+Total block memory bits : 1,640,448
 Total DSP Blocks : 0
 Total HSSI RX PCSs : 0
 Total HSSI PMA RX Deserializers : 0

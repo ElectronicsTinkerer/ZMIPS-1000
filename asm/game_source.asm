@@ -9,6 +9,15 @@
 ;
 
 
+; TODO:
+; Lives Display?
+; Draw score function
+; ~~Move background code to a function (pointers to from and to buffers)
+; Enemy spawning
+; RNG
+; Firing of missiles (potatos)
+; Collision detection
+
 ; DEFINES
 =RAM_BASE               0x2000
 =RAM_SIZE               0x2000
@@ -16,12 +25,15 @@
 =INPUT_OFFSET           0x8000
 =VCORE_OFFSET           0xc000
 
+; Screen info
+=LINE_WIDTH             0x20 ; In words (8px/word)
+=SCREEN_WORDS           0x1000
+
+; Graphic data
 =BACKGROUND_TITLE       GAME_DATA_BASE + 0
 =SPRITE_MASK_OFFSET     8
 =SPRITE_PLAYER_DATA     GAME_DATA_BASE + 4096
 =SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
-
-=LINE_WIDTH             0x20 ; In words (8px/word)
 
 ; Controls
 =BTN_DOWN               1
@@ -33,39 +45,11 @@
     li RAM_BASE+RAM_SIZE-1         ; Init SP
     mov r29, r0
 
-    ; Copy the start screen into video ram
-    li 0x1000               ; All of video memory (first buffer)
-    mov r10, r0
-    li BACKGROUND_TITLE + 0x1000
-    mov r11, r0
-:display_title
-    lw r1, r11              ; Get word from data memory
-    li 1
-    ffl c
-    sub r11, r11, r0
-    sw r10, r1
-    ffl c
-    sub r10, r10, r0, N
-    bfc N, display_title
-
-
-    li INPUT_OFFSET
-    mov r10, r0
-:start_loop
-    lw r1, r10              ; Get player inputs
-    li BTN_FIRE
-    and r1, r1, r0, Z
-    bfc Z, start_loop       ; Loop until "FIRE" has been pressed
-
-
-
-
-
     li 120
     mov r1, r0
     li 0
     mov r2, r0
-:player_loop
+:title_loop
 ;     li INPUT_OFFSET
 ;     lw r3, r0
 ;     li 1
@@ -79,10 +63,18 @@
 ;     sub r2, r2, r0
 ;     jpl player_move
 ; :player_go_right
+
+    ; Redraw background (so we don't have "painting")
+    li 0                        ; Base of video memory (first buffer)
+    mov r20, r0
+    li BACKGROUND_TITLE
+    mov r21, r0
+    jpl draw_background
+
     li 1
     ffl x
     add r2, r2, r0
-:player_move
+:title_draw_player
     li 0xff
     and r2, r2, r0
     mov r20, r2                 ; Setup X, Y position
@@ -92,43 +84,76 @@
     lw r4, r0
     li 0x800                    ; Bit to determine spaceship animation state
     and r31, r4, r0, Z
-    bfc Z,player_on
-:player_off
+    bfc Z,title_player_on
+:title_ player_off
     li SPRITE_PLAYER_DATA       ; Sprite to display
-    jpl player_draw
-:player_on
+    jpl title_update
+:title_player_on
     li SPRITE_PLAYER_DATA+16    ; Sprite to display
-:player_draw
+:title_update
     mov r22, r0
     jpl draw_sprite
 
-:loop
     li VCORE_OFFSET
-    mov r5, r0
-; :ll
-    lw r4, r5
-    li 0
-    sw r0, r4
+    lw r4, r0
     mov r4, r4, N
-    bfs N, player_move ; If it's the same frame, keep checking
-    srl r4, r4, 7 ; Remove line number
+    bfs N, title_start_check    ; If it's the same frame, don't update player position
+    srl r4, r4, 7               ; Remove line number
     li 0x01
     and r31, r4, r0, Z
-    bfc Z, player_move ; If not frame 0, keep checking
-;     li 300000
-;     mov r3, r0
-;     li -1
-; :ll
-;     ffl x
-;     add r3, r3, r0, Z
-;     bfc Z, ll
-    jpl player_loop
+    bfc Z, title_start_check    ; If it's the same frame, don't update player position
+    jpl title_loop              ; Frame % 2 = 0, update player position
 
 
-    nop
+:title_start_check
+    li INPUT_OFFSET             ; When user presses "FIRE" button, move to ACTIVE gameplay
+    lw r4, r0                   ; Get player inputs
+    li BTN_FIRE
+    and r4, r4, r0, Z
+    bfc Z, title_draw_player    ; Loop until "FIRE" has been pressed
+
 
 :spin
-    jpl spin           ; Spin
+    jpl spin                    ; Spin
+
+
+
+; ------------------------------------------------------------------
+;             HELPER FUNCTIONS
+; ------------------------------------------------------------------
+
+; Copy a full screen of data from one location to another
+; Args: (destructive)
+;   r20 - To base address
+;   r21 - From base address
+; Uses:
+;   r0, r10, r11
+:draw_background
+    mov r11, r20            ; Save TO address
+    li SCREEN_WORDS         ; Start copying from end of data
+    ffl x
+    add r20, r20, r0
+    ffl x
+    add r21, r21, r0
+    mov r21, r21
+    li 1
+    ; This NOP is necessary (strangely)
+    ; It appears that once the ZMIPS CPU is synthesized,
+    ; if an instruction uses rt=0 exactly 3 cycles after
+    ; LI then zero is read instead of the immediate value.
+    ; This is not the case in the simulated CPU - it works 
+    ; fine without the NOP there
+    nop                     
+:background_loop
+    lw r10, r21             ; Get word from data memory
+    ffl c
+    sub r21, r21, r0
+    sw r20, r10             ; Store the word
+    ffl c
+    sub r20, r20, r0
+    cmp r20, r11, N         ; Past base address?
+    bfc N, background_loop  ; No, keep going
+    jmp r30                 ; Yes, Return
 
 
 ; Draw a 8x8 pixel sprite to a position on screen
@@ -274,6 +299,15 @@
     or r11, r11, r13    ; Or the sprite data into vmem
     or r12, r12, r15
     sw r20, r11
+
+    li LINE_WIDTH       ; If sprite wraps, correct for line offset
+    and r13, r21, r0
+    and r14, r20, r0
+    eor r31, r13, r14, Z
+    bfs Z, sprite_store_high
+    ffl c
+    sub r21, r21, r0
+:sprite_store_high
     sw r21, r12
 
     ; Next byte of data

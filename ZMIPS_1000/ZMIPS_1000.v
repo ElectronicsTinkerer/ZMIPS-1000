@@ -195,7 +195,7 @@ begin
 
 	if ({vcore_v_sync_state, VGA_VS} == 3'b010)
 	begin
-		vcore_frame_num <= vcore_frame_num + 32'b1;
+		vcore_frame_num <= vcore_frame_num + 6'b1;
 	end
 end
 
@@ -204,7 +204,7 @@ always @(posedge cpu_clk)
 begin
 	vcore_frame_num_cdc_1 <= vcore_frame_num;
 	vcore_frame_num_cdc_2 <= vcore_frame_num_cdc_1;
-	line_num_cdc_1 <= line_num;
+	line_num_cdc_1 <= line_num[8:2];
 	line_num_cdc_2 <= line_num_cdc_1;
 end
 
