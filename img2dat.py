@@ -6,7 +6,7 @@ import sys
 if __name__ == "__main__":
     argv = sys.argv
 
-    if len(argv) != 2:
+    if len(argv) < 2:
         print("Expected image file")
         exit(-1)
 
@@ -34,7 +34,8 @@ if __name__ == "__main__":
         for d in datalist:
             print(f"    .word 0x{d:08x}")
 
-        print(f"    ; Sprite mask - {argv[1]}")
-        for m in masklist:
-            print(f"    .word 0x{m:08x}")
+        if not argv[2] == "--nomask":
+            print(f"    ; Sprite mask - {argv[1]}")
+            for m in masklist:
+                print(f"    .word 0x{m:08x}")
 
