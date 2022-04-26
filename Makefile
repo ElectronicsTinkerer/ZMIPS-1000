@@ -8,6 +8,7 @@ GAME_SOURCE	= ./asm/game_source.asm
 GAME_DATA	= ./asm/game_data.asm
 GS_TARGET	= ./mifdata/game_source
 GD_TARGET	= ./mifdata/game_data
+GD_RULE		= $(wildcard ./assets/*.png)
 SYNTH_DIR	= ./synthesis
 CDF_FILE	= $(PROJECT_NAME).cdf
 SOF_FILE	= $(PROJECT_NAME).sof
@@ -32,11 +33,12 @@ $(GS_TARGET): $(GAME_SOURCE)
 	python3 $(TOOLS_DIR)/zmips_assembler.py $< $@
 	touch $@
 
+img: $(GD_TARGET)
 $(GD_TARGET): $(GAME_DATA)
 	python3 $(TOOLS_DIR)/zmips_assembler.py $< $@
 	touch $@
 
-img:
+$(GAME_DATA): $(GD_RULE)
 # $(foreach var,$(ASSETS_SRC),python3 $(TOOLS_DIR)/img2dat.py $(ASSETS_DIR)/"$(var)" >> $(IMG_TARGET);)
 	$(TOOLS_DIR)/img_convert.bash $(TOOLS_DIR) $(ASSETS_DIR) $(IMG_TARGET)
 
