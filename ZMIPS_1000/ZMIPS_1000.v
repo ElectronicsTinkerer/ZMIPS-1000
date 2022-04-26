@@ -90,8 +90,8 @@ wire [31:0] cpu_vga_i_data, cpu_romdata;
 // CPU-Video state machine interface
 wire [31:0] vcore_state; // Passed to CPU
 reg [1:0] vcore_v_sync_state;
-reg [5:0] vcore_frame_num, vcore_frame_num_cdc_1, vcore_frame_num_cdc_2, vcore_frame_num_prev;
-reg [6:0] line_num_cdc_1, line_num_cdc_2;
+reg [5:0] vcore_frame_num, vcore_frame_num_cdc_0, vcore_frame_num_cdc_1, vcore_frame_num_cdc_2, vcore_frame_num_prev;
+reg [6:0] line_num_cdc_0, line_num_cdc_1, line_num_cdc_2;
 reg vcore_new_frame;
 
 // User interface
@@ -200,11 +200,16 @@ begin
 end
 
 // Synchronize count with CPU
+always @(posedge pxl_mem_clk)
+begin
+	vcore_frame_num_cdc_0 <= vcore_frame_num;
+	line_num_cdc_0 <= line_num[8:2];
+end
 always @(posedge cpu_clk)
 begin
-	vcore_frame_num_cdc_1 <= vcore_frame_num;
+	vcore_frame_num_cdc_1 <= vcore_frame_num_cdc_0;
 	vcore_frame_num_cdc_2 <= vcore_frame_num_cdc_1;
-	line_num_cdc_1 <= line_num[8:2];
+	line_num_cdc_1 <= line_num_cdc_0;
 	line_num_cdc_2 <= line_num_cdc_1;
 end
 
