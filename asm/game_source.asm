@@ -30,9 +30,12 @@
 =SCREEN_WORDS           0x1000
 
 ; Graphic data
-=BACKGROUND_TITLE       GAME_DATA_BASE + 0
 =SPRITE_MASK_OFFSET     8
-=SPRITE_PLAYER_DATA     GAME_DATA_BASE + 4096
+
+=BACKGROUND_TITLE       GAME_DATA_BASE + 0
+=BACKGROUND_GAMEPLAY    GAME_DATA_BASE + SCREEN_WORDS
+
+=SPRITE_PLAYER_DATA     GAME_DATA_BASE + (2 * SCREEN_WORDS)
 =SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
 
 ; Controls
@@ -112,6 +115,19 @@
     and r4, r4, r0, Z
     bfc Z, title_draw_player    ; Loop until "FIRE" has been pressed
 
+
+    ; Active Gameplay loop
+:active_loop
+    
+    ; Redraw background (so we don't have "painting")
+    li 0                        ; Base of video memory (first buffer)
+    mov r20, r0
+    li BACKGROUND_GAMEPLAY
+    mov r21, r0
+    jpl draw_background
+
+
+    jpl active_loop
 
 :spin
     jpl spin                    ; Spin
