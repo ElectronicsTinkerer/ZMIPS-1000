@@ -11,7 +11,8 @@
 
 ; TODO:
 ; ~~Lives Display?
-; Draw score function
+; ~~Draw score function (or code block)
+; ~~Update score function
 ; ~~Move background code to a function (pointers to from and to buffers)
 ; Enemy spawning
 ; RNG
@@ -80,6 +81,8 @@
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
 =SPY_LIVES              8
+=SPX_SCORE              0xb8        ; SCORE display location (top right)
+=SPY_SCORE              8   
 
 
 ; ENTRY POINT
@@ -201,28 +204,82 @@
     cmp r9, r1, C               ; Past start location?
     bfc C, active_draw_lives    ; No, display another
 
-    li 64                       ; Setup loop count
-    mov r9, r0
-:active_enemy_update
-    jpl rng ; Random X, Y
-    mov r1, r20
-    li 0
-    sw r0, r1
-    jpl rng
-    li 1
-    sw r0, r20
-    li 0xff
-    and r20, r20, r0    ; Limit x range
-    mov r21, r1
-    li 0x7f ; Limit Y range to on screen
-    and r21, r21, r0
-    li SPRITE_ENEMY_DATA
-    mov r22, r0
-    jpl draw_sprite
-    li 1
+
+    ; Draw score
+    li 8*(8-1)+SPX_SCORE        ; 8 score digits to display (each 8 pixels wide, zero indexed (-1))
+    mov r9, r0                  ; Setup loop index
+    li SPX_SCORE
+    mov r1, r0
+    li SPY_SCORE
+    mov r2, r0
+    li VAR_SCORE                ; Get the current score
+    lw r8, r0
+    li 0xf
+    mov r3, r0
+    li SPRITE_NUM0_DATA
+    mov r4, r0
+:active_draw_score
+    and r0, r8, r3              ; Mask off first digit
+    sll r0, r0, 4               ; Multiply index by 16 (the amount of data per number sprite)
+    add r22, r4, r0             ; Setup pointer to correct number sprite
+    mov r21, r2                 ; Y position of sprite
+    mov r20, r9                 ; X position
+    jpl draw_sprite_fast        ; Display number
+    srl r8, r8, 4               ; Shift to get next digit
+    li 8
     ffl c
-    sub r9, r9, r0, c           ; Done?
-    bfs c, active_enemy_update  ; No, continue updating enemies
+    sub r9, r9, r0
+    cmp r9, r1, C               ; Are there any more digits to display?
+    bfs C, active_draw_score    ; No, keep going
+
+;     li 64                       ; Setup loop count
+;     mov r9, r0
+; :active_enemy_update
+;     jpl rng ; Random X, Y
+;     mov r1, r20
+;     li 0
+;     sw r0, r1
+;     jpl rng
+;     li 1
+;     sw r0, r20
+;     li 0xff
+;     and r20, r20, r0    ; Limit x range
+;     mov r21, r1
+;     li 0x7f ; Limit Y range to on screen
+;     and r21, r21, r0
+;     li SPRITE_ENEMY_DATA
+;     mov r22, r0
+;     jpl draw_sprite
+;     li 1
+;     ffl c
+;     sub r9, r9, r0, c           ; Done?
+;     bfs c, active_enemy_update  ; No, continue updating enemies
+
+    ; Inc the score when the up button is pressed
+    li INPUT_OFFSET
+    lw r4, r0
+    li BTN_UP
+    and r4, r4, r0, Z
+    bfc Z, active_loop
+    li VCORE_OFFSET
+    lw r4, r0
+    mov r4, r4, N
+    bfs N, active_loop    ; If it's the same frame, don't update player position
+    srl r4, r4, 7               ; Remove line number
+    li 0x01
+    and r31, r4, r0, Z
+    bfc Z, active_loop    ; If it's the same frame, don't update player position
+    ; li VAR_SCORE
+    ; lw r1, r0
+    ; li 1
+    ; ffl x
+    ; add r1, r1, r0
+    ; li VAR_SCORE
+    ; sw r0, r1
+    li 0x10
+    mov r20, r0
+    jpl update_score
+    
 
     jpl active_loop
 
@@ -235,6 +292,91 @@
 ;             HELPER FUNCTIONS
 ; ------------------------------------------------------------------
 
+
+; Add a value to the score
+; Args:
+;   r20 - Value to be added to the score (in BCD)
+; Uses:
+;   r0, r10, r11, r12, r13
+; Return:
+;   NONE
+:update_score
+    li VAR_SCORE
+    lw r10, r0
+    ffl x
+    add r10, r10, r20
+    
+    ; Go through all the digits and correct for binary-BCD conversion
+    li 0xf
+    mov r11, r0
+    li 6
+    mov r12, r0
+    li 10-1
+    mov r13, r0
+    and r0, r10, r11        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig1    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig1
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig2    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig2
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig3    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig3
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig4    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig4
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig5    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig5
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig6    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig6
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_dig7    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_dig7
+    sll r11, r11, 4         ; Update digit mask to current digit
+    sll r12, r12, 4
+    sll r13, r13, 4
+    and r0, r11, r10        ; Mask off current digit
+    cmp r13, r0, C          ; Is the digit over 10?
+    bfs C, update_score_done    ; No, do next digit
+    add r10, r10, r12       ; Yes, correct this digit
+:update_score_done
+    li VAR_SCORE            ; Write back score
+    sw r0, r10
+    jmp r30                 ; Return
 
 ; Return a random number in R20
 ; Args:
@@ -267,7 +409,7 @@
 :draw_background
     mov r11, r20            ; Save TO address
     li SCREEN_WORDS         ; Start copying from end of data
-    ffl x
+    ffl c
     add r20, r20, r0
     ffl x
     add r21, r21, r0
@@ -275,8 +417,9 @@
     li 1
     ; This NOP is necessary (strangely)
     ; It appears that once the ZMIPS CPU is synthesized,
-    ; if an instruction uses rt=0 exactly 3 cycles after
-    ; LI then zero is read instead of the immediate value.
+    ; if an instruction uses rt exactly 3 cycles after
+    ; an instruction that writes to it then the previous 
+    ; value is read instead of the last one that was written.
     ; This is not the case in the simulated CPU - it works 
     ; fine without the NOP there
     nop                     

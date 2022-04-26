@@ -3324,7 +3324,7 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000f00
+    .word 0x00000000
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -3356,7 +3356,7 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000f00
+    .word 0x00000000
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -3388,7 +3388,7 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000ff0
+    .word 0x000000f0
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -3400,7 +3400,7 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x000f0000
+    .word 0x00000000
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -3980,7 +3980,7 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x000f0000
+    .word 0x00000000
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4098,6 +4098,39 @@
 
 
     ; Sprite data - ./assets/gameplay_background.png
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4128,6 +4161,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4158,6 +4193,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4188,6 +4225,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4218,6 +4257,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4248,6 +4289,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4278,6 +4321,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4308,6 +4353,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4338,6 +4385,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4368,6 +4417,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4398,6 +4449,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4428,6 +4481,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4458,6 +4513,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4488,6 +4545,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4518,6 +4577,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4548,6 +4609,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4578,71 +4641,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4673,6 +4673,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4703,6 +4705,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4733,12 +4737,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4769,6 +4769,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00007000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4799,6 +4801,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4829,6 +4833,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4859,6 +4865,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4889,16 +4897,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4929,6 +4929,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4959,6 +4961,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4989,6 +4993,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5019,14 +5025,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000040
     .word 0x00000000
     .word 0x00000000
@@ -5057,6 +5057,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5087,6 +5089,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5117,6 +5121,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5147,6 +5153,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5177,6 +5185,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5207,6 +5217,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000010
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5217,7 +5229,6 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000010
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5238,19 +5249,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5281,6 +5281,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5311,6 +5313,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5341,6 +5345,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5371,6 +5377,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5401,16 +5409,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5441,6 +5441,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5471,6 +5473,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5501,12 +5505,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5537,6 +5537,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5567,10 +5569,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5601,6 +5601,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5631,10 +5633,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5665,8 +5665,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000003
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5697,8 +5697,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5729,6 +5729,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5759,10 +5761,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5793,6 +5793,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5823,6 +5825,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5853,12 +5857,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5889,6 +5889,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5919,6 +5921,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5949,6 +5953,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -5979,14 +5985,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6017,6 +6017,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6047,6 +6049,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6077,6 +6081,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6107,6 +6113,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6137,16 +6145,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6177,6 +6177,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6207,10 +6209,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6241,6 +6241,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6271,10 +6273,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x10000000
     .word 0x00000000
@@ -6305,8 +6305,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6337,6 +6337,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6367,6 +6369,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6397,12 +6401,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6433,7 +6433,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000007
+    .word 0xf0000007
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6464,6 +6465,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6494,6 +6497,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6524,6 +6529,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6554,6 +6561,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6584,6 +6593,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6614,19 +6625,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6657,6 +6657,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6687,6 +6689,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6717,6 +6721,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6747,6 +6753,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6777,6 +6785,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6807,18 +6817,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6849,6 +6849,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6879,6 +6881,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6909,6 +6913,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6939,6 +6945,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6969,6 +6977,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -6999,18 +7009,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000007
@@ -7041,6 +7041,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7071,6 +7073,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7101,6 +7105,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7131,6 +7137,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7161,16 +7169,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7201,8 +7201,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7233,6 +7233,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7263,6 +7265,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7293,12 +7297,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7329,6 +7329,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7359,6 +7361,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7389,12 +7393,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7425,6 +7425,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7455,10 +7457,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7489,6 +7489,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7519,10 +7521,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7553,8 +7553,8 @@
     .word 0x30000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000030
     .word 0x00000000
     .word 0x00000000
@@ -7585,6 +7585,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7615,6 +7617,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7645,6 +7649,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7675,6 +7681,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7705,6 +7713,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7735,6 +7745,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7765,6 +7777,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7795,6 +7809,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7825,6 +7841,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7855,26 +7873,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7905,8 +7905,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000007
     .word 0x00000000
@@ -7937,8 +7937,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7969,6 +7969,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -7999,6 +8001,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -8029,12 +8033,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -8065,8 +8065,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -8097,8 +8097,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -8129,6 +8129,8 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
+    .word 0xf0000000
+    .word 0x0000000f
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -8159,41 +8161,39 @@
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
-    .word 0x00000000
+    .word 0xf0000000
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
 
 
     ; Sprite data - ./assets/number1.png
