@@ -10,14 +10,14 @@
 
 
 ; TODO:
-; Lives Display?
+; ~~Lives Display?
 ; Draw score function
 ; ~~Move background code to a function (pointers to from and to buffers)
 ; Enemy spawning
 ; RNG
 ; Firing of missiles (potatos)
 ; Collision detection
-; Fast sprite draw (no fractional-word addressing)
+; ~~Fast sprite draw (no fractional-word addressing)
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -37,8 +37,32 @@
 =BACKGROUND_TITLE       GAME_DATA_BASE + 0
 =BACKGROUND_GAMEPLAY    GAME_DATA_BASE + SCREEN_WORDS
 
-=SPRITE_PLAYER_DATA     GAME_DATA_BASE + (2 * SCREEN_WORDS)
-=SPRITE_PLAYER_MASK     GAME_DATA_BASE + SPRITE_MASK_OFFSET
+=SPRITE_NUM0_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS)
+=SPRITE_NUM0_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (1  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM1_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (2  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM1_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (3  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM2_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (4  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM2_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (5  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM3_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (6  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM3_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (7  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM4_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (8  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM4_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (9  * SPRITE_MASK_OFFSET)
+=SPRITE_NUM5_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (10 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM5_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (11 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM6_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (12 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM6_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (13 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM7_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (14 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM7_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (15 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM8_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (16 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM8_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (17 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM9_DATA       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (18 * SPRITE_MASK_OFFSET)
+=SPRITE_NUM9_MASK       GAME_DATA_BASE + (2 * SCREEN_WORDS) + (19 * SPRITE_MASK_OFFSET)
+
+=SPRITE_ENEMY_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (20 * SPRITE_MASK_OFFSET)
+=SPRITE_ENEMY_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (21 * SPRITE_MASK_OFFSET)
+
+=SPRITE_PLAYER_DATA     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (22 * SPRITE_MASK_OFFSET)
+=SPRITE_PLAYER_MASK     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (23 * SPRITE_MASK_OFFSET)
 
 ; Controls
 =BTN_DOWN               1
@@ -46,8 +70,9 @@
 =BTN_FIRE               4
 
 ; Game variables
-=LIVES                  RAM_BASE + 0
-=SCORE                  RAM_BASE + 1
+=VAR_LIVES              RAM_BASE + 0
+=VAR_SCORE              RAM_BASE + 1
+=VAR_RNG_SEED           RAM_BASE + 2
 
 ; Game constants
 =DEFAULT_LIVES          3
@@ -132,11 +157,15 @@
 :init_active_vars
     li DEFAULT_LIVES            ; Setup lives count
     mov r1, r0
-    li LIVES
+    li VAR_LIVES
     sw r0, r1
     li 0                        ; Reset score
     mov r1, r0
-    li SCORE
+    li VAR_SCORE
+    sw r0, r1
+    li VCORE_OFFSET             ; Init RNG with current frame and line
+    lw r1, r0
+    li VAR_RNG_SEED
     sw r0, r1
 
     ; Active Gameplay loop
@@ -150,7 +179,7 @@
     jpl draw_background
 
     ; Draw the player lives
-    li LIVES                    ; Get the total lives
+    li VAR_LIVES                ; Get the total lives
     lw r1, r0
     sll r1, r1, 3               ; Multiply by 8 (width of sprite)
                                 ; The loop index is also used as the
@@ -172,6 +201,28 @@
     cmp r9, r1, C               ; Past start location?
     bfc C, active_draw_lives    ; No, display another
 
+    li 64                       ; Setup loop count
+    mov r9, r0
+:active_enemy_update
+    jpl rng ; Random X, Y
+    mov r1, r20
+    li 0
+    sw r0, r1
+    jpl rng
+    li 1
+    sw r0, r20
+    li 0xff
+    and r20, r20, r0    ; Limit x range
+    mov r21, r1
+    li 0x7f ; Limit Y range to on screen
+    and r21, r21, r0
+    li SPRITE_ENEMY_DATA
+    mov r22, r0
+    jpl draw_sprite
+    li 1
+    ffl c
+    sub r9, r9, r0, c           ; Done?
+    bfs c, active_enemy_update  ; No, continue updating enemies
 
     jpl active_loop
 
@@ -183,6 +234,29 @@
 ; ------------------------------------------------------------------
 ;             HELPER FUNCTIONS
 ; ------------------------------------------------------------------
+
+
+; Return a random number in R20
+; Args:
+;   NONE
+; Uses:
+;   r0
+; Return:
+;   r20 - Containing a random number
+:rng
+    ffl x
+    li VAR_RNG_SEED         ; Get the seed value
+    lw r20, r0
+    mov r0, r20
+    sll r20, r20, 2         ; Multiply it by 4
+    add r20, r20, r0        ; And add the original value to effectively multiply by 5
+    li 3                    ; Add 3
+    ffl x
+    add r20, r20, r0
+    li VAR_RNG_SEED         ; Save new number for next iteration
+    sw r0, r20
+    jmp r30                 ; Return
+
 
 ; Copy a full screen of data from one location to another
 ; Args: (destructive)
@@ -394,7 +468,7 @@
 ; Does not account for sub-word positioning, allowing for
 ; a much faster operation
 ; Args: (destructive)
-;   r20 - X posiiton
+;   r20 - X posiiton (multiple of the sprite width)
 ;   r21 - Y position
 ;   r22 - Base address of sprite data (pointer)
 ; Uses:

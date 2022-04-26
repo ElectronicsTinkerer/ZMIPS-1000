@@ -8396,6 +8396,26 @@
     .word 0x0fffff00
 
 
+    ; Sprite data - ./assets/enemy.png
+    .word 0x00000000
+    .word 0x00a77a00
+    .word 0x028777a0
+    .word 0x087cc770
+    .word 0x087cc770
+    .word 0x028778a0
+    .word 0x00288200
+    .word 0x00000000
+    ; Sprite mask - ./assets/enemy.png
+    .word 0x0ffffff0
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0x0ffffff0
+
+
     ; Sprite data - ./assets/player_right1.png
     .word 0x00000000
     .word 0x00000ff0
