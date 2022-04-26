@@ -34,7 +34,7 @@ if __name__ == "__main__":
         for d in datalist:
             print(f"    .word 0x{d:08x}")
 
-        if not argv[2] == "--nomask":
+        if len(argv) > 2 and not argv[2] == "--nomask":
             print(f"    ; Sprite mask - {argv[1]}")
             for m in masklist:
                 print(f"    .word 0x{m:08x}")
