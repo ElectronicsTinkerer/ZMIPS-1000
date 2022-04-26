@@ -39,7 +39,7 @@ $(GD_TARGET): $(GAME_DATA)
 	touch $@
 
 $(GAME_DATA): $(GD_RULE)
-# $(foreach var,$(ASSETS_SRC),python3 $(TOOLS_DIR)/img2dat.py $(ASSETS_DIR)/"$(var)" >> $(IMG_TARGET);)
+#	$(foreach var,$(ASSETS_SRC),python3 $(TOOLS_DIR)/img2dat.py $(ASSETS_DIR)/"$(var)" >> $(IMG_TARGET);)
 	$(TOOLS_DIR)/img_convert.bash $(TOOLS_DIR) $(ASSETS_DIR) $(IMG_TARGET)
 
 upload: $(SYNTH_DIR)/$(SOF_FILE)

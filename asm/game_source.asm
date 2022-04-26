@@ -15,10 +15,11 @@
 ; ~~Update score function
 ; ~~Move background code to a function (pointers to from and to buffers)
 ; Enemy spawning
-; RNG
+; ~~RNG
 ; Firing of missiles (potatos)
 ; Collision detection
 ; ~~Fast sprite draw (no fractional-word addressing)
+; Player motion
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -74,39 +75,30 @@
 =VAR_LIVES              RAM_BASE + 0
 =VAR_SCORE              RAM_BASE + 1
 =VAR_RNG_SEED           RAM_BASE + 2
+=VAR_PLAYER_Y           RAM_BASE + 3
 
 ; Game constants
 =DEFAULT_LIVES          3
+=PLAYER_MIN_Y           24
+=PLAYER_MAX_Y           118
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
 =SPY_LIVES              8
 =SPX_SCORE              0xb8        ; SCORE display location (top right)
 =SPY_SCORE              8   
-
+=SPY_PLAYER             0x40        ; PLAYER initial position (mid left)
+=SPX_PLAYER             8
 
 ; ENTRY POINT
-    li RAM_BASE+RAM_SIZE-1          ; Init SP
+    li RAM_BASE+RAM_SIZE-1      ; Init SP
     mov r29, r0
 
-    li 120
+    li 120                      ; Setup location of spaceship on title screen
     mov r1, r0
     li 0
     mov r2, r0
 :title_loop
-;     li INPUT_OFFSET
-;     lw r3, r0
-;     li 1
-;     and r31, r3, r0, Z          ; Can't write to r31, so use as dummy
-;     bfs z, player_go_right
-;     li 2
-;     and r31, r3, r0, Z
-;     bfc Z,loop
-;     li 1
-;     ffl c
-;     sub r2, r2, r0
-;     jpl player_move
-; :player_go_right
 
     ; Redraw background (so we don't have "painting")
     li 0                        ; Base of video memory (first buffer)
@@ -129,7 +121,7 @@
     li 0x800                    ; Bit to determine spaceship animation state
     and r31, r4, r0, Z
     bfc Z,title_player_on
-:title_ player_off
+:title_player_off
     li SPRITE_PLAYER_DATA       ; Sprite to display
     jpl title_update
 :title_player_on
@@ -169,6 +161,10 @@
     li VCORE_OFFSET             ; Init RNG with current frame and line
     lw r1, r0
     li VAR_RNG_SEED
+    sw r0, r1
+    li SPY_PLAYER               ; Setup player position
+    mov r1, r0
+    li VAR_PLAYER_Y
     sw r0, r1
 
     ; Active Gameplay loop
@@ -232,6 +228,33 @@
     cmp r9, r1, C               ; Are there any more digits to display?
     bfs C, active_draw_score    ; No, keep going
 
+    ; Draw enemies
+    ; TODO!
+    
+    ; Draw Missiles
+    ; TODO!
+    
+    ; Draw player
+    li SPX_PLAYER               ; Setup player location
+    mov r20, r0
+    li VAR_PLAYER_Y
+    lw r21, r0
+    li SPRITE_PLAYER_DATA
+    ; Handle player animation
+    li VCORE_OFFSET             ; Get the current frame number
+    lw r4, r0
+    li 0x800                    ; Bit to determine spaceship animation state
+    and r31, r4, r0, Z
+    bfc Z,active_player_on
+:active_player_off
+    li SPRITE_PLAYER_DATA       ; Sprite to display
+    jpl active_update
+:active_player_on
+    li SPRITE_PLAYER_DATA+16    ; Sprite to display
+:active_update
+    mov r22, r0
+    jpl draw_sprite_fast        ; Can use FAST mode since the x-coord is a multiple of 8
+
 ;     li 64                       ; Setup loop count
 ;     mov r9, r0
 ; :active_enemy_update
@@ -255,33 +278,74 @@
 ;     sub r9, r9, r0, c           ; Done?
 ;     bfs c, active_enemy_update  ; No, continue updating enemies
 
-    ; Inc the score when the up button is pressed
-    li INPUT_OFFSET
-    lw r4, r0
-    li BTN_UP
-    and r4, r4, r0, Z
-    bfc Z, active_loop
+
+    ; Only do screen updates once every 2 frames
+:active_frame_wait
     li VCORE_OFFSET
     lw r4, r0
     mov r4, r4, N
-    bfs N, active_loop    ; If it's the same frame, don't update player position
+    bfs N, active_frame_wait    ; If it's the same frame, don't update player position
     srl r4, r4, 7               ; Remove line number
-    li 0x01
+    li 0x01                     ; frame % 2
     and r31, r4, r0, Z
-    bfc Z, active_loop    ; If it's the same frame, don't update player position
-    ; li VAR_SCORE
-    ; lw r1, r0
-    ; li 1
-    ; ffl x
-    ; add r1, r1, r0
-    ; li VAR_SCORE
-    ; sw r0, r1
-    li 0x10
-    mov r20, r0
-    jpl update_score
+    ; bfc Z, active_frame_wait    ; frame % 2 != 0 -> wait
     
+    ; Update enemy positions
+    ; TODO!
 
+    ; Update missiles positions and check for collisions
+    ; TODO!
+    
+    ; Move the player if a button is pressed
+    li INPUT_OFFSET
+    lw r4, r0
+    li BTN_UP                   ; Move Up?
+    and r31, r4, r0, Z          
+    bfs Z, active_move_up
+    li BTN_DOWN                 ; Move Down?
+    and r31, r4, r0, Z          
+    bfs Z, active_move_down
+    li BTN_FIRE                 ; Fire?
+    and r31, r4, r0, Z          
+    bfs Z, active_player_fire
+
+    ; No action from player, update screen
     jpl active_loop
+
+:active_move_up
+    li VAR_PLAYER_Y             ; Get current player position
+    lw r1, r0
+    li PLAYER_MIN_Y             ; Bound movement
+    cmp r1, r0, C
+    bfc C, active_move_check_fire   ; Don't move player
+        ; Yes, move player
+    li -1                       ; Negative Y is up
+    jpl active_move
+:active_move_down
+    li VAR_PLAYER_Y             ; Get current player position
+    lw r1, r0
+    li PLAYER_MAX_Y             ; Bound movement
+    cmp r0, r1, C
+    bfc C, active_move_check_fire   ; Don't move player
+        ; Yes, move player
+    li 1                        ; Down is positive Y
+:active_move
+    ffl x
+    add r1, r1, r0              ; Add direction to position
+    li VAR_PLAYER_Y
+    sw r0, r1                   ; Save result
+        ; Fallthrough
+:active_move_check_fire
+    li BTN_FIRE                 ; Fire? (Check again in case the player is moving and firing)
+    and r31, r4, r0, Z          
+    bfs Z, active_player_fire
+    jpl active_loop
+
+:active_player_fire
+    ; TODO!
+    jpl active_loop
+
+
 
 :spin
     jpl spin                    ; Spin
@@ -565,9 +629,17 @@
     ;    r20 - vmem addr low
     ;    r21 - vmem addr high
     ;    r22 - Sprite data pointer
-    li 0                ; Calculate high byte address
-    ffl c
+    li 1                ; Calculate high byte address
+    ffl x
     add r21, r20, r0
+    li LINE_WIDTH       ; If sprite wraps, correct for line offset
+    and r11, r21, r0
+    and r12, r20, r0
+    eor r31, r11, r12, Z
+    bfs Z, sprite_wrap_bypass
+    ffl c
+    sub r21, r21, r0    ; Go up a line if wrapping
+:sprite_wrap_bypass
     lw r11, r20         ; Get low word of vdata
     lw r12, r21         ; Get high word of vdata
     li 0xffffffff       ; Invert the masks
@@ -578,15 +650,6 @@
     or r11, r11, r13    ; Or the sprite data into vmem
     or r12, r12, r15
     sw r20, r11
-
-    li LINE_WIDTH       ; If sprite wraps, correct for line offset
-    and r13, r21, r0
-    and r14, r20, r0
-    eor r31, r13, r14, Z
-    bfs Z, sprite_store_high
-    ffl c
-    sub r21, r21, r0
-:sprite_store_high
     sw r21, r12
 
     ; Next byte of data
