@@ -1,5 +1,4 @@
-:background_title
-    ; Sprite data - assets/title_screen.png
+    ; Sprite data - ./assets/title_screen.png
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -4097,8 +4096,8 @@
     .word 0x00000000
     .word 0x00000000
 
-:background_gameplay
-    ; Sprite data - assets/gameplay_background.png
+
+    ; Sprite data - ./assets/gameplay_background.png
     .word 0x00000000
     .word 0x00000000
     .word 0x00000000
@@ -8197,8 +8196,207 @@
     .word 0x00000000
 
 
-:sprite_player1
-    ; Sprite data - assets/player_right1.png
+    ; Sprite data - ./assets/number1.png
+    .word 0x00000000
+    .word 0x00fff000
+    .word 0x0f000f00
+    .word 0x0f0f0f00
+    .word 0x0f0f0f00
+    .word 0x0f000f00
+    .word 0x00fff000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number1.png
+    .word 0x0fffff00
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0x0fffff00
+
+
+    ; Sprite data - ./assets/number2.png
+    .word 0x00000000
+    .word 0x000ff000
+    .word 0x000f0f00
+    .word 0x000f0000
+    .word 0x000f0000
+    .word 0x000f0000
+    .word 0x0fffff00
+    .word 0x00000000
+    ; Sprite mask - ./assets/number2.png
+    .word 0x00ffff00
+    .word 0x00fffff0
+    .word 0x00fffff0
+    .word 0x00fffff0
+    .word 0x00fff000
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+
+
+    ; Sprite data - ./assets/number3.png
+    .word 0x00000000
+    .word 0x00fff000
+    .word 0x0f000f00
+    .word 0x0f000000
+    .word 0x00fff000
+    .word 0x00000f00
+    .word 0x0fffff00
+    .word 0x00000000
+    ; Sprite mask - ./assets/number3.png
+    .word 0x0fffff00
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+
+
+    ; Sprite data - ./assets/number4.png
+    .word 0x00000000
+    .word 0x00fff000
+    .word 0x0f000f00
+    .word 0x0f000000
+    .word 0x00ff0000
+    .word 0x0f000f00
+    .word 0x00fff000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number4.png
+    .word 0x0fffff00
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0x0fffff00
+
+
+    ; Sprite data - ./assets/number5.png
+    .word 0x00000000
+    .word 0x00f00f00
+    .word 0x00f00f00
+    .word 0x0fffff00
+    .word 0x00f00000
+    .word 0x00f00000
+    .word 0x00f00000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number5.png
+    .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0x0fff0000
+    .word 0x0fff0000
+    .word 0x0fff0000
+
+
+    ; Sprite data - ./assets/number6.png
+    .word 0x00000000
+    .word 0x0fffff00
+    .word 0x00000f00
+    .word 0x00ffff00
+    .word 0x0f000000
+    .word 0x0f000000
+    .word 0x00ffff00
+    .word 0x00000000
+    ; Sprite mask - ./assets/number6.png
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0x0ffffff0
+
+
+    ; Sprite data - ./assets/number7.png
+    .word 0x00000000
+    .word 0x00fff000
+    .word 0x00000f00
+    .word 0x00ffff00
+    .word 0x0f000f00
+    .word 0x0f000f00
+    .word 0x00fff000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number7.png
+    .word 0x0fffff00
+    .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0x0fffff00
+
+
+    ; Sprite data - ./assets/number8.png
+    .word 0x00000000
+    .word 0x0fffff00
+    .word 0x0f000000
+    .word 0x00f00000
+    .word 0x0fff0000
+    .word 0x00f00000
+    .word 0x00f00000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number8.png
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffff000
+    .word 0xfffff000
+    .word 0xfffff000
+    .word 0x0fff0000
+    .word 0x0fff0000
+
+
+    ; Sprite data - ./assets/number9.png
+    .word 0x00000000
+    .word 0x00fff000
+    .word 0x0f000f00
+    .word 0x0f00f000
+    .word 0x00ff0f00
+    .word 0x0f000f00
+    .word 0x00fff000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number9.png
+    .word 0x0fffff00
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0x0fffff00
+
+
+    ; Sprite data - ./assets/number10.png
+    .word 0x00000000
+    .word 0x00fff000
+    .word 0x0f000f00
+    .word 0x0f000f00
+    .word 0x0ffff000
+    .word 0x0f000000
+    .word 0x00fff000
+    .word 0x00000000
+    ; Sprite mask - ./assets/number10.png
+    .word 0x0fffff00
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xffffff00
+    .word 0xffffff00
+    .word 0x0fffff00
+
+
+    ; Sprite data - ./assets/player_right1.png
     .word 0x00000000
     .word 0x00000ff0
     .word 0x0000ff90
@@ -8207,7 +8405,7 @@
     .word 0x0000ff90
     .word 0x00000ff0
     .word 0x00000000
-    ; Sprite mask - assets/player_right1.png
+    ; Sprite mask - ./assets/player_right1.png
     .word 0x0000ffff
     .word 0x00ffffff
     .word 0xffffffff
@@ -8216,9 +8414,9 @@
     .word 0xffffffff
     .word 0x00ffffff
     .word 0x0000ffff
-    
-:sprite_player2
-    ; Sprite data - assets/player_right2.png
+
+
+    ; Sprite data - ./assets/player_right2.png
     .word 0x00000000
     .word 0x00000ff0
     .word 0x0009ff90
@@ -8227,7 +8425,7 @@
     .word 0x0009ff90
     .word 0x00000ff0
     .word 0x00000000
-    ; Sprite mask - assets/player_right2.png
+    ; Sprite mask - ./assets/player_right2.png
     .word 0x0000ffff
     .word 0x00ffffff
     .word 0xffffffff
@@ -8236,3 +8434,5 @@
     .word 0xffffffff
     .word 0x00ffffff
     .word 0x0000ffff
+
+

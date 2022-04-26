@@ -10,10 +10,10 @@ GS_TARGET	= ./mifdata/game_source
 GD_TARGET	= ./mifdata/game_data
 SYNTH_DIR	= ./synthesis
 
-IMG_TARGET	= ./asm/dummy.bak
-ASSETS_DIR	= ./assets
-
 TOOLS_DIR	= ./tools
+
+IMG_TARGET	= ./asm/game_data.asm
+ASSETS_DIR	= ./assets
 
 all: mifupdate
 	cd $(SYNTH_DIR) && $(QUARTUS_INSTALL_DIR)/21.1/quartus/bin64/quartus_asm.exe $(PROJECT_NAME) -c $(PROJECT_NAME) --read_settings_files=on --write_settings_files=off
@@ -26,8 +26,10 @@ assemble:
 	python3 $(TOOLS_DIR)/zmips_assembler.py $(GAME_SOURCE) $(GS_TARGET)
 
 img:
-	python3 $(TOOLS_DIR)/img2dat.py $(ASSETS_DIR)/$(IMAGE) > $(IMG_TARGET)
+# $(foreach var,$(ASSETS_SRC),python3 $(TOOLS_DIR)/img2dat.py $(ASSETS_DIR)/"$(var)" >> $(IMG_TARGET);)
+	$(TOOLS_DIR)/img_convert.bash $(TOOLS_DIR) $(ASSETS_DIR) $(IMG_TARGET)
 
 clean:
 	rm ./mifdata/*
+
 

@@ -8,6 +8,7 @@ if __name__ == "__main__":
 
     if len(argv) < 2:
         print("Expected image file")
+        print("img2dat file.img [--nomask]")
         exit(-1)
 
     with Image.open(argv[1]) as im:
