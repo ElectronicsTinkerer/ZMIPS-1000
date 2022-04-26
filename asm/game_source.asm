@@ -17,8 +17,10 @@
 ; RNG
 ; Firing of missiles (potatos)
 ; Collision detection
+; Fast sprite draw (no fractional-word addressing)
 
 ; DEFINES
+=SCREEN_BASE            0x0000
 =RAM_BASE               0x2000
 =RAM_SIZE               0x2000
 =GAME_DATA_BASE         0x4000
@@ -43,9 +45,20 @@
 =BTN_UP                 2
 =BTN_FIRE               4
 
+; Game variables
+=LIVES                  RAM_BASE + 0
+=SCORE                  RAM_BASE + 1
+
+; Game constants
+=DEFAULT_LIVES          3
+
+; Screen positions
+=SPX_LIVES              8           ; LIVES display location (top left)
+=SPY_LIVES              8
+
 
 ; ENTRY POINT
-    li RAM_BASE+RAM_SIZE-1         ; Init SP
+    li RAM_BASE+RAM_SIZE-1          ; Init SP
     mov r29, r0
 
     li 120
@@ -116,6 +129,16 @@
     bfc Z, title_draw_player    ; Loop until "FIRE" has been pressed
 
 
+:init_active_vars
+    li DEFAULT_LIVES            ; Setup lives count
+    mov r1, r0
+    li LIVES
+    sw r0, r1
+    li 0                        ; Reset score
+    mov r1, r0
+    li SCORE
+    sw r0, r1
+
     ; Active Gameplay loop
 :active_loop
     
@@ -125,6 +148,29 @@
     li BACKGROUND_GAMEPLAY
     mov r21, r0
     jpl draw_background
+
+    ; Draw the player lives
+    li LIVES                    ; Get the total lives
+    lw r1, r0
+    sll r1, r1, 3               ; Multiply by 8 (width of sprite)
+                                ; The loop index is also used as the
+                                ; x-pixel location for the sprite
+    li SPX_LIVES-8
+    ffl x
+    add r1, r1, r0              ; Add x offset to loop
+    mov r9, r0
+:active_draw_lives
+    li SPY_LIVES
+    mov r21, r0                 ; Setup Y position
+    mov r20, r1                 ; Setup X position
+    li SPRITE_PLAYER_DATA
+    mov r22, r0
+    jpl draw_sprite_fast
+    li 8                        ; Keep drawing lives until all have been drawn
+    ffl c
+    sub r1, r1, r0
+    cmp r9, r1, C               ; Past start location?
+    bfc C, active_draw_lives    ; No, display another
 
 
     jpl active_loop
@@ -197,7 +243,7 @@
     jpl mult
     
     ; Determine line index
-    srl r21, r17, 3     ; Divide out pixel number (FIXME)
+    srl r21, r17, 3     ; Divide out pixel number
     ffl X               ; Clear C
     add r20, r20, r21
 
@@ -335,6 +381,92 @@
     li 8                ; 8 iterations (8 pixels tall)
     cmp r10, r0, Z
     bfc Z,sprite_loop
+    
+    li 1                ; Return
+    ffl x
+    add r29, r29, r0
+    lw r0, r29
+    jmp r0
+
+
+
+; Draw a 8x8 pixel sprite to a position on screen
+; Does not account for sub-word positioning, allowing for
+; a much faster operation
+; Args: (destructive)
+;   r20 - X posiiton
+;   r21 - Y position
+;   r22 - Base address of sprite data (pointer)
+; Uses:
+;   r0, r10, r11, r12, r13
+; Return:
+;   NONE
+:draw_sprite_fast
+    sw r29, r30         ; Save return address
+    li -1
+    ffl x
+    add r29, r29, r0
+    
+    ; Save X
+    mov r17, r20
+
+    ; calculate line
+    ; y * line_width
+    li LINE_WIDTH
+    mov r20, r0
+    jpl mult
+    
+    ; Determine line index
+    srl r21, r17, 3     ; Divide out pixel number
+    ffl X               ; Clear C
+    add r20, r20, r21
+
+    ; BEGIN LOOP
+    li 8                ; Init loop var (8 lines tall)
+    mov r10, r0
+    
+    li 1
+    ffl C
+    sub r22, r22, r0    ; Start sprite pointer at address minus 1
+
+:sprite_loop_fast
+    ; Currently,
+    ;    r10 stores the loop count
+    ;    r20 stores the base offset of the video data word
+    ;    r22 stores the pointer to the sprite data base
+    ffl x
+    li 1
+    add r22, r22, r0    ; Increment sprite data pointer
+    lw r12, r22         ; Get the sprite's line of data
+    ffl x
+    li SPRITE_MASK_OFFSET
+    add r0, r22, r0
+    lw r13, r0          ; Get the sprite's corresponding line mask
+    and r12, r12, r13   ; Apply the mask
+
+    ; Read vmem and get the data present under the current sprite location
+    ; Regs:
+    ;    r10 - loop index
+    ;    r11 - vmem data
+    ;    r12 - Sprite data
+    ;    r13 - Sprite mask
+    ;    r20 - vmem addr
+    ;    r22 - Sprite data pointer
+    lw r11, r20         ; Get word of vdata
+    li 0xffffffff       ; Invert the mask
+    eor r13, r13, r0
+    and r11, r11, r13   ; And apply it to vmem
+    or r11, r11, r12    ; Or the sprite data into vmem
+    sw r20, r11
+
+    ; Next byte of data
+    ffl x
+    li LINE_WIDTH       ; Move vmem pointer to next line
+    add r20, r20, r0
+    li 1                ; Decrement loop var
+    ffl C
+    sub r10, r10, r0, Z
+    bfc Z,sprite_loop_fast
     
     li 1                ; Return
     ffl x
