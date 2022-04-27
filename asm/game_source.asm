@@ -162,6 +162,7 @@
     mov r22, r0
     jpl draw_sprite
 
+:title_same_frame_loop
     li VCORE_OFFSET
     lw r4, r0
     mov r4, r4, N
@@ -178,7 +179,7 @@
     lw r4, r0                   ; Get player inputs
     li BTN_FIRE
     and r4, r4, r0, Z
-    bfs Z, title_draw_player    ; Loop until "FIRE" has been pressed
+    bfs Z, title_same_frame_loop    ; Loop until "FIRE" has been pressed
 :title_start_check_release
     li INPUT_OFFSET
     lw r4, r0                   ; Get player inputs
