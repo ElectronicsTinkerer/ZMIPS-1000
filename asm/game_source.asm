@@ -14,14 +14,15 @@
 ; ~~Draw score function (or code block)
 ; ~~Update score function
 ; ~~Move background code to a function (pointers to from and to buffers)
-; Enemy spawning
+; ~~Enemy spawning
 ; ~~RNG
 ; ~~Firing of missiles (potatos)
-; Collision detection
+; Collision detection (missile/enemy)
 ; ~~Fast sprite draw (no fractional-word addressing)
 ; ~~Player motion
 ; Death screen
-; Player getting hit detection (and life dec)
+; ~Player getting hit detection (and life dec)
+; Remake title screen
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -108,15 +109,17 @@
 =ENEMY_MIN_Y            24
 =ENEMY_MAX_Y            118
 =MAX_ENEMIES            4
+=TOLERANCE_PEX          5           ; Tolerance for player-enemy collision checking (x-axis)
+=TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
 =SPY_LIVES              8
 =SPX_SCORE              0xb8        ; SCORE display location (top right)
 =SPY_SCORE              8   
-=SPX_PLAYER             8           ; PLAYER initial position (mid left)
+=SPX_PLAYER             16          ; PLAYER initial position (mid left)
 =SPY_PLAYER             0x40
-=SPX_MISSILE            8           ; MISSILE intitial position
+=SPX_MISSILE            16          ; MISSILE intitial position
 =SPX_ENEMY              0xf8        ; ENEMY initial position
 
 ; ENTRY POINT
@@ -193,10 +196,18 @@
     mov r1, r0
     li VAR_SCORE
     sw r0, r1
+:init_active_vars_nextlife
+        ; Entry point for after being hit
     li VCORE_OFFSET             ; Init RNG with current frame and line
     lw r1, r0
     li VAR_RNG_SEED
     sw r0, r1
+
+    li VAR_LIVES                ; Only reset board if player is alive
+    lw r1, r0                   ; (Let them see the screen when they die)
+    mov r1, r1, N
+    bfs N, active_loop
+
     li SPY_PLAYER               ; Setup player position
     mov r1, r0
     li VAR_PLAYER_Y
@@ -226,9 +237,11 @@
     ; Draw the player lives
     li VAR_LIVES                ; Get the total lives
     lw r1, r0
-    sll r1, r1, 3               ; Multiply by 8 (width of sprite)
+    sll r1, r1, 3, NZ           ; Multiply by 8 (width of sprite)
                                 ; The loop index is also used as the
                                 ; x-pixel location for the sprite
+    bfs N, active_draw_score    ; Don't display lives if negative (negative breaks things!)
+    bfs Z, active_draw_score    ; Don't display lives if zero extra remaining
     li SPX_LIVES-8
     ffl x
     add r1, r1, r0              ; Add x offset to loop
@@ -248,6 +261,8 @@
 
 
     ; Draw score
+    ; TODO: When player has 0 lives, the last digit of the score is shifted down 1 pixel
+:active_draw_score
     li 8*(8-1)+SPX_SCORE        ; 8 score digits to display (each 8 pixels wide, zero indexed (-1))
     mov r9, r0                  ; Setup loop index
     li SPX_SCORE
@@ -260,19 +275,19 @@
     mov r3, r0
     li SPRITE_NUM0_DATA
     mov r4, r0
-:active_draw_score
+:active_ds_loop
+    mov r21, r2                 ; Y position of sprite
+    mov r20, r9                 ; X position
     and r0, r8, r3              ; Mask off first digit
     sll r0, r0, 4               ; Multiply index by 16 (the amount of data per number sprite)
     add r22, r4, r0             ; Setup pointer to correct number sprite
-    mov r21, r2                 ; Y position of sprite
-    mov r20, r9                 ; X position
     jpl draw_sprite_fast        ; Display number
     srl r8, r8, 4               ; Shift to get next digit
     li 8
     ffl c
     sub r9, r9, r0
     cmp r9, r1, C               ; Are there any more digits to display?
-    bfs C, active_draw_score    ; No, keep going
+    bfs C, active_ds_loop       ; No, keep going
 
     ; Draw enemies
 :active_draw_enemies:
@@ -350,6 +365,12 @@
     mov r22, r0
     jpl draw_sprite_fast        ; Can use FAST mode since the x-coord is a multiple of 8
 
+
+    ; Check for player death
+    li VAR_LIVES
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, dead_screen          ; Zero is still alive, negative is dead
 
 :active_frame_wait
     jpl rng
@@ -446,24 +467,59 @@
     ffl c
     sub r1, r1, r0, Z           ; Enemy moving toward player
     bfc Z, active_ue_next       ; If not a edge of screen, update next
-    li 0x9999                   ; 10's complement of 10 has to be loaded in two separate operations
-    sll r1, r0, 16
-    li 0x9980
-    or r20, r1, r0
-    jpl update_score            ; Subtract 10 points from the score
-    jpl active_ue_rng_loop      ; Respawn the player if at edge of screen
+        ; If end of screen, subtract a few points and respawn
+    ; li 0x9999                   ; 10's complement of 10 has to be loaded in two separate operations
+    ; sll r1, r0, 16
+    ; li 0x9980
+    ; or r20, r1, r0
+    ; jpl update_score            ; Subtract 10 points from the score
+    jpl active_ue_rng_loop      ; Respawn the enemy if it's at the edge of the screen
+
 :active_ue_next
-    nop
+    nop                         ; The 3-cycle reg issue strikes again!
     sw r7, r1
-    li 2                        ; Inc pointer to next sprite's X value 
+    
+    li SPX_PLAYER               ; Compare enemy with player X value
+    sub r2, r1, r0, N
+    bfc N, active_ue_player_check
+    li 0                        ; If negative, invert sign
+    ffl c
+    sub r2, r0, r2
+:active_ue_player_check
+    li TOLERANCE_PEX
+    cmp r0, r2, c               ; If the enemy is close in X to player, check for Y collisions
+    bfc c, active_ue_update_continue
+
+    li 1                        ; Inc pointer to get Y value
+    ffl x
+    add r1, r7, r0
+    lw r2, r1                   ; Get the Y value
+    li VAR_PLAYER_Y             ; Get player Y value
+    lw r1, r0
+    ; li 0x40
+    ffl c                       ; Difference between values
+    sub r2, r2, r1, N
+    bfc N, active_ue_player_collision
+    li 0                        ; If negative, invert sign
+    ffl c
+    sub r2, r0, r2
+:active_ue_player_collision
+    li TOLERANCE_PEY
+    cmp r0, r2, c
+    bfs c, active_player_hit    ; If within size, player is hit
+
+        ; Otherwise, keep updating enemy positions
+:active_ue_update_continue
+    li 2                        ; Inc pointer to get next enemy's X value
     ffl x
     add r7, r7, r0
-    li 1
+
+    li 1                        ; Update RNG callback index
     ffl x
     add r9, r9, r0
     ffl c
-    sub r6, r6, r0, N           ; Dec loop index
-    bfc N, active_ue_loop
+    sub r6, r6, r0, Z           ; Dec loop index
+    bfc z, active_ue_loop
 
 
     ; Update missiles positions and check for collisions
@@ -579,32 +635,24 @@
     ffl x
     add r9, r9, r0
     sw r9, r1       
-
-    ; ; DEBUG
-    ; li VAR_ENEMY
-    ; mov r1, r0
-    ; li 60
-    ; sw r1, r0
-    ; li VAR_ENEMY + 1
-    ; mov r1, r0
-    ; li 60
-    ; sw r1, r0
-    ; li VAR_ENEMY + 2
-    ; mov r1, r0
-    ; li 80
-    ; sw r1, r0
-    ; li VAR_ENEMY + 1 + 2
-    ; mov r1, r0
-    ; li 60
-    ; sw r1, r0
-    ; li VAR_ENEMY_COUNT
-    ; mov r1, r0
-    ; li 2
-    ; sw r1, r0
-    ; ; END DEBUG
-
     jpl active_loop
 
+
+    ; When player is hit, update stuff
+:active_player_hit
+    li VAR_LIVES                ; Get the lives count
+    lw r1, r0
+    li 1                        ; Subtract 1
+    ffl c
+    sub r1, r1, r0              ; Death detection is after screen update code
+    li VAR_LIVES                ; Save new life total
+    sw r0, r1
+    
+    jpl init_active_vars_nextlife   ; Start the next round
+
+
+:dead_screen
+    ; TODO
 
 
 :spin
@@ -942,7 +990,7 @@
 ;   r21 - Y position
 ;   r22 - Base address of sprite data (pointer)
 ; Uses:
-;   r0, r10, r11, r12, r13
+;   r0, r10, r11, r12, r13, r14
 ; Return:
 ;   NONE
 :draw_sprite_fast
@@ -952,16 +1000,16 @@
     add r29, r29, r0
     
     ; Save X
-    mov r17, r20
+    mov r14, r20
 
     ; calculate line
     ; y * line_width
     li LINE_WIDTH
     mov r20, r0
-    jpl mult
+    jpl mult            ; Result in r20
     
     ; Determine line index
-    srl r21, r17, 3     ; Divide out pixel number
+    srl r21, r14, 3     ; Divide out pixel number
     ffl X               ; Clear C
     add r20, r20, r21
 
