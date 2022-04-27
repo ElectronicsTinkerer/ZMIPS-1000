@@ -96,8 +96,11 @@ reg vcore_new_frame;
 
 // User interface
 // Neeed to do CDC on the buttons so they aren't changing when the CPU reads their state
+wire btn_fire, btn_up, btn_down; // Inputs (can be assigned from multiple sources)
 wire [31:0] user_input_state; // Sent to CPU
-reg [2:0] keys_cdc_1, keys_cdc_2;
+reg btn_fire_cdc_1, btn_fire_cdc_2, btn_up_cdc_1, btn_up_cdc_2, btn_down_cdc_1, btn_down_cdc_2;
+reg btn_fire_prev;	// Stores last state of FIRE button that the CPU read
+reg btn_pulse_fire;
 
 //=======================================================
 //  Structural coding
@@ -228,14 +231,45 @@ end
 
 assign vcore_state = {vcore_new_frame, 18'b0, vcore_frame_num_cdc_2, line_num_cdc_2};
 
+// USER INPUTS
+assign btn_down = !KEY[0]; // | GPIO[0];
+assign btn_up   = !KEY[1]; // | GPIO[1];
+assign btn_fire = !KEY[2]; // | GPIO[2];
+
 // User interface CDC
 always @(posedge cpu_clk)
 begin
-	keys_cdc_1 <= KEY[2:0];
-	keys_cdc_2 <= keys_cdc_1;
+	btn_fire_cdc_1 <= btn_fire;
+	btn_fire_cdc_2 <= btn_fire_cdc_1;
+	btn_up_cdc_1   <= btn_up;
+	btn_up_cdc_2   <= btn_up_cdc_1;
+	btn_down_cdc_1 <= btn_down;
+	btn_down_cdc_2 <= btn_down_cdc_1;
 end
 
-assign user_input_state = {29'b0, keys_cdc_2};
+// Handle "FIRE" button pulse bit
+// Bit goes high the first time that the CPU reads the status
+// then stays low until released
+always @(posedge cpu_clk)
+begin
+	// If the video core data reg is accessed and the CPU is reading
+	if (cpu_d_addr[15:14] == 2'b10 && cpu_rden == 1'b1)
+	begin
+		// If the button state has changed and is pressed
+		if ((btn_fire_prev ^ btn_fire_cdc_2) & btn_fire_cdc_2)
+		begin
+			btn_pulse_fire <= 1'b1;
+		end
+		else
+		begin
+			btn_pulse_fire <= 1'b0;
+		end
+		// Then update the previous data FF
+		btn_fire_prev <= btn_fire_cdc_2;
+	end
+end
+
+assign user_input_state = {28'b0, btn_pulse_fire, btn_fire_cdc_2, btn_up_cdc_2, btn_down_cdc_2};
 
 // Memory map:
 // 0x00000000 - 0x00001fff => Video memory (Buffer 0)
