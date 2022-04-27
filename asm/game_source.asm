@@ -20,6 +20,8 @@
 ; Collision detection
 ; ~~Fast sprite draw (no fractional-word addressing)
 ; ~~Player motion
+; Death screen
+; Player getting hit detection (and life dec)
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -87,10 +89,25 @@
 ;VAR_MISSILES           RAM_BASE + 6    ; X2
 ;VAR_MISSILES           RAM_BASE + 7    ; Y2
 
+=VAR_ENEMY_FRAME        RAM_BASE + 8
+=VAR_ENEMY_COUNT        RAM_BASE + 9    ; Total enemies active on the screen
+=VAR_ENEMY              RAM_BASE + 10   ; X1
+;VAR_ENEMY              RAM_BASE + 11   ; Y1
+;VAR_ENEMY              RAM_BASE + 12   ; X2
+;VAR_ENEMY              RAM_BASE + 13   ; Y2
+;VAR_ENEMY              RAM_BASE + 14   ; X3
+;VAR_ENEMY              RAM_BASE + 15   ; Y3
+;VAR_ENEMY              RAM_BASE + 16   ; X4
+;VAR_ENEMY              RAM_BASE + 17   ; Y4
+
+
 ; Game constants
 =DEFAULT_LIVES          3
 =PLAYER_MIN_Y           24
 =PLAYER_MAX_Y           118
+=ENEMY_MIN_Y            24
+=ENEMY_MAX_Y            118
+=MAX_ENEMIES            4
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
@@ -100,6 +117,7 @@
 =SPX_PLAYER             8           ; PLAYER initial position (mid left)
 =SPY_PLAYER             0x40
 =SPX_MISSILE            8           ; MISSILE intitial position
+=SPX_ENEMY              0xf8        ; ENEMY initial position
 
 ; ENTRY POINT
     li RAM_BASE+RAM_SIZE-1      ; Init SP
@@ -189,6 +207,10 @@
     sw r0, r1
     li VAR_MISSILES + 2
     sw r0, r1
+    li 0                        ; No enemies initially
+    mov r1, r0
+    li VAR_ENEMY_COUNT
+    sw r0, r1
 
 
     ; Active Gameplay loop
@@ -253,7 +275,31 @@
     bfs C, active_draw_score    ; No, keep going
 
     ; Draw enemies
-    ; TODO!
+:active_draw_enemies:
+    li VAR_ENEMY_COUNT          ; Get total number of enemies currently active
+    lw r9, r0
+    mov r9, r9, Z
+    bfs Z, active_draw_missiles ; If no enemies to display, don't display them!
+    li VAR_ENEMY                ; Get enemy base address and save it for later
+    mov r8, r0
+    li SPRITE_ENEMY_DATA        ; Save enemy data pointer for later
+    mov r7, r0
+    li 1                        ; Save 1 for "math"
+    mov r6, r0
+:active_de_loop
+    mov r22, r7                 ; Data pointer
+    lw r20, r8                  ; Get X for enemy
+    ffl x
+    add r8, r8, r6              ; Inc pointer to get Y
+    lw r21, r8                  ; Get Y
+    jpl draw_sprite
+    ffl x
+    add r8, r8, r6              ; Inc pointer to get next sprite X
+
+    ffl c
+    sub r9, r9, r6, z           ; Dec loop index
+    bfc z, active_de_loop
+
     
     ; Draw Missiles
 :active_draw_missiles
@@ -304,44 +350,121 @@
     mov r22, r0
     jpl draw_sprite_fast        ; Can use FAST mode since the x-coord is a multiple of 8
 
-;     li 64                       ; Setup loop count
-;     mov r9, r0
-; :active_enemy_update
-;     jpl rng ; Random X, Y
-;     mov r1, r20
-;     li 0
-;     sw r0, r1
-;     jpl rng
-;     li 1
-;     sw r0, r20
-;     li 0xff
-;     and r20, r20, r0    ; Limit x range
-;     mov r21, r1
-;     li 0x7f ; Limit Y range to on screen
-;     and r21, r21, r0
-;     li SPRITE_ENEMY_DATA
-;     mov r22, r0
-;     jpl draw_sprite
-;     li 1
-;     ffl c
-;     sub r9, r9, r0, c           ; Done?
-;     bfs c, active_enemy_update  ; No, continue updating enemies
 
-
-    ; Only do screen updates once every 2 frames
 :active_frame_wait
+    jpl rng
     li VCORE_OFFSET
     lw r4, r0
     mov r4, r4, N
     bfs N, active_frame_wait    ; If it's the same frame, don't update player position
-    srl r4, r4, 7               ; Remove line number
-    li 0x01                     ; frame % 2
-    and r31, r4, r0, Z
+
+    ; Only do screen updates once every 2 frames
+    ; Sets update rate (commented since this is unneeded)
+    ; srl r4, r4, 7               ; Remove line number
+    ; li 0x01                     ; frame % 2
+    ; and r31, r4, r0, Z
     ; bfc Z, active_frame_wait    ; frame % 2 != 0 -> wait
+
+    li VAR_ENEMY_FRAME          ; Update enemy frame counter for determining when to spawn another enemy
+    lw r1, r0
+    li 1
+    ffl x
+    add r1, r1, r0
+    li VAR_ENEMY_FRAME
+    sw r0, r1                   
+    li 0x3f                     ; Update score (by 5 points) for staying alive for about second
+    and r1, r1, r0, z
+    bfc z, active_update_enemies
+    li 5                        ; Add 5 points
+    mov r20, r0
+    jpl update_score
     
     ; Update enemy positions
     ; If enemy gets past player, subtract points (5)
-    ; TODO!
+    ; Keep a count of the number of enemies active, start out with 1 and go up until MAX_ENEMIES
+:active_update_enemies
+    li VAR_ENEMY_COUNT          ; Get total number of enemies currently active
+    lw r9, r0
+    li MAX_ENEMIES
+    cmp r9, r0, C               ; Are all the possible enemies on the screen?
+    bfs c, active_ue_move       ; Yes, move them
+    li VAR_ENEMY_FRAME          ; No, is it time to spawn another?
+    lw r1, r0
+    li 0x3f
+    and r1, r1, r0, Z
+    bfc Z, active_ue_move       ; No, just update positions
+                                ; Yes, spawn another
+
+    li -1                       ; Used to check if the rng was entered via adding
+    mov r4, r0                  ; another enemy or regenerating an existing one
+
+:active_ue_rng_loop
+    jpl rng                     ; Get a random Y position
+    li 0x7f
+    and r20, r20, r0            ; mask off to keep within reasonable range (screen height)
+    li ENEMY_MIN_Y
+    cmp r20, r0, c              ; Is the random value out of range?
+    bfc c, active_ue_rng_loop   ; Yes, regenerate the number
+    li ENEMY_MAX_Y
+    cmp r20, r0, c              ; Is the random value out of range?
+    bfs c, active_ue_rng_loop   ; Yes, regenerate the number
+
+    sll r8, r9, 1               ; Multiply the enemy count by 2
+    li VAR_ENEMY                ; Add to base address of enemy array
+    ffl x
+    add r8, r8, r0
+
+    li SPX_ENEMY                ; Setup X start position
+    sw r8, r0
+    li 1
+    ffl x
+    add r8, r8, r0
+    sw r8, r20                  ; Save random Y position
+
+    mov r4, r4, N
+    bfc N, active_ue_loop       ; If entered from ue_move, don't change enemy count
+
+    li 1                        ; Increment the total enemies count
+    ffl x
+    add r9, r9, r0
+    li VAR_ENEMY_COUNT          ; And save the updated count
+    sw r0, r9
+
+    li 0                        ; Indicate that enemy rng call will be from move update, not spawning
+    mov r4, r0
+
+:active_ue_move
+    mov r6, r9, Z               ; If no enemies to display, don't update them!
+    bfs Z, active_update_missiles
+    li 0                        ; Setup index for rng callback
+    mov r9, r0
+    li VAR_ENEMY                ; Get enemy array base address and save it for later
+    mov r7, r0
+:active_ue_loop
+    lw r1, r7                   ; Get X for enemy
+    li 1
+    ffl c
+    sub r1, r1, r0, Z           ; Enemy moving toward player
+    bfc Z, active_ue_next       ; If not a edge of screen, update next
+    li 0x9999                   ; 10's complement of 10 has to be loaded in two separate operations
+    sll r1, r0, 16
+    li 0x9980
+    or r20, r1, r0
+    jpl update_score            ; Subtract 10 points from the score
+    jpl active_ue_rng_loop      ; Respawn the player if at edge of screen
+:active_ue_next
+    nop
+    sw r7, r1
+    li 2                        ; Inc pointer to next sprite's X value 
+    ffl x
+    add r7, r7, r0
+    li 1
+    ffl x
+    add r9, r9, r0
+    ffl c
+    sub r6, r6, r0, N           ; Dec loop index
+    bfc N, active_ue_loop
+
 
     ; Update missiles positions and check for collisions
     ; TODO: Still need to check for collisions (add 10 points for hit)
@@ -362,6 +485,10 @@
     mov r1, r0
     li VAR_MISSILES
     sw r0, r1
+    ; TODO: check for collisions
+    ; if there is a collision, make enemy negative and remove missile
+    ; make the draw enemy code conver the enemy into a fire ball
+
         ; Fallthrough to check for second missile
 :active_um_2
     li VAR_MISSILES + 2         ; Each slot is two words
@@ -380,6 +507,9 @@
     mov r1, r0
     li VAR_MISSILES + 2
     sw r0, r1
+    ; TODO: check for collisions
+    ; if there is a collision, make enemy negative and remove missile
+    ; make the draw enemy code conver the enemy into a fire ball
 
     ; Move the player if a button is pressed
 :active_input_check
@@ -448,7 +578,31 @@
     li 1                        ; Inc pointer to access Y value
     ffl x
     add r9, r9, r0
-    sw r9, r1                   
+    sw r9, r1       
+
+    ; ; DEBUG
+    ; li VAR_ENEMY
+    ; mov r1, r0
+    ; li 60
+    ; sw r1, r0
+    ; li VAR_ENEMY + 1
+    ; mov r1, r0
+    ; li 60
+    ; sw r1, r0
+    ; li VAR_ENEMY + 2
+    ; mov r1, r0
+    ; li 80
+    ; sw r1, r0
+    ; li VAR_ENEMY + 1 + 2
+    ; mov r1, r0
+    ; li 60
+    ; sw r1, r0
+    ; li VAR_ENEMY_COUNT
+    ; mov r1, r0
+    ; li 2
+    ; sw r1, r0
+    ; ; END DEBUG
+
     jpl active_loop
 
 
@@ -474,9 +628,13 @@
     li VAR_SCORE
     lw r10, r0
     ffl x
-    add r10, r10, r20
+    add r10, r10, r20, N
+    bfc N, update_score_dig0    ; If underflow (or realy good score, reset to 0)
+    li 0
+    mov r10, r0
     
     ; Go through all the digits and correct for binary-BCD conversion
+:update_score_dig0
     li 0xf
     mov r11, r0
     li 6
