@@ -8416,6 +8416,26 @@
     .word 0x0ffffff0
 
 
+    ; Sprite data - ./assets/missile.png
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x00fff0c0
+    .word 0x0fee0000
+    .word 0x076e0000
+    .word 0x0077f040
+    .word 0x00000000
+    .word 0x00000000
+    ; Sprite mask - ./assets/missile.png
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x00fffff0
+    .word 0x0fff0000
+    .word 0x0fff0000
+    .word 0x00fffff0
+    .word 0x00000000
+    .word 0x00000000
+
+
     ; Sprite data - ./assets/player_right1.png
     .word 0x00000000
     .word 0x00000ff0

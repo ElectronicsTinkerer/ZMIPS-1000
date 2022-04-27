@@ -16,10 +16,10 @@
 ; ~~Move background code to a function (pointers to from and to buffers)
 ; Enemy spawning
 ; ~~RNG
-; Firing of missiles (potatos)
+; ~~Firing of missiles (potatos)
 ; Collision detection
 ; ~~Fast sprite draw (no fractional-word addressing)
-; Player motion
+; ~~Player motion
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -63,19 +63,29 @@
 =SPRITE_ENEMY_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (20 * SPRITE_MASK_OFFSET)
 =SPRITE_ENEMY_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (21 * SPRITE_MASK_OFFSET)
 
-=SPRITE_PLAYER_DATA     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (22 * SPRITE_MASK_OFFSET)
-=SPRITE_PLAYER_MASK     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (23 * SPRITE_MASK_OFFSET)
+=SPRITE_MISSILE_DATA    GAME_DATA_BASE + (2 * SCREEN_WORDS) + (22 * SPRITE_MASK_OFFSET)
+=SPRITE_MISSILE_MASK    GAME_DATA_BASE + (2 * SCREEN_WORDS) + (23 * SPRITE_MASK_OFFSET)
+
+=SPRITE_PLAYER_DATA     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (24 * SPRITE_MASK_OFFSET)
+=SPRITE_PLAYER_MASK     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (25 * SPRITE_MASK_OFFSET)
 
 ; Controls
 =BTN_DOWN               1
 =BTN_UP                 2
 =BTN_FIRE               4
+=BTN_FIRE_PULSE         8
 
 ; Game variables
 =VAR_LIVES              RAM_BASE + 0
 =VAR_SCORE              RAM_BASE + 1
 =VAR_RNG_SEED           RAM_BASE + 2
 =VAR_PLAYER_Y           RAM_BASE + 3
+                                        ; If X is negative, (bit 31 set) then missile slot not in use
+                                        ; If X is positive, then missile slot represents y position of missile 
+=VAR_MISSILES           RAM_BASE + 4    ; X1 -> Size = 2 per missile (x, y)
+;VAR_MISSILES           RAM_BASE + 5    ; Y1
+;VAR_MISSILES           RAM_BASE + 6    ; X2
+;VAR_MISSILES           RAM_BASE + 7    ; Y2
 
 ; Game constants
 =DEFAULT_LIVES          3
@@ -87,8 +97,9 @@
 =SPY_LIVES              8
 =SPX_SCORE              0xb8        ; SCORE display location (top right)
 =SPY_SCORE              8   
-=SPY_PLAYER             0x40        ; PLAYER initial position (mid left)
-=SPX_PLAYER             8
+=SPX_PLAYER             8           ; PLAYER initial position (mid left)
+=SPY_PLAYER             0x40
+=SPX_MISSILE            8           ; MISSILE intitial position
 
 ; ENTRY POINT
     li RAM_BASE+RAM_SIZE-1      ; Init SP
@@ -146,7 +157,13 @@
     lw r4, r0                   ; Get player inputs
     li BTN_FIRE
     and r4, r4, r0, Z
-    bfc Z, title_draw_player    ; Loop until "FIRE" has been pressed
+    bfs Z, title_draw_player    ; Loop until "FIRE" has been pressed
+:title_start_check_release
+    li INPUT_OFFSET
+    lw r4, r0                   ; Get player inputs
+    li BTN_FIRE
+    and r4, r4, r0, Z
+    bfc Z, title_start_check_release    ; Loop until "FIRE" has been released
 
 
 :init_active_vars
@@ -166,6 +183,13 @@
     mov r1, r0
     li VAR_PLAYER_Y
     sw r0, r1
+    li -1                       ; Reset missile slots to be not active
+    mov r1, r0
+    li VAR_MISSILES
+    sw r0, r1
+    li VAR_MISSILES + 2
+    sw r0, r1
+
 
     ; Active Gameplay loop
 :active_loop
@@ -232,9 +256,34 @@
     ; TODO!
     
     ; Draw Missiles
-    ; TODO!
+:active_draw_missiles
+    li VAR_MISSILES             ; Check to if first missile is in use
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, active_dm_2          ; If slot not in use, don't display anything
+    li SPRITE_MISSILE_DATA      ; Otherwise, put sprite on to screen
+    mov r22, r0
+    li VAR_MISSILES             ; X
+    lw r20, r0
+    li VAR_MISSILES + 1         ; Y
+    lw r21, r0
+    jpl draw_sprite
+        ; Fallthrough to check for second missile
+:active_dm_2
+    li VAR_MISSILES + 2         ; Each slot is two words
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, active_draw_player   ; If slot not in use, ignore it
+    li SPRITE_MISSILE_DATA      ; Otherwise, put sprite on to screen
+    mov r22, r0
+    li VAR_MISSILES + 2         ; X
+    lw r20, r0
+    li VAR_MISSILES + 3         ; Y
+    lw r21, r0
+    jpl draw_sprite
     
     ; Draw player
+:active_draw_player
     li SPX_PLAYER               ; Setup player location
     mov r20, r0
     li VAR_PLAYER_Y
@@ -291,23 +340,60 @@
     ; bfc Z, active_frame_wait    ; frame % 2 != 0 -> wait
     
     ; Update enemy positions
+    ; If enemy gets past player, subtract points (5)
     ; TODO!
 
     ; Update missiles positions and check for collisions
-    ; TODO!
-    
+    ; TODO: Still need to check for collisions (add 10 points for hit)
+:active_update_missiles
+    li VAR_MISSILES             ; Check to if first missile is in use
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, active_um_2          ; If slot not in use, don't update it
+    li 2
+    ffl x
+    add r1, r1, r0
+    li VAR_MISSILES             ; Save back result
+    sw r0, r1
+    li LINE_WIDTH*8-8           ; Has the missile gone past the end of the frame?
+    cmp r1, r0, C           
+    bfc C, active_um_2          ; No, check the other
+    li -1                       ; Reset missile slot to be not active
+    mov r1, r0
+    li VAR_MISSILES
+    sw r0, r1
+        ; Fallthrough to check for second missile
+:active_um_2
+    li VAR_MISSILES + 2         ; Each slot is two words
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, active_input_check   ; If slot not in use, ignore it
+    li 2
+    ffl x
+    add r1, r1, r0
+    li VAR_MISSILES + 2         ; Save back result
+    sw r0, r1
+    li LINE_WIDTH*8-8           ; Has the missile gone past the end of the frame?
+    cmp r1, r0, C           
+    bfc C, active_input_check   ; No, check the other
+    li -1                       ; Reset missile slot to be not active
+    mov r1, r0
+    li VAR_MISSILES + 2
+    sw r0, r1
+
     ; Move the player if a button is pressed
+:active_input_check
     li INPUT_OFFSET
     lw r4, r0
     li BTN_UP                   ; Move Up?
     and r31, r4, r0, Z          
-    bfs Z, active_move_up
+    bfc Z, active_move_up
     li BTN_DOWN                 ; Move Down?
     and r31, r4, r0, Z          
-    bfs Z, active_move_down
-    li BTN_FIRE                 ; Fire?
+    bfc Z, active_move_down
+    li BTN_FIRE_PULSE           ; Fire?
     and r31, r4, r0, Z          
-    bfs Z, active_player_fire
+    bfc Z, active_player_fire
 
     ; No action from player, update screen
     jpl active_loop
@@ -336,13 +422,33 @@
     sw r0, r1                   ; Save result
         ; Fallthrough
 :active_move_check_fire
-    li BTN_FIRE                 ; Fire? (Check again in case the player is moving and firing)
+    li BTN_FIRE_PULSE           ; Fire? (Check again in case the player is moving and firing)
     and r31, r4, r0, Z          
-    bfs Z, active_player_fire
+    bfc Z, active_player_fire
     jpl active_loop
 
 :active_player_fire
-    ; TODO!
+    li VAR_MISSILES             ; Check to if both missiles are in use
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, active_missile       ; If slot not in use, use it
+    li VAR_MISSILES + 2         ; Each slot is two words
+    lw r1, r0
+    mov r1, r1, N
+    bfs N, active_missile       ; If slot not in use, use it
+    jpl active_loop             ; No slot found, don't fire
+
+    ; r0 contains the address of the missile to use
+:active_missile
+    mov r9, r0                  ; Save missile pointer
+    li SPX_PLAYER               ; Set missile to player X
+    sw r9, r0
+    li VAR_PLAYER_Y             ; And to the player Y
+    lw r1, r0
+    li 1                        ; Inc pointer to access Y value
+    ffl x
+    add r9, r9, r0
+    sw r9, r1                   
     jpl active_loop
 
 

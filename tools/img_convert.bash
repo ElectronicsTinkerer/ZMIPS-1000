@@ -19,6 +19,7 @@ ASSETS_SRC=(\
 		number9.png \
 		number10.png \
 		enemy.png \
+		missile.png \
 		player_right1.png \
 		player_right2.png \
 )
@@ -26,6 +27,7 @@ ASSETS_SRC=(\
 ASSETS_FLGS=(\
 		--nomask \
 		--nomask \
+		-- \
 		-- \
 		-- \
 		-- \
