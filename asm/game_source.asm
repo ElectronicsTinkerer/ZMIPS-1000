@@ -117,7 +117,7 @@
 =TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
 =TOLERANCE_MEX          5           ; Tolerance for missile-enemy collision checking (x-axis)
 =TOLERANCE_MEY          7           ; Tolerance for missile-enemy collision checking (y-axis)
-=POINTS_HIT             0x50        ; In BCD
+=POINTS_HIT             0x100       ; In BCD
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
@@ -410,7 +410,7 @@
     
     ; Update enemy positions
     ; If enemy gets past player, subtract points (5)
-    ; Keep a count of the number of enemies active, start out with 1 and go up until MAX_ENEMIES
+    ; Keep a count of the number of enemies active, start out with 0 and go up until MAX_ENEMIES
 :active_update_enemies
     li VAR_ENEMY_COUNT          ; Get total number of enemies currently active
     lw r9, r0
@@ -565,6 +565,8 @@
     add r9, r9, r8              ; Add index to the base of the array
 :active_um_1_collision_loop
     lw r1, r9                   ; Get enemy X value
+    li VAR_MISSILES             ; Get missile X value
+    lw r2, r0
     sub r1, r2, r1, N           ; Get X distance between enemy and missile
     bfc N, active_um_1_cl_xpos  ; Correct sign if negative
     li 0
@@ -603,47 +605,46 @@
 
     ; TODO: Signal explosion to drawing code
 
-    ; Move all the missliles over in the array (remove current missile)
-    ffl x                       ; + 1
-    li VAR_ENEMY_COUNT          ; Get enemy count
-    lw r3, r0
-    li -1                       ; Correct for zero-indexed array
-    add r5, r3, r0, Z
-    bfs Z, active_um_1_update_count ; If only 1 enemy, don't bother updating array
-    li VAR_ENEMY                ; Get array base
-    sll r5, r5, 1               ; Multiply count to get index into array
-    add r5, r5, r0              ; And add base to the index
-    nop
-:active_um_1_remove_enemy_loop
-    li -1                       ; Subtract 1 to get Y
-    ffl x
-    add r5, r5, r0
-    ; nop
-    li 2                        ; Get "FROM" address
-    ; ffl x
-    add r4, r5, r0
-    lw r1, r4                   ; Y value
-    sw r5, r1                   ; Move data value
-    li -1                       ; Subtract 1 to get X
-    ; ffl x
-    add r5, r5, r0
-    li -2                        ; Get "FROM" address
-    ; ffl x
-    add r4, r4, r0              
-    lw r1, r4
-    sw r5, r1                   ; Move data value
-    cmp r9, r5, C               ; Done?
-    bfc C, active_um_1_remove_enemy_loop ; No, keep moving enemies
+        ; Move all the missliles over in the array (remove current missile)
+        li VAR_ENEMY_COUNT          ; Get enemy count
+        ffl c
+        lw r3, r0                   ; r3 later used for updating active enemy count
+        li 1
+        sub r5, r3, r0
+        sll r5, r5, 1, Z            ; Multiply count to get index into array
+        bfs Z, active_um_1_update_count ; If only 1 enemy, don't bother updating array
+        add r5, r5, r8              ; Add enemy array base to the index 
+                                    ; r5 should now be the last X memory location
+                                    ; in the array
+        mov r7, r9                  ; Make copy of enemy array pointer
+        li 2
+        ffl x   
+        add r6, r7, r0              ; Setup "TO" address
+        li 1
+    :active_um_1_remove_enemy_loop
+        cmp r7, r5, c               ; Are we done? (at the end of the array)
+        bfs c, active_um_1_update_count ; Yes, update count
+            ; No, keep moving enemies
+        lw r1, r6
+        add r6, r6, r0
+        lw r2, r6
+        add r6, r6, r0
+        sw r7, r1
+        add r7, r7, r0
+        sw r7, r2
+        add r7, r7, r0              ; Inc pointers
+        nop
+        jpl active_um_1_remove_enemy_loop
 
-:active_um_1_update_count
-    ffl x
-    li -1                       ; Subtract 1 from enemy count
-    add r3, r3, r0
-    li VAR_ENEMY_COUNT          ; And save count
-    sw r0, r3
+    :active_um_1_update_count
+        li 1                        ; Subtract 1 from enemy count
+        ffl c
+        sub r3, r3, r0
+        li VAR_ENEMY_COUNT          ; And save count
+        sw r0, r3
 
-    ; Don't check the other enemies
-    jpl active_um_1_reset
+        ; Don't check the other enemies
+        jpl active_um_1_reset
 
 :active_um_1_continue
     li 2                        ; Next enemy
@@ -658,7 +659,7 @@
     mov r1, r0
     li VAR_MISSILES
     sw r0, r1
-        ; Fallthrough to check for second missile
+        ; Fallthrough to update and check second missile
 :active_um_2
     li VAR_MISSILES + 2         ; Each slot is two words
     lw r1, r0
@@ -671,14 +672,18 @@
     sw r0, r1
     li LINE_WIDTH*8-8           ; Has the missile gone past the end of the frame?
     cmp r1, r0, C           
-    bfc C, active_input_check   ; No, check the other
+    bfs C, active_um_2_reset   ; Yes, reset missile slot
+        ; No, check for collisions
+    li VAR_MISSILES + 2
+    mov r20, r0
+    jpl collision_check_me
+    jpl active_input_check
+    
+:active_um_2_reset
     li -1                       ; Reset missile slot to be not active
     mov r1, r0
     li VAR_MISSILES + 2
     sw r0, r1
-    ; TODO: check for collisions
-    ; if there is a collision, make enemy negative and remove missile
-    ; make the draw enemy code conver the enemy into a fire ball
 
     ; Move the player if a button is pressed
 :active_input_check
@@ -777,7 +782,141 @@
 ;             HELPER FUNCTIONS
 ; ------------------------------------------------------------------
 
+; Check for collisions between a missile and an enemy
+; Args:
+;   r20 - Missile X address
+; Regs:
+;   r0, r10..r19
+; Return:
+;   Will modify state vars for the specified missile if a collision is detected
+;   Also will modify state vars for enemy array if collision is detected
+;   NONE
+; Details:
+;   * loop over enemies
+;   * compare x and y values
+;   * if collision detected, shift all enemies down one slot and dec enemy count and free missile
+:collision_check_me
+    sw r29, r30                 ; Save return address
+    li -1
+    ffl x
+    add r29, r29, r0
 
+    li VAR_ENEMY_COUNT          ; Get enemy count
+    lw r19, r0
+    mov r19, r19, Z
+    bfs Z, collision_me_done    ; If no enemies on screen, don't check for collisions
+    li 1                        ; Correct for zero-indexed array
+    ffl c
+    sub r19, r19, r0
+    sll r19, r19, 1             ; Multiply enemy count by 2 for indexing into enemy array
+    li VAR_ENEMY
+    mov r18, r0                 ; Save enemy array base address for done checking
+    ffl x
+    add r19, r19, r18           ; Add index to the base of the array
+:collision_me_loop
+    lw r11, r19                 ; Get enemy X value
+    lw r12, r20                 ; Get missile X value
+    sub r11, r12, r11, N        ; Get X distance between enemy and missile
+    bfc N, collision_me_cl_xpos ; Correct sign if negative
+    li 0
+    ffl c
+    sub r11, r0, r11
+:collision_me_cl_xpos
+    li TOLERANCE_MEX            ; Check tolerance
+    cmp r0, r11, c
+    bfc c, collision_me_continue ; Out of tolerance, check next
+        ; In tolerance, check Y positions
+
+    li 1                        ; Get missile Y value
+    ffl x
+    add r10, r20, r0
+    lw r12, r10
+    li 1                        ; Inc pointer to Y value of enemy
+    ffl x
+    add r13, r19, r0
+    lw r11, r13                 ; Get enemy Y
+    sub r11, r12, r11, N        ; Get Y distance between enemy and missile
+    bfc N, collision_me_cl_ypos ; Correct sign if negative
+    li 0
+    ffl c
+    sub r11, r0, r11
+:collision_me_cl_ypos
+    li TOLERANCE_MEY            ; Check tolerance
+    cmp r0, r11, c
+    bfc c, collision_me_continue ; Out of tolerance, check next
+
+    li POINTS_HIT*0x100               ; Update score
+    mov r14, r20                ; But save Missile X position first
+    mov r20, r0
+    jpl update_score
+    mov r20, r14                ; And restore X position
+
+    li -1                       ; Free missile slot
+    sw r20, r0
+
+    ; TODO: Signal explosion to drawing code
+
+    ;     ; Move all the missliles over in the array (remove current missile)
+    ;     li VAR_ENEMY_COUNT          ; Get enemy count
+    ;     ffl c
+    ;     lw r13, r0                  ; r3 later used for updating active enemy count
+    ;     li 1
+    ;     sub r15, r13, r0
+    ;     sll r15, r15, 1, Z          ; Multiply count to get index into array
+    ;     bfs Z, collision_me_update_count ; If only 1 enemy, don't bother updating array
+    ;     add r15, r15, r18           ; Add enemy array base to the index 
+    ;                                 ; r5 should now be the last X memory location
+    ;                                 ; in the array
+    ;     mov r17, r19                ; Make copy of enemy array pointer
+    ;     li 2
+    ;     ffl x   
+    ;     add r16, r17, r0            ; Setup "TO" address
+    ;     li 1
+    ; :collision_me_remove_enemy_loop
+    ;     cmp r17, r15, c             ; Are we done? (at the end of the array)
+    ;     bfs c, collision_me_update_count ; Yes, update count
+    ;         ; No, keep moving enemies
+    ;     lw r11, r16
+    ;     add r16, r16, r0
+    ;     lw r12, r16
+    ;     add r16, r16, r0
+    ;     sw r17, r11
+    ;     add r17, r17, r0
+    ;     sw r17, r12
+    ;     add r17, r17, r0            ; Inc pointers
+    ;     nop
+    ;     jpl collision_me_remove_enemy_loop
+
+    ; :collision_me_update_count
+    ;     li 1                        ; Subtract 1 from enemy count
+    ;     ffl c
+    ;     sub r13, r13, r0
+    ;     li VAR_ENEMY_COUNT          ; And save count
+    ;     sw r0, r13
+
+    ;     ; Don't check the other enemies
+    ;     jpl collision_me_reset
+
+:collision_me_continue
+    li 2                        ; Next enemy
+    ffl c
+    sub r19, r19, r0
+    cmp r19, r18, c             ; Done?
+    bfs c, collision_me_loop
+    jpl collision_me_done
+    
+:collision_me_reset
+    li -1                       ; Reset missile slot to be not active
+    mov r11, r0
+    sw r20, r11
+
+:collision_me_done
+    li 1                        ; Return
+    ffl x
+    add r29, r29, r0
+    lw r0, r29
+    jmp r0
+:
 ; Add a value to the score
 ; Args:
 ;   r20 - Value to be added to the score (in BCD)
