@@ -22,7 +22,11 @@
 ; ~~Player motion
 ; Death screen
 ; ~Player getting hit detection (and life dec)
+
+; OPTIONAL TODO:
 ; Remake title screen
+; Player explosions
+; Enemy explosions
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -111,6 +115,9 @@
 =MAX_ENEMIES            4
 =TOLERANCE_PEX          5           ; Tolerance for player-enemy collision checking (x-axis)
 =TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
+=TOLERANCE_MEX          5           ; Tolerance for missile-enemy collision checking (x-axis)
+=TOLERANCE_MEY          7           ; Tolerance for missile-enemy collision checking (y-axis)
+=POINTS_HIT             0x50        ; In BCD
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
@@ -497,7 +504,6 @@
     lw r2, r1                   ; Get the Y value
     li VAR_PLAYER_Y             ; Get player Y value
     lw r1, r0
-    ; li 0x40
     ffl c                       ; Difference between values
     sub r2, r2, r1, N
     bfc N, active_ue_player_collision
@@ -507,7 +513,7 @@
 :active_ue_player_collision
     li TOLERANCE_PEY
     cmp r0, r2, c
-    bfs c, active_player_hit    ; If within size, player is hit
+    ; bfs c, active_player_hit    ; If within size, player is hit
 
         ; Otherwise, keep updating enemy positions
 :active_ue_update_continue
@@ -524,28 +530,134 @@
 
 
     ; Update missiles positions and check for collisions
-    ; TODO: Still need to check for collisions (add 10 points for hit)
 :active_update_missiles
     li VAR_MISSILES             ; Check to if first missile is in use
-    lw r1, r0
-    mov r1, r1, N
+    lw r2, r0
+    mov r2, r2, N
     bfs N, active_um_2          ; If slot not in use, don't update it
-    li 2
+    li 2                        ; Otherwise, move it 2 pixels to the right
     ffl x
-    add r1, r1, r0
+    add r2, r2, r0
     li VAR_MISSILES             ; Save back result
-    sw r0, r1
+    sw r0, r2
     li LINE_WIDTH*8-8           ; Has the missile gone past the end of the frame?
-    cmp r1, r0, C           
-    bfc C, active_um_2          ; No, check the other
+    cmp r2, r0, C           
+    bfs C, active_um_1_reset    ; Yes, reset missile slot
+        ; No - check for collisions
+    ; if there is a collision, make enemy negative and remove missile
+    ; The Missile's X value is currently in r2
+
+    ; loop over enemies
+    ; compare x and y values
+    ; if collision detected, shift all enemies down one slot and dec enemy count
+    
+    li VAR_ENEMY_COUNT          ; Get enemy count
+    lw r9, r0
+    mov r9, r9, Z
+    bfs Z, active_um_2          ; If no enemies on screen, don't check for collisions
+    li 1                        ; Correct for zero-indexed array
+    ffl c
+    sub r9, r9, r0
+    sll r9, r9, 1               ; Multiply enemy count by 2 for indexing into enemy array
+    li VAR_ENEMY
+    mov r8, r0                  ; Save enemy array base address for done checking
+    ffl x
+    add r9, r9, r8              ; Add index to the base of the array
+:active_um_1_collision_loop
+    lw r1, r9                   ; Get enemy X value
+    sub r1, r2, r1, N           ; Get X distance between enemy and missile
+    bfc N, active_um_1_cl_xpos  ; Correct sign if negative
+    li 0
+    ffl c
+    sub r1, r0, r1
+:active_um_1_cl_xpos
+    li TOLERANCE_MEX            ; Check tolerance
+    cmp r0, r1, c
+    bfc c, active_um_1_continue ; Out of tolerance, check next
+        ; In tolerance, check Y positions
+
+    li VAR_MISSILES + 1         ; Get missile Y value
+    lw r2, r0
+    li 1                        ; Inc pointer to Y value of enemy
+    ffl x
+    add r3, r9, r0
+    lw r1, r3                   ; Get enemy Y
+    sub r1, r2, r1, N           ; Get Y distance between enemy and missile
+    bfc N, active_um_1_cl_ypos  ; Correct sign if negative
+    li 0
+    ffl c
+    sub r1, r0, r1
+:active_um_1_cl_ypos
+    li TOLERANCE_MEY            ; Check tolerance
+    cmp r0, r1, c
+    bfc c, active_um_1_continue ; Out of tolerance, check next
+
+    li POINTS_HIT               ; Update score
+    mov r20, r0
+    jpl update_score
+
+    li VAR_MISSILES             ; Free missile slot
+    mov r1, r0
+    li -1
+    sw r1, r0
+
+    ; TODO: Signal explosion to drawing code
+
+    ; Move all the missliles over in the array (remove current missile)
+    ffl x                       ; + 1
+    li VAR_ENEMY_COUNT          ; Get enemy count
+    lw r3, r0
+    li -1                       ; Correct for zero-indexed array
+    add r5, r3, r0, Z
+    bfs Z, active_um_1_update_count ; If only 1 enemy, don't bother updating array
+    li VAR_ENEMY                ; Get array base
+    sll r5, r5, 1               ; Multiply count to get index into array
+    add r5, r5, r0              ; And add base to the index
+    nop
+:active_um_1_remove_enemy_loop
+    li -1                       ; Subtract 1 to get Y
+    ffl x
+    add r5, r5, r0
+    ; nop
+    li 2                        ; Get "FROM" address
+    ; ffl x
+    add r4, r5, r0
+    lw r1, r4                   ; Y value
+    sw r5, r1                   ; Move data value
+    li -1                       ; Subtract 1 to get X
+    ; ffl x
+    add r5, r5, r0
+    li -2                        ; Get "FROM" address
+    ; ffl x
+    add r4, r4, r0              
+    lw r1, r4
+    sw r5, r1                   ; Move data value
+    cmp r9, r5, C               ; Done?
+    bfc C, active_um_1_remove_enemy_loop ; No, keep moving enemies
+
+:active_um_1_update_count
+    ffl x
+    li -1                       ; Subtract 1 from enemy count
+    add r3, r3, r0
+    li VAR_ENEMY_COUNT          ; And save count
+    sw r0, r3
+
+    ; Don't check the other enemies
+    jpl active_um_1_reset
+
+:active_um_1_continue
+    li 2                        ; Next enemy
+    ffl c
+    sub r9, r9, r0
+    cmp r9, r8, c               ; Done?
+    bfs c, active_um_1_collision_loop
+    jpl active_um_2
+    
+:active_um_1_reset
     li -1                       ; Reset missile slot to be not active
     mov r1, r0
     li VAR_MISSILES
     sw r0, r1
-    ; TODO: check for collisions
-    ; if there is a collision, make enemy negative and remove missile
-    ; make the draw enemy code conver the enemy into a fire ball
-
         ; Fallthrough to check for second missile
 :active_um_2
     li VAR_MISSILES + 2         ; Each slot is two words
