@@ -131,7 +131,7 @@
 
 
 ; Game constants
-=DEFAULT_LIVES          3
+=DEFAULT_LIVES          0
 =PLAYER_MIN_Y           24
 =PLAYER_MAX_Y           118
 =ENEMY_MIN_Y            24
@@ -734,6 +734,13 @@
     cmp r9, r8, C               ; Are we done?
     bfs C, dead_splash_loop     ; No, keep going
 
+    li 0x800000
+    mov r1, r0
+:dead_delay
+    li 1
+    ffl c
+    sub r1, r1, r0, Z
+    bfc Z, dead_delay
 
 :dead_screen_loop
     li INPUT_OFFSET

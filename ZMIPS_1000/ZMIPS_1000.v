@@ -232,9 +232,9 @@ end
 assign vcore_state = {vcore_new_frame, 18'b0, vcore_frame_num_cdc_2, line_num_cdc_2};
 
 // USER INPUTS
-assign btn_down = !KEY[0]; // | GPIO[0];
-assign btn_up   = !KEY[1]; // | GPIO[1];
-assign btn_fire = !KEY[2]; // | GPIO[2];
+assign btn_down = !KEY[0] | GPIO[0];
+assign btn_up   = !KEY[1] | GPIO[1];
+assign btn_fire = !KEY[2] | GPIO[2];
 
 // User interface CDC
 always @(posedge cpu_clk)

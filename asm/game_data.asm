@@ -8566,14 +8566,14 @@
     .word 0x00cccc00
     .word 0x00000000
     ; Sprite mask - ./assets/dead1.png
-    .word 0x0ffffff0
     .word 0xfffffff0
     .word 0xfffffff0
-    .word 0xfff0fff0
-    .word 0xfff0fff0
     .word 0xfffffff0
     .word 0xfffffff0
-    .word 0x0ffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
+    .word 0xfffffff0
 
 
     ; Sprite data - ./assets/dead2.png
@@ -8586,14 +8586,14 @@
     .word 0x00cccc00
     .word 0x00000000
     ; Sprite mask - ./assets/dead2.png
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0x00fffff0
-    .word 0x00fffff0
-    .word 0x0ffffff0
-    .word 0x0ffffff0
-    .word 0x0ffffff0
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
 
 
     ; Sprite data - ./assets/dead3.png
@@ -8606,14 +8606,14 @@
     .word 0x0c000c00
     .word 0x00000000
     ; Sprite mask - ./assets/dead3.png
-    .word 0x0fffff00
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0xfff0fff0
-    .word 0xfff0fff0
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
 
 
     ; Sprite data - ./assets/dead4.png
@@ -8626,14 +8626,14 @@
     .word 0x00cccc00
     .word 0x00000000
     ; Sprite mask - ./assets/dead4.png
-    .word 0x0ffffff0
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0xfff0fff0
-    .word 0xfff0fff0
-    .word 0xfffffff0
-    .word 0xfffffff0
-    .word 0x0ffffff0
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
 
 
     ; Sprite data - ./assets/dead5.png
@@ -8646,13 +8646,13 @@
     .word 0x00000c00
     .word 0x00000000
     ; Sprite mask - ./assets/dead5.png
-    .word 0x0000fff0
-    .word 0x0000fff0
-    .word 0x0000fff0
-    .word 0x0000fff0
-    .word 0x0000fff0
-    .word 0x0000fff0
-    .word 0x0000fff0
-    .word 0x0000fff0
+    .word 0x0000ffff
+    .word 0x0000ffff
+    .word 0x0000ffff
+    .word 0x0000ffff
+    .word 0x0000ffff
+    .word 0x0000ffff
+    .word 0x0000ffff
+    .word 0x0000ffff
 
 
