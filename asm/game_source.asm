@@ -131,7 +131,7 @@
 
 
 ; Game constants
-=DEFAULT_LIVES          0
+=DEFAULT_LIVES          3
 =PLAYER_MIN_Y           24
 =PLAYER_MAX_Y           118
 =ENEMY_MIN_Y            24
