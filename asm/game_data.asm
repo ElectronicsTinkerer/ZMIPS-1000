@@ -8476,6 +8476,86 @@
     .word 0x0000ffff
 
 
+    ; Sprite data - ./assets/player_thrust1.png
+    .word 0x00000000
+    .word 0x0ee76b00
+    .word 0x0e6ec640
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x0ecb76c0
+    .word 0x0ee6e600
+    .word 0x00000000
+    ; Sprite mask - ./assets/player_thrust1.png
+    .word 0x00000000
+    .word 0x0fffff00
+    .word 0x0ffffff0
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x0ffffff0
+    .word 0x0fffff00
+    .word 0x00000000
+
+
+    ; Sprite data - ./assets/player_thrust2.png
+    .word 0x00000000
+    .word 0x00ee7600
+    .word 0x0ee6ec60
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x0eecb760
+    .word 0x00ee6e00
+    .word 0x00000000
+    ; Sprite mask - ./assets/player_thrust2.png
+    .word 0x00000000
+    .word 0x00ffff00
+    .word 0x0ffffff0
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x0ffffff0
+    .word 0x00ffff00
+    .word 0x00000000
+
+
+    ; Sprite data - ./assets/player_thrust3.png
+    .word 0x00000000
+    .word 0x0eece700
+    .word 0x00eb6ec0
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x00cecb70
+    .word 0x0e0ce600
+    .word 0x00000000
+    ; Sprite mask - ./assets/player_thrust3.png
+    .word 0x00000000
+    .word 0x0fffff00
+    .word 0x00fffff0
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x00fffff0
+    .word 0x0f0fff00
+    .word 0x00000000
+
+
+    ; Sprite data - ./assets/player_thrust4.png
+    .word 0x00000000
+    .word 0x007ece00
+    .word 0x0eeeb6e0
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x007cecb0
+    .word 0x07eece00
+    .word 0x00000000
+    ; Sprite mask - ./assets/player_thrust4.png
+    .word 0x00000000
+    .word 0x00ffff00
+    .word 0x0ffffff0
+    .word 0x00000000
+    .word 0x00000000
+    .word 0x00fffff0
+    .word 0x0fffff00
+    .word 0x00000000
+
+
     ; Sprite data - ./assets/dead1.png
     .word 0x00000000
     .word 0x00cccc00
