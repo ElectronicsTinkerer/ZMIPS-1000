@@ -76,6 +76,20 @@
 
 =SPRITE_PLAYER_DATA     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (24 * SPRITE_MASK_OFFSET)
 =SPRITE_PLAYER_MASK     GAME_DATA_BASE + (2 * SCREEN_WORDS) + (25 * SPRITE_MASK_OFFSET)
+=SPRITE_PLAYER2_DATA    GAME_DATA_BASE + (2 * SCREEN_WORDS) + (26 * SPRITE_MASK_OFFSET)
+=SPRITE_PLAYER2_MASK    GAME_DATA_BASE + (2 * SCREEN_WORDS) + (27 * SPRITE_MASK_OFFSET)
+
+=SPRITE_DEAD0_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (28 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD0_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (29 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD1_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (30 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD1_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (31 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD2_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (32 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD2_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (33 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD3_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (34 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD3_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (35 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD4_DATA      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (36 * SPRITE_MASK_OFFSET)
+=SPRITE_DEAD4_MASK      GAME_DATA_BASE + (2 * SCREEN_WORDS) + (37 * SPRITE_MASK_OFFSET)
+
 
 ; Controls
 =BTN_DOWN               1
@@ -129,6 +143,8 @@
 =SPY_PLAYER             0x40
 =SPX_MISSILE            16          ; MISSILE intitial position
 =SPX_ENEMY              0xf8        ; ENEMY initial position
+=SPX_DEAD               0x6e        ; DEAD text x start location
+=SPY_DEAD               0x3c        ; DEAD top Y
 
 ; ENTRY POINT
     li RAM_BASE+RAM_SIZE-1      ; Init SP
@@ -665,7 +681,38 @@
 
 
 :dead_screen
-    ; TODO
+    ; Draw the "DEAD!" message to the screen
+    li SPX_DEAD                 ; Get base location for text
+    mov r8, r0
+    li (5-1)*8                  ; 5 sprites wide, 8 pixels each
+    ffl x
+    add r9, r8, r0              ; Setup X location
+    li SPY_DEAD
+    mov r7, r0
+    li SPRITE_DEAD4_DATA       ; Get data pointer
+    mov r6, r0
+:dead_splash_loop
+    mov r22, r6
+    mov r21, r7
+    mov r20, r9
+    jpl draw_sprite
+    ffl c
+    li 16
+    sub r6, r6, r0              ; Move pointer
+    li 8
+    sub r9, r9, r0              ; Next character
+    cmp r9, r8, C               ; Are we done?
+    bfs C, dead_splash_loop     ; No, keep going
+
+
+:dead_screen_loop
+    li INPUT_OFFSET
+    lw r4, r0
+    li BTN_FIRE_PULSE           ; Fire?
+    and r31, r4, r0, Z          
+    bfs Z, dead_screen_loop     ; No, keep checking
+        ; Yes, restart game
+    jpl init_active_vars
 
 
 :spin

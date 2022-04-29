@@ -22,11 +22,21 @@ ASSETS_SRC=(\
 		missile.png \
 		player_right1.png \
 		player_right2.png \
+		dead1.png \
+		dead2.png \
+		dead3.png \
+		dead4.png \
+		dead5.png \
 )
 
 ASSETS_FLGS=(\
 		--nomask \
 		--nomask \
+		-- \
+		-- \
+		-- \
+		-- \
+		-- \
 		-- \
 		-- \
 		-- \
