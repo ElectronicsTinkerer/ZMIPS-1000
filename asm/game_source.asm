@@ -17,7 +17,7 @@
 ; ~~Enemy spawning
 ; ~~RNG
 ; ~~Firing of missiles (potatos)
-; Collision detection (missile/enemy)
+; ~~Collision detection (missile/enemy)
 ; ~~Fast sprite draw (no fractional-word addressing)
 ; ~~Player motion
 ; Death screen
@@ -27,6 +27,7 @@
 ; Remake title screen
 ; Player explosions
 ; Enemy explosions
+; Player "thruster" animation
 
 ; DEFINES
 =SCREEN_BASE            0x0000
@@ -269,7 +270,6 @@
 
 
     ; Draw score
-    ; TODO: When player has 0 lives, the last digit of the score is shifted down 1 pixel
 :active_draw_score
     li 8*(8-1)+SPX_SCORE        ; 8 score digits to display (each 8 pixels wide, zero indexed (-1))
     mov r9, r0                  ; Setup loop index
@@ -286,7 +286,7 @@
 :active_ds_loop
     mov r21, r2                 ; Y position of sprite
     mov r20, r9                 ; X position
-    and r0, r8, r3              ; Mask off first digit
+    and r0, r8, r3, C           ; Mask off first digit (and reset carry)
     sll r0, r0, 4               ; Multiply index by 16 (the amount of data per number sprite)
     add r22, r4, r0             ; Setup pointer to correct number sprite
     jpl draw_sprite_fast        ; Display number
@@ -513,7 +513,7 @@
 :active_ue_player_collision
     li TOLERANCE_PEY
     cmp r0, r2, c
-    ; bfs c, active_player_hit    ; If within size, player is hit
+    bfs c, active_player_hit    ; If within size, player is hit
 
         ; Otherwise, keep updating enemy positions
 :active_ue_update_continue
@@ -1155,7 +1155,7 @@
     li LINE_WIDTH
     mov r20, r0
     jpl mult            ; Result in r20
-    
+
     ; Determine line index
     srl r21, r14, 3     ; Divide out pixel number
     ffl X               ; Clear C
@@ -1178,7 +1178,7 @@
     li 1
     add r22, r22, r0    ; Increment sprite data pointer
     lw r12, r22         ; Get the sprite's line of data
-    ffl x
+    ; ffl x
     li SPRITE_MASK_OFFSET
     add r0, r22, r0
     lw r13, r0          ; Get the sprite's corresponding line mask
