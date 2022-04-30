@@ -32,11 +32,19 @@ ASSETS_SRC=(\
 		dead3.png \
 		dead4.png \
 		dead5.png \
+		explosion1.png \
+		explosion2.png \
+		explosion3.png \
+		explosion4.png
 )
 
 ASSETS_FLGS=(\
 		--nomask \
 		--nomask \
+		-- \
+		-- \
+		-- \
+		-- \
 		-- \
 		-- \
 		-- \

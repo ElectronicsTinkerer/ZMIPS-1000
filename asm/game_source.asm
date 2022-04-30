@@ -26,7 +26,7 @@
 ; OPTIONAL TODO:
 ; ~~Remake title screen
 ; Player explosions
-; Enemy explosions
+; ~~Enemy explosions
 ; ~~Player "thruster" animation
 ; ~~Animate enemy
 
@@ -102,6 +102,14 @@
 =SPRITE_DEAD4_DATA              GAME_DATA_BASE + (2 * SCREEN_WORDS) + (46 * SPRITE_MASK_OFFSET)
 =SPRITE_DEAD4_MASK              GAME_DATA_BASE + (2 * SCREEN_WORDS) + (47 * SPRITE_MASK_OFFSET)
 
+=SPRITE_EXPLOSION1_DATA         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (48 * SPRITE_MASK_OFFSET)
+=SPRITE_EXPLOSION1_MASK         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (49 * SPRITE_MASK_OFFSET)
+;SPRITE_EXPLOSION2_DATA         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (50 * SPRITE_MASK_OFFSET)
+;SPRITE_EXPLOSION2_MASK         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (51 * SPRITE_MASK_OFFSET)
+;SPRITE_EXPLOSION3_DATA         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (52 * SPRITE_MASK_OFFSET)
+;SPRITE_EXPLOSION3_MASK         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (53 * SPRITE_MASK_OFFSET)
+;SPRITE_EXPLOSION4_DATA         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (54 * SPRITE_MASK_OFFSET)
+;SPRITE_EXPLOSION4_MASK         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (55 * SPRITE_MASK_OFFSET)
 
 ; Controls
 =BTN_DOWN               1
@@ -109,32 +117,8 @@
 =BTN_FIRE               4
 =BTN_FIRE_PULSE         8
 
-; Game variables
-=VAR_LIVES              RAM_BASE + 0
-=VAR_SCORE              RAM_BASE + 1
-=VAR_RNG_SEED           RAM_BASE + 2
-=VAR_PLAYER_Y           RAM_BASE + 3
-                                        ; If X is negative, (bit 31 set) then missile slot not in use
-                                        ; If X is positive, then missile slot represents y position of missile 
-=VAR_MISSILES           RAM_BASE + 4    ; X1 -> Size = 2 per missile (x, y)
-;VAR_MISSILES           RAM_BASE + 5    ; Y1
-;VAR_MISSILES           RAM_BASE + 6    ; X2
-;VAR_MISSILES           RAM_BASE + 7    ; Y2
-
-=VAR_ENEMY_FRAME        RAM_BASE + 8
-=VAR_ENEMY_COUNT        RAM_BASE + 9    ; Total enemies active on the screen
-=VAR_ENEMY              RAM_BASE + 10   ; X1
-;VAR_ENEMY              RAM_BASE + 11   ; Y1
-;VAR_ENEMY              RAM_BASE + 12   ; X2
-;VAR_ENEMY              RAM_BASE + 13   ; Y2
-;VAR_ENEMY              RAM_BASE + 14   ; X3
-;VAR_ENEMY              RAM_BASE + 15   ; Y3
-;VAR_ENEMY              RAM_BASE + 16   ; X4
-;VAR_ENEMY              RAM_BASE + 17   ; Y4
-
-
 ; Game constants
-=DEFAULT_LIVES          3
+=DEFAULT_LIVES          3           ; Extra lives (so there's DEFAULT_LIVES + 1 total)
 =PLAYER_MIN_Y           24
 =PLAYER_MAX_Y           118
 =ENEMY_MIN_Y            24
@@ -143,8 +127,11 @@
 =TOLERANCE_PEX          5           ; Tolerance for player-enemy collision checking (x-axis)
 =TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
 =TOLERANCE_MEX          5           ; Tolerance for missile-enemy collision checking (x-axis)
-=TOLERANCE_MEY          7           ; Tolerance for missile-enemy collision checking (y-axis)
+=TOLERANCE_MEY          6           ; Tolerance for missile-enemy collision checking (y-axis)
 =POINTS_HIT             0x100       ; In BCD
+=MAX_EXPLOSIONS         4           ; Number of explosions to allocate memory for
+=EXPLOSION_FRAMES       16          ; Number of frames an explosion will take
+=EXPLOSION_FRAMES_MASK  0x3
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
@@ -158,6 +145,37 @@
 =SPX_ENEMY              0xf8        ; ENEMY initial position
 =SPX_DEAD               0x6e        ; DEAD text x start location
 =SPY_DEAD               0x3c        ; DEAD top Y
+
+; Game variables
+=VAR_LIVES              RAM_BASE + 0
+=VAR_SCORE              RAM_BASE + 1
+=VAR_RNG_SEED           RAM_BASE + 2
+=VAR_PLAYER_Y           RAM_BASE + 3
+                                        ; If X is negative, (bit 31 set) then missile slot not in use
+                                        ; If X is positive, then missile slot represents y position of missile 
+=VAR_MISSILES           RAM_BASE + 4    ; X1 -> Size = 2 per missile (x, y)
+;VAR_MISSILES           RAM_BASE + 5    ; Y1
+;VAR_MISSILES           RAM_BASE + 6    ; X2
+;VAR_MISSILES           RAM_BASE + 7    ; Y2
+
+                                        ; Base of explosion sprite array
+                                        ; Like the missiles, if an X value is negative, then that explosion is not currently running
+=VAR_EXPLOSION          RAM_BASE + 80    ; X1
+;VAR_EXPLOSION          RAM_BASE + 9    ; Y1
+;VAR_EXPLOSION          RAM_BASE + 10   ; Frame1
+;VAR_EXPLOSION          RAM_BASE + 11   ; sprite pointer
+
+=VAR_ENEMY_FRAME        VAR_EXPLOSION + 4 * MAX_EXPLOSIONS
+=VAR_ENEMY_COUNT        VAR_ENEMY_FRAME + 1   ; Total enemies active on the screen
+=VAR_ENEMY              VAR_ENEMY_COUNT + 1   ; X1
+;VAR_ENEMY              VAR_ENEMY_COUNT + 2   ; Y1
+;VAR_ENEMY              VAR_ENEMY_COUNT + 3   ; X2
+;VAR_ENEMY              VAR_ENEMY_COUNT + 4   ; Y2
+;VAR_ENEMY              VAR_ENEMY_COUNT + 5   ; X3
+;VAR_ENEMY              VAR_ENEMY_COUNT + 6   ; Y3
+;VAR_ENEMY              VAR_ENEMY_COUNT + 7   ; X4
+;VAR_ENEMY              VAR_ENEMY_COUNT + 8   ; Y4
+
 
 ; ENTRY POINT
     li RAM_BASE+RAM_SIZE-1      ; Init SP
@@ -234,6 +252,24 @@
     mov r1, r0
     li VAR_SCORE
     sw r0, r1
+
+    li VAR_EXPLOSION            ; Reset explosion data
+    mov r1, r0
+    li MAX_EXPLOSIONS-1         ; Setup loop count
+    mov r9, r0    
+    ffl x
+:init_explosions_loop
+    sll r8, r9, 2               ; 4 words per explosion entry
+    add r3, r1, r8              ; Add explosion array offset to index
+    li -1
+    add r9, r9, r0, N
+    sw r3, r0                   ; Reset explosion data
+    li 2
+    add r3, r3, r0              
+    li 0                        ; Clear animation frame counter
+    sw r3, r0
+    bfc N, init_explosions_loop
+
 :init_active_vars_nextlife
         ; Entry point for after being hit
     li VCORE_OFFSET             ; Init RNG with current frame and line
@@ -382,7 +418,7 @@
     li VAR_MISSILES + 2         ; Each slot is two words
     lw r1, r0
     mov r1, r1, N
-    bfs N, active_draw_player   ; If slot not in use, ignore it
+    bfs N, active_draw_explosions   ; If slot not in use, ignore it
     li SPRITE_MISSILE_DATA      ; Otherwise, put sprite on to screen
     mov r22, r0
     li VAR_MISSILES + 2         ; X
@@ -390,6 +426,61 @@
     li VAR_MISSILES + 3         ; Y
     lw r21, r0
     jpl draw_sprite
+
+    ; Draw explosions 
+:active_draw_explosions   
+    li VAR_EXPLOSION            ; Reset explosion data
+    mov r1, r0
+    li MAX_EXPLOSIONS-1         ; Setup loop count
+    mov r9, r0    
+:active_dex_loop
+    ffl x
+    sll r8, r9, 2               ; 4 words per explosion entry
+    add r3, r1, r8              ; Add explosion array offset to index
+    lw r0, r3                   ; Get X of explosion slot
+    mov r0, r0, N
+    bfs N, active_dex_continue  ; Not active, don't draw it
+    mov r20, r0                 ; Setup X
+    li 1
+    add r3, r3, r0
+    lw r0, r3
+    mov r21, r0                 ; Setup Y
+    li 1
+    add r3, r3, r0              ; Get a pointer to the frame count
+    lw r4, r3                   ; And update the frame
+    li -1
+    add r4, r4, r0, Z
+    sw r3, r4
+    bfc Z, active_dex_update_frame
+        ; Reset explosion
+    li -2
+    add r3, r3, r0
+    sw r3, r0
+    jpl active_dex_continue
+:active_dex_update_frame
+    sw r3, r4                   ; Save back updated frame number
+    li EXPLOSION_FRAMES_MASK
+    and r4, r4, r0, Z
+    bfc Z, active_dex_draw      ; If frame % 0x8 != 0, don't change animation state
+        ; Change animation state
+    li 1
+    add r3, r3, r0
+    lw r2, r3                   ; Get current pointer
+    li 2 * SPRITE_MASK_OFFSET
+    add r2, r2, r0              ; Inc to next sprite position
+    sw r3, r2
+    li -1                       ; Un-inc the pointer for dex_draw
+    add r3, r3, r0
+
+:active_dex_draw
+    li 1
+    add r3, r3, r0
+    lw r22, r3                  ; Display the current animation frame of the sprite
+    jpl draw_sprite
+:active_dex_continue
+    li -1
+    add r9, r9, r0, N
+    bfc N, active_dex_loop      ; More slots left
     
     ; Draw player
 :active_draw_player
@@ -848,8 +939,43 @@
     li -1                       ; Free missile slot
     sw r20, r0
 
-    ; TODO: Signal explosion to drawing code
+    ; Signal explosion to drawing code
+    li VAR_EXPLOSION
+    mov r1, r0
+    li -1
+    mov r2, r0
+    li MAX_EXPLOSIONS           ; Setup loop count
+    mov r9, r0    
+    ffl x
+:collsion_explosions_loop
+    add r8, r9, r2              ; Accound for zero-indexed array
+    sll r8, r8, 2               ; 4 words per explosion entry
+    add r3, r1, r8              ; Add explosion array offset to index
+    add r9, r9, r2, N
+    bfs N, collision_remove_enemy   ; If out of slots, don't keep checking. Just don't display the explosion
+    lw r4, r3                   ; Get explosion state (or X value if active)
+    mov r4, r4, N
+    bfc N, collsion_explosions_loop ; Keep looping until we find an open slot
+        ; Found open slot, mark it with the current enemy's X and Y location
+        ; r19 has the enemy base address (X address)
+    lw r0, r19                  ; Get enemy X
+    sw r3, r0                   ; Save to explosion
+    ffl x
+    li 1
+    add r3, r3, r0
+    add r13, r19, r0
+    lw r0, r13                  ; Enemy Y
+    sw r3, r0
+    li 1
+    add r3, r3, r0
+    li EXPLOSION_FRAMES         ; Reset explosion frame counter
+    sw r3, r0
+    li 1
+    add r3, r3, r0
+    li SPRITE_EXPLOSION1_DATA   ; Setup sprite pointer
+    sw r3, r0
 
+    :collision_remove_enemy
         ; Move all the missliles over in the array (remove current missile)
         li VAR_ENEMY_COUNT          ; Get enemy count
         ffl c
