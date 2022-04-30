@@ -24,7 +24,7 @@
 ; ~~Player getting hit detection (and life dec)
 
 ; OPTIONAL TODO:
-; Remake title screen
+; ~~Remake title screen
 ; Player explosions
 ; Enemy explosions
 ; ~~Player "thruster" animation

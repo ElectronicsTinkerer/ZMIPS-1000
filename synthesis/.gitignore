@@ -47,6 +47,7 @@
 *.qws
 *.rpt
 *.smsg
+*.qmsg
 *.sof
 *.sopc_builder
 *.summary
