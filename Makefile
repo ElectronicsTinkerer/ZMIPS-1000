@@ -6,6 +6,7 @@ PROJECT_NAME	= ZMIPS_1000
 
 GAME_SOURCE	= ./asm/game_source.asm
 GAME_DATA	= ./asm/game_data.asm
+GX_FOLDER	= ./mifdata
 GS_TARGET	= ./mifdata/game_source
 GD_TARGET	= ./mifdata/game_data
 GD_RULE		= $(wildcard ./assets/*.png)
@@ -30,11 +31,13 @@ $(SYNTH_DIR)/$(MIF_LOG): $(GD_TARGET) $(GS_TARGET)
 	cd $(SYNTH_DIR) && $(QUARTUS_INSTALL_DIR)/21.1/quartus/bin64/quartus_cdb.exe $(PROJECT_NAME) -c $(PROJECT_NAME) --update_mif
 
 $(GS_TARGET): $(GAME_SOURCE)
+	mkdir -p $(GX_FOLDER)
 	python3 $(TOOLS_DIR)/zmips_assembler.py $< $@
 	touch $@
 
 img: $(GD_TARGET)
 $(GD_TARGET): $(GAME_DATA)
+	mkdir -p $(GX_FOLDER)
 	python3 $(TOOLS_DIR)/zmips_assembler.py $< $@
 	touch $@
 
