@@ -8396,7 +8396,7 @@
     .word 0x0fffff00
 
 
-    ; Sprite data - ./assets/enemy.png
+    ; Sprite data - ./assets/enemy1.png
     .word 0x00000000
     .word 0x00a77a00
     .word 0x028777a0
@@ -8405,7 +8405,27 @@
     .word 0x028778a0
     .word 0x00288200
     .word 0x00000000
-    ; Sprite mask - ./assets/enemy.png
+    ; Sprite mask - ./assets/enemy1.png
+    .word 0x0ffffff0
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0xffffffff
+    .word 0x0ffffff0
+
+
+    ; Sprite data - ./assets/enemy2.png
+    .word 0x00000000
+    .word 0x00c77c00
+    .word 0x048777c0
+    .word 0x08766770
+    .word 0x08766770
+    .word 0x048778c0
+    .word 0x00488400
+    .word 0x00000000
+    ; Sprite mask - ./assets/enemy2.png
     .word 0x0ffffff0
     .word 0xffffffff
     .word 0xffffffff

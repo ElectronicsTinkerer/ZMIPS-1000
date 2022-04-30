@@ -52,7 +52,7 @@ INIT:
 
             [inline] drawScore(score)
 
-            [inline] drawEnemies(enemy_count, enemies)
+            [inline] drawEnemies(enemy_count, enemies, frame)
 
             [inline] drawMissiles(missiles)
 
