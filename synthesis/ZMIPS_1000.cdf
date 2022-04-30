@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(5CEBA4F23) Path("D:/Documents/Zachs_stuff/Verilog/vga_core/synthesis/") File("ZMIPS_1000.sof") MfrSpec(OpMask(1));
+		Device PartName(5CEBA4F23) Path("D:/Documents/Zachs_stuff/Verilog/ZMIPS-1000/synthesis/") File("ZMIPS_1000.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
