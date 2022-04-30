@@ -34,6 +34,11 @@ INIT:
     enemy_spawn_delay = 0
     missiles[2]
     enemies[4]
+    explosions[4]
+
+    
+    for slot in explosions:
+        slot.state = INACTIVE
 
     NEXT_LIFE:
         rng.seed({frame,line})
@@ -41,7 +46,7 @@ INIT:
         player.setPosition(STARTX, STARTY)
 
         for slot in missiles:
-            missile.state = INACTIVE
+            slot.state = INACTIVE
 
         enemy_count = 0
 
@@ -55,6 +60,9 @@ INIT:
             [inline] drawEnemies(enemy_count, enemies, frame)
 
             [inline] drawMissiles(missiles)
+
+            [inline] updateExplosions(explosions)
+            [inline] drawExplosions(explosions)
 
             [inline] drawPlayer(player, frame)
 
@@ -89,13 +97,13 @@ INIT:
             if missiles[0].getX > LINE_WIDTH - 8: # Past end of frame
                 missiles[0].state = INACTIVE
             else:
-                checkMissileEnemyCollision(missile[0], enemies, enemy_count)
+                checkMissileEnemyCollision(missile[0], enemies, enemy_count, explosions)
                 
             missiles[1].moveRight(2)
             if missiles[1].getX > LINE_WIDTH - 8: # Past end of frame
                 missiles[1].state = INACTIVE
             else:
-                checkMissileEnemyCollision(missile[1], enemies, enemy_count)
+                checkMissileEnemyCollision(missile[1], enemies, enemy_count, explosions)
 
             if BUTTONS.UP.isPressed():
                 if player.getY() > PLAYER_MIN_Y:
@@ -129,12 +137,19 @@ INIT:
 
 ### HELPER FUNCTIONS ###
 
-checkMissileEnemyCollision(missile, enemies, enemy_count):
+checkMissileEnemyCollision(missile, enemies, enemy_count, explosions):
     if enemy_count == 0:
         return
     
     for enemy in enemies:
         if abs(enemy.getX() - missile.getX()) < TOLERANCE and abs(enemy.getY() - missile.getY()) < TOLERANCE:
+            for slot in explosions:
+                if slot.state == INACTIVE:
+                    slot.setX(enemy.getX())
+                    slot.setY(enemy.getY())
+                    slot.setFrameState(EXPLOSION_FRAMES)
+                    slot.setSprite(SPRITE_EXPLOSION1_DATA) # Frame 1 animation sprite
+                    
             enemy.state = INACTIVE
             missile.state = INACTIVE
             enemy_count -= 1
