@@ -21,7 +21,6 @@ The user input register (memory location) is mapped as follows:
 |0000000000000000000000000000|P|F|U|D|
 +----------------------------+-+-+-+-+
 |                                    |
-|                                    |
 |31                                 0|
 ```
 
@@ -69,7 +68,7 @@ The core has been parameterized, allowing for easy modification to fit different
 
 When the system was designed, I was targeting a Cyclone V FPGA (on Terasic's DE0-CV board), using Quartus 21.1. This is used for synthesis and creating the chain description file (CDF). Once synthesized, the makefile can be used to quickly reassemble updates to the MIF files and reupload the bitstream to the FPGA. 
 
-**Make file targets:**
+**Makefile targets:**
 
 * `all` - Build both program and data images.
 * `upload` - Build both program and data images then attempt to upload to a board. Requires a connected programmer and valid CDF.

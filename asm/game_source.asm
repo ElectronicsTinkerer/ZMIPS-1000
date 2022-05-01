@@ -23,6 +23,7 @@
 ; ~~Death screen
 ; ~~Player getting hit detection (and life dec)
 ; Dec score when enemy gets past player
+; Fix register usage in missile/enemy collision check function
 
 ; OPTIONAL TODO:
 ; ~~Remake title screen
@@ -128,7 +129,7 @@
 =TOLERANCE_PEX          5           ; Tolerance for player-enemy collision checking (x-axis)
 =TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
 =TOLERANCE_MEX          5           ; Tolerance for missile-enemy collision checking (x-axis)
-=TOLERANCE_MEY          7           ; Tolerance for missile-enemy collision checking (y-axis)
+=TOLERANCE_MEY          6           ; Tolerance for missile-enemy collision checking (y-axis)
 =POINTS_HIT             0x100       ; In BCD
 =MAX_EXPLOSIONS         4           ; Number of explosions to allocate memory for
 =EXPLOSION_FRAMES       16          ; Number of frames an explosion will take
@@ -900,12 +901,11 @@
     add r19, r19, r18           ; Add index to the base of the array
 :collision_me_loop
     lw r11, r19                 ; Get enemy X value
-    nop                         ; 3 cycle bug
+    ffl c
     lw r12, r20                 ; Get missile X value
     sub r11, r12, r11, N        ; Get X distance between enemy and missile
     bfc N, collision_me_cl_xpos ; Correct sign if negative
     li 0
-    ffl c
     sub r11, r0, r11
 :collision_me_cl_xpos
     li TOLERANCE_MEX            ; Check tolerance
@@ -917,14 +917,12 @@
     ffl x
     add r10, r20, r0
     lw r12, r10
-    li 1                        ; Inc pointer to Y value of enemy
-    ffl x
-    add r13, r19, r0
+    add r13, r19, r0            ; Inc pointer to Y value of enemy
+    ffl c
     lw r11, r13                 ; Get enemy Y
     sub r11, r12, r11, N        ; Get Y distance between enemy and missile
     bfc N, collision_me_cl_ypos ; Correct sign if negative
     li 0
-    ffl c
     sub r11, r0, r11
 :collision_me_cl_ypos
     li TOLERANCE_MEY            ; Check tolerance
@@ -942,39 +940,39 @@
 
     ; Signal explosion to drawing code
     li VAR_EXPLOSION
-    mov r1, r0
+    mov r11, r0
     li -1
-    mov r2, r0
+    mov r12, r0
     li MAX_EXPLOSIONS           ; Setup loop count
-    mov r9, r0    
+    mov r17, r0    
     ffl x
 :collsion_explosions_loop
-    add r8, r9, r2              ; Accound for zero-indexed array
-    sll r8, r8, 2               ; 4 words per explosion entry
-    add r3, r1, r8              ; Add explosion array offset to index
-    add r9, r9, r2, N
+    add r16, r17, r12           ; Account for zero-indexed array
+    sll r16, r16, 2             ; 4 words per explosion entry
+    add r13, r11, r16           ; Add explosion array offset to index
+    add r17, r17, r12, N
     bfs N, collision_remove_enemy   ; If out of slots, don't keep checking. Just don't display the explosion
-    lw r4, r3                   ; Get explosion state (or X value if active)
-    mov r4, r4, N
+    lw r14, r13                 ; Get explosion state (or X value if active)
+    mov r14, r14, N
     bfc N, collsion_explosions_loop ; Keep looping until we find an open slot
         ; Found open slot, mark it with the current enemy's X and Y location
         ; r19 has the enemy base address (X address)
     lw r0, r19                  ; Get enemy X
-    sw r3, r0                   ; Save to explosion
+    sw r13, r0                  ; Save to explosion
     ffl x
     li 1
-    add r3, r3, r0
-    add r13, r19, r0
-    lw r0, r13                  ; Enemy Y
-    sw r3, r0
+    add r13, r13, r0
+    add r14, r19, r0
+    lw r0, r14                  ; Enemy Y
+    sw r13, r0
     li 1
-    add r3, r3, r0
+    add r13, r13, r0
     li EXPLOSION_FRAMES         ; Reset explosion frame counter
-    sw r3, r0
+    sw r13, r0
     li 1
-    add r3, r3, r0
+    add r13, r13, r0
     li SPRITE_EXPLOSION1_DATA   ; Setup sprite pointer
-    sw r3, r0
+    sw r13, r0
 
     :collision_remove_enemy
         ; Move all the missliles over in the array (remove current missile)
