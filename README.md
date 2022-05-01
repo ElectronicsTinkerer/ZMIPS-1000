@@ -1,199 +1,87 @@
 # ZMIPS-1000 Game Console
 
-## Program Flow
+## Hardware
 
-The overall program flow for the game (in pseudo code) looks like this:
+The ZMIPS-1000 games console runs on the [ZMIPS](https://github.com/ElectronicsTinkerer/zmips-cpu) CPU, which is a MIPS-based, pipelined 32-bit architecture. This uses a separate instruction and memory, so two different sets of buses are used in the ZMIPS-1000 top level module for interfacing it with the rest of the system. Currently, the ROM block for the instruction memory is 2048 words and is initialized from the `mifdata/game_source.mif` file.
 
-```python
-TITLE:
-    player = Sprite(PLAYER)
+The data memory is more interesting, however. This uses a mux to perform address decoding between different memory sources:
+1. Video memory (16k words, CPU; 128k nibbles, VGA)
+2. Graphics ROM (16k words, initialized from `mifdata/game_data.mif`)
+3. User inputs (1 word, mirrored over 16k addresses)
+4. VGA state information (1 word, mirrored over 16k addresses)
 
-    player.setPosition(0, 120)
+With this configuration, accessing the screen buffer, reading background/sprite data, handling user inputs, and reading the current line or frame is as simple as an access to memory. Since all the memory blocks are setup using the FPGA's internal memory structures, the memory is able to run at the same speed as the CPU.
 
-    # Title screen
-    while not BUTTONS.FIRE.isPressed():
-        displayBackground(title_screen)
-        if frame % 2 == 0:
-            player.moveRight(1)
+### User Inputs
 
-        # Handle blinking
-        if frame / 16 == 0:
-            player.setState(1)
-        else:
-            player.setState(2)
+The user input register (memory location) is mapped as follows:
 
-        displaySprite(player)
-
-    while FIRE.isPressed():
-        # Busy wait for release
-    
-INIT:
-    lives = 3
-    score = 0
-    enemy_count = 0
-    enemy_spawn_delay = 0
-    missiles[2]
-    enemies[4]
-    explosions[4]
-
-    
-    for slot in explosions:
-        slot.state = INACTIVE
-
-    NEXT_LIFE:
-        rng.seed({frame,line})
-
-        player.setPosition(STARTX, STARTY)
-
-        for slot in missiles:
-            slot.state = INACTIVE
-
-        enemy_count = 0
-
-        while True:
-            displayBackground(gameplay_screen)
-
-            [inline] displayLives(lives)
-
-            [inline] drawScore(score)
-
-            [inline] drawEnemies(enemy_count, enemies, frame)
-
-            [inline] drawMissiles(missiles)
-
-            [inline] updateExplosions(explosions)
-            [inline] drawExplosions(explosions)
-
-            [inline] drawPlayer(player, frame)
-
-            [inline] drawPlayerThrusters(frame)
-
-            if lives < 0:
-                goto DEATH
-
-            while not hasChanged(frame):
-                # Busy wait until next vertical blanking period
-
-            enemy_spawn_delay += 1
-            
-            if frame % 64 == 0:
-                updateScore(5)
-
-            if enemy_count < MAX_ENEMIES and enemy_spawn_delay % 64 == 0:
-                [inline] spawnNewEnemy(enemies)
-                enemy_count += 1
-
-            # Update enemy positions
-            for i in range(enemy_count):
-                enemies[i].moveLeft(1)
-                if enemies[i].getX() == 0:
-                    [inline] respawnEnemy(enemies, enemies[i])
-
-                if abs(enemies[i].getX() - player.getX()) < TOLERANCE and abs(enemies[i].getY() < player.getY()):
-                    goto PLAYER_HIT
-
-            # Update missile positions
-            missiles[0].moveRight(2)
-            if missiles[0].getX > LINE_WIDTH - 8: # Past end of frame
-                missiles[0].state = INACTIVE
-            else:
-                checkMissileEnemyCollision(missile[0], enemies, enemy_count, explosions)
-                
-            missiles[1].moveRight(2)
-            if missiles[1].getX > LINE_WIDTH - 8: # Past end of frame
-                missiles[1].state = INACTIVE
-            else:
-                checkMissileEnemyCollision(missile[1], enemies, enemy_count, explosions)
-
-            if BUTTONS.UP.isPressed():
-                if player.getY() > PLAYER_MIN_Y:
-                    player.moveUp(1)
-            else if BUTTONS.DOWN.isPressed():
-                if player.getY() < PLAYER_MAX_Y:
-                    player.moveDown(1)
-            if BUTTONS.FIRE.isPressed():
-                if missiles[0].isInactive():
-                    missiles[0].setPosition(player.getPosition())
-                if missiles[1].isInactive():
-                    missiles[1].setPosition(player.getPosition())
-                
-                rng.seed += 13
-
-    PLAYER_HIT:
-        lives -= 1
-        goto NEXT_LIFE
-
-    DEATH:
-        for letter in DEATH_MESSAGE:
-            displaySprite(letter, posX, posY)
-        
-        delay(1000) # About 1 second ?
-
-        while not BUTTONS.FIRE.getEdge():
-            # Wait for player to press FIRE
-        
-        goto INIT # Restart game
-
-
-### HELPER FUNCTIONS ###
-
-checkMissileEnemyCollision(missile, enemies, enemy_count, explosions):
-    if enemy_count == 0:
-        return
-    
-    for enemy in enemies:
-        if abs(enemy.getX() - missile.getX()) < TOLERANCE and abs(enemy.getY() - missile.getY()) < TOLERANCE:
-            for slot in explosions:
-                if slot.state == INACTIVE:
-                    slot.setX(enemy.getX())
-                    slot.setY(enemy.getY())
-                    slot.setFrameState(EXPLOSION_FRAMES)
-                    slot.setSprite(SPRITE_EXPLOSION1_DATA) # Frame 1 animation sprite
-                    
-            enemy.state = INACTIVE
-            missile.state = INACTIVE
-            enemy_count -= 1
-            updateScore(100)
-
-    return
-
-
-updateScore(delta):
-    score += delta
-    return
-
-
-rng:
-    seed *= 5
-    seed += 3
-    return seed
-
-
-drawBackground(dst_address, src_address):
-    for i in range(SCREEN_SIZE, 0, -1):
-        *(dst_address + i) = *(src_address + i)
-
-    return
-
-
-drawSprite(x, y, sprite):
-    addr = x + y * LINE_WIDTH
-
-    for i in range(8):
-        data = sprite.getData()[i]
-        mask = sprite.getMask()[i]
-
-        data = data << (x % 8)  # Shift not present in drawSpriteFast()
-        mask = mask << (x % 8)
-
-        sdata = screen_data[addr]
-        sdata = sdata & ~mask
-        sdata = sdata | data
-        screen_data[addr] = sdata
-
-
-multiply(x, y):
-    return x * y # Uses 
-
-            
 ```
++----------------------------+-+-+-+-+
+|0000000000000000000000000000|P|F|U|D|
++----------------------------+-+-+-+-+
+|                                    |
+|                                    |
+|31                                 0|
+```
+
+Where the fields are:
+
+* `D` - The state of the "Down" button. 1 = pressed, 0 = not pressed.
+* `U` - The state of the "Up" button. 1 = pressed, 0 = not pressed.
+* `F` - The state of the "Fire" button. 1 = pressed, 0 = not pressed.
+* `P` - 1 on the first CPU read of the register in which the fire button is pressed. All subsequent reads while the fire button is pressed will read as 0.
+
+### VGA State Register
+
+When the CPU reads the VGA state register, it receives the following data:
+
+```
++-+------------------+------+-------+
+|N|000000000000000000|ffffff|lllllll|
++-+------------------+------+-------+
+|  \                 |      |       |
+|    \               |      |       |
+|31 30|29          13|12   7|6     0|
+```
+
+Where the fields are:
+
+* `N` - Will be high if this is the first time that the CPU has read the state register since the last frame change.
+* `ffffff` - The current frame counter (rolls over)
+* `lllllll` - The current line number
+
+Note that the data in this register will be several clock cycles behind the updates in the VGA core since there is a series of synchronization flip flops between the VGA and CPU clock domains.
+
+### Memory
+
+The video memory is a dual-port memory block. On the CPU side, it is organized as 16k words (where a word is 32 bits). The first 4k words of this are dedicated to the video memory. The next 4k words are "reserved" for the event that double buffering support ever gets implemented in hardware. The remaining 8k words are available for use by the CPU to store game variables and stack data.
+
+On the VGA side, the dual-port memory is seen as a 4-bit wide interface. This allows for reading a single pixel at a time, which can be directly input to the color lookup table to generate the appropriate RGB signals to output. The difference in data port widths creates an interesting "feature" where the words that are stored by the CPU are displayed horizontally backwards. As a result, the ordering of the quartets in words  written to the screen must be reversed. This is achieved by simply storing the sprite and background image data in the reversed order. (The image converter utility handles this reversal).
+
+### VGA Core
+
+The "VGA Core" implements the state machine needed to generate the sync pulses and address generation to produce a VGA output. The current output resolution is 1024 x 768 @ 60Hz, but the fron porch and back porch periods have been extended to center a 256 x 128 pixel frame. The ZMIPS_1000 module preforms pixel-quadrupling in both the X and Y directions, meaning that a display which is connected will still "see" a "standard" VGA resolution.
+
+The core has been parameterized, allowing for easy modification to fit different resolutions/framerates. All that it needs is an input clock and it will generate the V-sync, H-sync, row, column, and active video region (AVR) signals.
+
+## Synthesis, Assembling, and Running
+
+When the system was designed, I was targeting a Cyclone V FPGA (on Terasic's DE0-CV board), using Quartus 21.1. This is used for synthesis and creating the chain description file (CDF). Once synthesized, the makefile can be used to quickly reassemble updates to the MIF files and reupload the bitstream to the FPGA. 
+
+**Make file targets:**
+
+* `all` - Build both program and data images.
+* `upload` - Build both program and data images then attempt to upload to a board. Requires a connected programmer and valid CDF.
+* `clean` - Remove all MIF and DAT files.
+
+**Environment Variables for Make:**
+
+Before running `make`, be sure to set `QUARTUS_INSTALL_DIR` environment variable to the root install directory of the Quartus install.
+
+**Other Notes:**
+
+All assembling is performed using the `zmips_assembler.py` file which needs to be placed into the `tools` directory. The assembler can be found in the ZMIPS CPU repository. This also requires python3 to be installed.
+
+To run the makefile, I used a WSL2 instance on Windows 11. This has the benefit of being able to run the linux commands and bash script needed to order the data from the images while also being able to run the windows Quartus executable.
+

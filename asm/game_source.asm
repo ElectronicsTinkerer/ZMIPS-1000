@@ -22,6 +22,7 @@
 ; ~~Player motion
 ; ~~Death screen
 ; ~~Player getting hit detection (and life dec)
+; Dec score when enemy gets past player
 
 ; OPTIONAL TODO:
 ; ~~Remake title screen
@@ -127,7 +128,7 @@
 =TOLERANCE_PEX          5           ; Tolerance for player-enemy collision checking (x-axis)
 =TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
 =TOLERANCE_MEX          5           ; Tolerance for missile-enemy collision checking (x-axis)
-=TOLERANCE_MEY          6           ; Tolerance for missile-enemy collision checking (y-axis)
+=TOLERANCE_MEY          7           ; Tolerance for missile-enemy collision checking (y-axis)
 =POINTS_HIT             0x100       ; In BCD
 =MAX_EXPLOSIONS         4           ; Number of explosions to allocate memory for
 =EXPLOSION_FRAMES       16          ; Number of frames an explosion will take
@@ -1036,7 +1037,7 @@
     add r29, r29, r0
     lw r0, r29
     jmp r0
-:
+
 ; Add a value to the score
 ; Args:
 ;   r20 - Value to be added to the score (in BCD)
