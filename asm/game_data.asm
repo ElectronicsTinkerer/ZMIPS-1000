@@ -8406,14 +8406,14 @@
     .word 0x00288200
     .word 0x00000000
     ; Sprite mask - ./assets/enemy1.png
+    .word 0x00000000
+    .word 0x00ffff00
     .word 0x0ffffff0
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
     .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0x00ffff00
+    .word 0x00000000
 
 
     ; Sprite data - ./assets/enemy2.png
@@ -8426,14 +8426,14 @@
     .word 0x00488400
     .word 0x00000000
     ; Sprite mask - ./assets/enemy2.png
+    .word 0x00000000
+    .word 0x00ffff00
     .word 0x0ffffff0
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
     .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0x0ffffff0
+    .word 0x00ffff00
+    .word 0x00000000
 
 
     ; Sprite data - ./assets/missile.png
@@ -8466,14 +8466,14 @@
     .word 0x00000ff0
     .word 0x00000000
     ; Sprite mask - ./assets/player_right1.png
-    .word 0x0000ffff
-    .word 0x00ffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0x00ffffff
-    .word 0x0000ffff
+    .word 0x00000000
+    .word 0x00000ff0
+    .word 0x0000fff0
+    .word 0x0fffff00
+    .word 0x0fffff00
+    .word 0x0000fff0
+    .word 0x00000ff0
+    .word 0x00000000
 
 
     ; Sprite data - ./assets/player_right2.png
@@ -8486,14 +8486,14 @@
     .word 0x00000ff0
     .word 0x00000000
     ; Sprite mask - ./assets/player_right2.png
-    .word 0x0000ffff
-    .word 0x00ffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0xffffffff
-    .word 0x00ffffff
-    .word 0x0000ffff
+    .word 0x00000000
+    .word 0x00000ff0
+    .word 0x000ffff0
+    .word 0x0fffff00
+    .word 0x0fffff00
+    .word 0x000ffff0
+    .word 0x00000ff0
+    .word 0x00000000
 
 
     ; Sprite data - ./assets/player_thrust1.png
