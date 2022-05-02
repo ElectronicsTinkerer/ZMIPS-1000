@@ -134,7 +134,7 @@
 =MAX_EXPLOSIONS         4           ; Number of explosions to allocate memory for
 =EXPLOSION_FRAMES       32          ; Number of frames an explosion will take
 =EXPLOSION_FRAMES_MASK  0x7
-=PLAYER_EXPLOSION_DELAY EXPLOSION_FRAMES + 32   ; Length of time for the player's explosion + restart delay
+=PLAYER_EXPLOSION_DELAY EXPLOSION_FRAMES + 48   ; Length of time for the player's explosion + restart delay
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
@@ -651,7 +651,39 @@
 :active_ue_next
     nop                         ; The 3-cycle reg issue strikes again!
     sw r7, r1
-    
+
+    li VCORE_OFFSET             ; If we like the frame count,
+    lw r5, r0
+    li 0x0180
+    and r31, r5, r0, Z
+    bfc Z, active_ue_y_skip
+    li 1                        ; ... then randomly move the enemy up or down
+    ffl x
+    add r3, r7, r0              ; Get Y value
+    lw r5, r3
+    jpl rng                     ; Get a number
+    li 0x8
+    and r31, r20, r0, Z         ; Get a direction to move the enemy
+    li 0x01
+    and r20, r20, r0            ; Get the amount to move the enemy
+    ; srl r20, r20, 4
+    bfc Z, active_ue_y          ; Handle up or down motion
+    ffl c
+    sub r5, r5, r20
+    sub r5, r5, r20
+:active_ue_y 
+    ffl x
+    add r5, r5, r20
+    li ENEMY_MIN_Y              ; Bound enemy movement
+    cmp r5, r0, C
+    bfc C, active_ue_y_skip
+    li ENEMY_MAX_Y
+    cmp r0, r5, C
+    bfc C, active_ue_y_skip
+    sw r3, r5                   ; Save new Y value
+:active_ue_y_skip
+
+    ffl c
     li SPX_PLAYER               ; Compare enemy with player X value
     sub r2, r1, r0, N
     bfc N, active_ue_player_check
@@ -881,11 +913,6 @@
     bfs Z, dead_screen_loop     ; No, keep checking
         ; Yes, restart game
     jpl init_active_vars
-
-
-:spin
-    jpl spin                    ; Spin
-
 
 
 ; ------------------------------------------------------------------
