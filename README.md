@@ -17,11 +17,11 @@ With this configuration, accessing the screen buffer, reading background/sprite 
 The user input register (memory location) is mapped as follows:
 
 ```
-+----------------------------+-+-+-+-+
-|0000000000000000000000000000|P|F|U|D|
-+----------------------------+-+-+-+-+
-|                                    |
-|31                                 0|
++--------------------------+-+-+-+-+-+-+
+|00000000000000000000000000|f|u|d|F|U|D|
++--------------------------+-+-+-+-+-+-+
+|                                      |
+|31                                   0|
 ```
 
 Where the fields are:
@@ -29,7 +29,9 @@ Where the fields are:
 * `D` - The state of the "Down" button. 1 = pressed, 0 = not pressed.
 * `U` - The state of the "Up" button. 1 = pressed, 0 = not pressed.
 * `F` - The state of the "Fire" button. 1 = pressed, 0 = not pressed.
-* `P` - 1 on the first CPU read of the register in which the fire button is pressed. All subsequent reads while the fire button is pressed will read as 0.
+* `d` - 1 on the first CPU read of the register in which the down button is pressed. All subsequent reads while the down button is pressed will read as 0.
+* `u` - 1 on the first CPU read of the register in which the up button is pressed. All subsequent reads while the up button is pressed will read as 0.
+* `f` - 1 on the first CPU read of the register in which the fire button is pressed. All subsequent reads while the fire button is pressed will read as 0.
 
 ### VGA State Register
 

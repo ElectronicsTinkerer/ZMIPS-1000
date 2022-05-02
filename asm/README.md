@@ -10,13 +10,18 @@ The overall program flow for the game (in pseudo code) looks like this:
 TITLE:
     player = Sprite(PLAYER)
 
+    difficulty = 0
+
+TITLE_INIT:
     player.setPosition(0, 120)
 
     # Title screen
     while not BUTTONS.FIRE.isPressed():
         displayBackground(title_screen)
-        if frame % 2 == 0:
+        if difficulty > 0:
+            drawSpite(thrustors)
             player.moveRight(1)
+        player.moveRight(1)
 
         # Handle blinking
         if frame / 16 == 0:
@@ -25,6 +30,15 @@ TITLE:
             player.setState(2)
 
         displaySprite(player)
+
+        if BUTTONS.UP.isPressed():
+            difficulty += 1
+            if difficulty > MAX_DIFFICULTY:
+                difficulty = MAX_DIFFICULTY
+        elif BUTTONS.DOWN.isPressed():
+            difficulty -= 1
+            if difficulty < 0:
+                difficulty = 0
 
     while FIRE.isPressed():
         # Busy wait for release
@@ -52,7 +66,7 @@ INIT:
 
         enemy_count = 0
 
-        while True:
+        while True: (ACTIVE_LOOP)
             displayBackground(gameplay_screen)
 
             [inline] displayLives(lives)
@@ -66,15 +80,27 @@ INIT:
             [inline] updateExplosions(explosions)
             [inline] drawExplosions(explosions)
 
-            [inline] drawPlayer(player, frame)
-
-            [inline] drawPlayerThrusters(frame)
-
             if lives < 0:
                 goto DEATH
 
+            if not player.hasBeenHit():
+
+                [inline] drawPlayer(player, frame)
+
+                [inline] drawPlayerThrusters(frame)
+
+            
             while not hasChanged(frame):
                 # Busy wait until next vertical blanking period
+
+            if player.hasBeenHit:
+                if player.hitTimer != 0:
+                    player.hitTimer -= 1
+                    continue (goto ACTIVE_LOOP)
+                if player.hitTimer == 0:
+                    lives -= 1
+                    player.hasBeenHit = False
+                    
 
             enemy_spawn_delay += 1
             
@@ -90,6 +116,8 @@ INIT:
                 enemies[i].moveLeft(1)
                 if enemies[i].getX() == 0:
                     [inline] respawnEnemy(enemies, enemies[i])
+                if difficulty >= 1 and (frame & 7 == 0):
+                    enemies[i].setY(enemies[i].getY() + (RNG() & 1)
 
                 if abs(enemies[i].getX() - player.getX()) < TOLERANCE and abs(enemies[i].getY() < player.getY()):
                     goto PLAYER_HIT
@@ -122,7 +150,9 @@ INIT:
                 rng.seed += 13
 
     PLAYER_HIT:
-        lives -= 1
+        signalExplosion(player.getX(), player.getY())
+        player.hasBeenHit = True # In reality, the explosion 'hit' timer stores this data
+        player.hitTimer = PLAYER_EXPLOSION_DELAY
         goto NEXT_LIFE
 
     DEATH:
@@ -139,18 +169,21 @@ INIT:
 
 ### HELPER FUNCTIONS ###
 
+signalExplosions(x, y):
+    for slot in explosions:
+        if slot.state == INACTIVE:
+            slot.setX(X)
+            slot.setY(Y)
+            slot.setFrameState(EXPLOSION_FRAMES)
+            slot.setSprite(SPRITE_EXPLOSION1_DATA) # Frame 1 animation sprite
+
 checkMissileEnemyCollision(missile, enemies, enemy_count, explosions):
     if enemy_count == 0:
         return
     
     for enemy in enemies:
         if abs(enemy.getX() - missile.getX()) < TOLERANCE and abs(enemy.getY() - missile.getY()) < TOLERANCE:
-            for slot in explosions:
-                if slot.state == INACTIVE:
-                    slot.setX(enemy.getX())
-                    slot.setY(enemy.getY())
-                    slot.setFrameState(EXPLOSION_FRAMES)
-                    slot.setSprite(SPRITE_EXPLOSION1_DATA) # Frame 1 animation sprite
+            signalExplosion(enemy.getX(), enemy.getY())
                     
             enemy.state = INACTIVE
             missile.state = INACTIVE

@@ -99,8 +99,8 @@ reg vcore_new_frame;
 wire btn_fire, btn_up, btn_down; // Inputs (can be assigned from multiple sources)
 wire [31:0] user_input_state; // Sent to CPU
 reg btn_fire_cdc_1, btn_fire_cdc_2, btn_up_cdc_1, btn_up_cdc_2, btn_down_cdc_1, btn_down_cdc_2;
-reg btn_fire_prev;	// Stores last state of FIRE button that the CPU read
-reg btn_pulse_fire;
+reg btn_fire_prev, btn_up_prev, btn_down_prev;	// Stores last state of buttons that the CPU read
+reg btn_pulse_fire, btn_pulse_up, btn_pulse_down;
 
 //=======================================================
 //  Structural coding
@@ -247,7 +247,7 @@ begin
 	btn_down_cdc_2 <= btn_down_cdc_1;
 end
 
-// Handle "FIRE" button pulse bit
+// Handle button button pulse bits
 // Bit goes high the first time that the CPU reads the status
 // then stays low until released
 always @(posedge cpu_clk)
@@ -264,12 +264,32 @@ begin
 		begin
 			btn_pulse_fire <= 1'b0;
 		end
+		// If the button state has changed and is pressed
+		if ((btn_up_prev ^ btn_up_cdc_2) & btn_up_cdc_2)
+		begin
+			btn_pulse_up <= 1'b1;
+		end
+		else
+		begin
+			btn_pulse_up <= 1'b0;
+		end
+		// If the button state has changed and is pressed
+		if ((btn_down_prev ^ btn_down_cdc_2) & btn_down_cdc_2)
+		begin
+			btn_pulse_down <= 1'b1;
+		end
+		else
+		begin
+			btn_pulse_down <= 1'b0;
+		end
 		// Then update the previous data FF
 		btn_fire_prev <= btn_fire_cdc_2;
+		btn_up_prev   <= btn_up_cdc_2;
+		btn_down_prev <= btn_down_cdc_2;
 	end
 end
 
-assign user_input_state = {28'b0, btn_pulse_fire, btn_fire_cdc_2, btn_up_cdc_2, btn_down_cdc_2};
+assign user_input_state = {26'b0, btn_pulse_fire, btn_pulse_up, btn_pulse_down, btn_fire_cdc_2, btn_up_cdc_2, btn_down_cdc_2};
 
 // Memory map:
 // 0x00000000 - 0x00001fff => Video memory (Buffer 0)

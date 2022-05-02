@@ -114,10 +114,12 @@
 ;SPRITE_EXPLOSION4_MASK         GAME_DATA_BASE + (2 * SCREEN_WORDS) + (55 * SPRITE_MASK_OFFSET)
 
 ; Controls
-=BTN_DOWN               1
-=BTN_UP                 2
-=BTN_FIRE               4
-=BTN_FIRE_PULSE         8
+=BTN_DOWN               0x01
+=BTN_UP                 0x02
+=BTN_FIRE               0x04
+=BTN_DOWN_PULSE         0x08
+=BTN_UP_PULSE           0x10
+=BTN_FIRE_PULSE         0x20
 
 ; Game constants
 =DEFAULT_LIVES          3           ; Extra lives (so there's DEFAULT_LIVES + 1 total)
@@ -135,6 +137,10 @@
 =EXPLOSION_FRAMES       32          ; Number of frames an explosion will take
 =EXPLOSION_FRAMES_MASK  0x7
 =PLAYER_EXPLOSION_DELAY EXPLOSION_FRAMES + 48   ; Length of time for the player's explosion + restart delay
+=DIFFICULTY_0           0           ; Level 0 difficulty
+=DIFFICULTY_1           1           ; Level 1 difficulty
+=DIFFICULTY_MAX         DIFFICULTY_1
+=DIFFICULTY_DEFAULT     DIFFICULTY_0
 
 ; Screen positions
 =SPX_LIVES              8           ; LIVES display location (top left)
@@ -155,16 +161,17 @@
 =VAR_RNG_SEED           RAM_BASE + 2
 =VAR_PLAYER_Y           RAM_BASE + 3
 =VAR_PLAYER_EXPLODE     RAM_BASE + 4
+=VAR_DIFFICULTY         RAM_BASE + 5
                                         ; If X is negative, (bit 31 set) then missile slot not in use
                                         ; If X is positive, then missile slot represents y position of missile 
-=VAR_MISSILES           RAM_BASE + 5    ; X1 -> Size = 2 per missile (x, y)
-;VAR_MISSILES           RAM_BASE + 6    ; Y1
-;VAR_MISSILES           RAM_BASE + 7    ; X2
-;VAR_MISSILES           RAM_BASE + 8    ; Y2
+=VAR_MISSILES           RAM_BASE + 6    ; X1 -> Size = 2 per missile (x, y)
+;VAR_MISSILES                           ; Y1
+;VAR_MISSILES                           ; X2
+;VAR_MISSILES                           ; Y2
 
                                         ; Base of explosion sprite array
                                         ; Like the missiles, if an X value is negative, then that explosion is not currently running
-=VAR_EXPLOSION          RAM_BASE + 9    ; X1
+=VAR_EXPLOSION          VAR_MISSILES + 4 ; X1
 ;VAR_EXPLOSION                          ; Y1
 ;VAR_EXPLOSION                          ; Frame1
 ;VAR_EXPLOSION                          ; sprite pointer
@@ -185,6 +192,12 @@
     li RAM_BASE+RAM_SIZE-1      ; Init SP
     mov r29, r0
 
+    li DIFFICULTY_DEFAULT       ; Init difficulty
+    mov r1, r0
+    li VAR_DIFFICULTY
+    sw r0, r1
+
+:title_init
     li 120                      ; Setup location of spaceship on title screen
     mov r1, r0
     li 0
@@ -198,8 +211,34 @@
     mov r21, r0
     jpl draw_background
 
-    li 1
+    li VAR_DIFFICULTY           ; Check the difficulty
+    lw r3, r0
+    li DIFFICULTY_1
+    cmp r3, r0, c
+    bfc c, title_move_player_1  ; If difficulty < level 1 then only draw spaceship
+        ; If difficulty >= level 1, draw flames and spaceship
+
     ffl x
+    li 2 - 8
+    add r3, r2, r0              ; Get a copy of the player's next position minus the sprite width
+    li LINE_WIDTH*8 - 1
+    and r3, r3, r0
+    mov r20, r3                 ; Setup X
+    mov r21, r1                 ; and Y
+    li VCORE_OFFSET             ; Get the current frame number
+    lw r3, r0
+    li 0x600                    ; Bits for animation state
+    and r3, r3, r0, c           ; Clear C for later addition
+    srl r3, r3, 5               ; Divide to get 16 * [0..3]
+    li SPRITE_PLAYER_THRUST_DATA
+    add r22, r3, r0
+    jpl draw_sprite
+
+    li 1                        ; Update player position
+    ffl x
+    add r2, r2, r0
+:title_move_player_1
+    li 1
     add r2, r2, r0
 :title_draw_player
     li 0xff
@@ -234,17 +273,48 @@
 
 
 :title_start_check
-    li INPUT_OFFSET             ; When user presses "FIRE" button, move to ACTIVE gameplay
+    li INPUT_OFFSET
     lw r4, r0                   ; Get player inputs
+    li BTN_DOWN_PULSE           ; If user presses "DOWN" then decrease difficulty
+    and r31, r4, r0, Z
+    bfc Z, title_start_dec_diff
+    li BTN_UP_PULSE             ; If user presses "up" then increase difficulty
+    and r31, r4, r0, Z
+    bfc Z, title_start_inc_diff
     li BTN_FIRE
-    and r4, r4, r0, Z
+    and r31, r4, r0, Z
     bfs Z, title_same_frame_loop    ; Loop until "FIRE" has been pressed
-:title_start_check_release
+:title_start_check_release      ; When user releases "FIRE" button, move to ACTIVE gameplay
     li INPUT_OFFSET
     lw r4, r0                   ; Get player inputs
     li BTN_FIRE
-    and r4, r4, r0, Z
+    and r31, r4, r0, Z
     bfc Z, title_start_check_release    ; Loop until "FIRE" has been released
+    jpl init_active_vars
+
+:title_start_dec_diff
+    li VAR_DIFFICULTY           ; Get the difficulty
+    lw r3, r0
+    li -1
+    ffl x
+    add r3, r3, r0, N           ; Subtract 1
+    bfs N, title_same_frame_loop    ; If result is negative, don't update difficulty
+    li VAR_DIFFICULTY
+    sw r0, r3
+    jpl title_same_frame_loop   ; Back to loop
+
+:title_start_inc_diff
+    li VAR_DIFFICULTY           ; Get the difficulty
+    lw r3, r0
+    li 1
+    ffl x
+    add r3, r3, r0              ; Add 1
+    li DIFFICULTY_MAX           ; If result is greater than max, don't save result
+    cmp r0, r3, C
+    bfc c, title_same_frame_loop
+    li VAR_DIFFICULTY
+    sw r0, r3
+    jpl title_same_frame_loop   ; Back to loop
 
 
 :init_active_vars
@@ -652,6 +722,12 @@
     nop                         ; The 3-cycle reg issue strikes again!
     sw r7, r1
 
+    li VAR_DIFFICULTY           ; If on difficulty 1+, move the enemy Y position
+    lw r5, r0
+    li DIFFICULTY_1
+    cmp r5, r0, c
+    bfc C, active_ue_y_skip
+
     li VCORE_OFFSET             ; If we like the frame count,
     lw r5, r0
     li 0x0180
@@ -908,6 +984,9 @@
 :dead_screen_loop
     li INPUT_OFFSET
     lw r4, r0
+    li BTN_DOWN                 ; Down?
+    and r31, r4, r0, Z          
+    bfc Z, title_init           ; Yes, go back to title screen
     li BTN_FIRE_PULSE           ; Fire?
     and r31, r4, r0, Z          
     bfs Z, dead_screen_loop     ; No, keep checking
