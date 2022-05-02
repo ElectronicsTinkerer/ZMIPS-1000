@@ -33,6 +33,10 @@ Where the fields are:
 * `u` - 1 on the first CPU read of the register in which the up button is pressed. All subsequent reads while the up button is pressed will read as 0.
 * `f` - 1 on the first CPU read of the register in which the fire button is pressed. All subsequent reads while the fire button is pressed will read as 0.
 
+### Debug Output Port
+
+There is a debug output port located at data address range `0x00008000 - 0x0000ffff` which will output the lowest 16 bits written to it.
+
 ### VGA State Register
 
 When the CPU reads the VGA state register, it receives the following data:

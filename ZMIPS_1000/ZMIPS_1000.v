@@ -86,6 +86,7 @@ wire cpu_rst;
 wire cpu_wren, cpu_rden;
 wire [3:0] vga_vindex;
 wire [31:0] cpu_vga_i_data, cpu_romdata;
+wire cpu_userreg_en, cpu_debugport_en, cpu_vmem_en, cpu_vstate_en;
 
 // CPU-Video state machine interface
 wire [31:0] vcore_state; // Passed to CPU
@@ -101,6 +102,9 @@ wire [31:0] user_input_state; // Sent to CPU
 reg btn_fire_cdc_1, btn_fire_cdc_2, btn_up_cdc_1, btn_up_cdc_2, btn_down_cdc_1, btn_down_cdc_2;
 reg btn_fire_prev, btn_up_prev, btn_down_prev;	// Stores last state of buttons that the CPU read
 reg btn_pulse_fire, btn_pulse_up, btn_pulse_down;
+
+// Debug port output
+reg [15:0] debug_port;
 
 //=======================================================
 //  Structural coding
@@ -128,7 +132,7 @@ vmem VMEM0(
 	.clock_b(pxl_mem_clk), // Latch address on falling clock edge since data is read on rising
 	.data_a(cpu_d_o_data),
 	.data_b(4'b0000),
-	.wren_a(cpu_wren & (~|cpu_d_addr[31:15])), // Lowest portion of memory is video
+	.wren_a(cpu_wren & cpu_vmem_en), // Lowest portion of memory is video
 	.wren_b(1'b0), // Video circuit does not need to write to mem
 	.q_a(cpu_vga_i_data),
 	.q_b(vga_vindex)
@@ -220,7 +224,7 @@ end
 always @(posedge cpu_clk)
 begin
 	// If the video core data reg is accessed and the CPU is reading
-	if (cpu_d_addr[15:14] == 2'b11 && cpu_rden == 1'b1)
+	if (cpu_vstate_en && cpu_rden)
 	begin
 		// Then set the flag indicating if this is not the same as the one previously read
 		vcore_new_frame <= (vcore_frame_num_cdc_2 != vcore_frame_num_prev) ? 1'b0 : 1'b1;
@@ -232,9 +236,9 @@ end
 assign vcore_state = {vcore_new_frame, 18'b0, vcore_frame_num_cdc_2, line_num_cdc_2};
 
 // USER INPUTS
-assign btn_down = !KEY[0] | GPIO[0];
-assign btn_up   = !KEY[1] | GPIO[1];
-assign btn_fire = !KEY[2] | GPIO[2];
+assign btn_down = !KEY[0];// | GPIO[0];
+assign btn_up   = !KEY[1];// | GPIO[1];
+assign btn_fire = !KEY[2];// | GPIO[2];
 
 // User interface CDC
 always @(posedge cpu_clk)
@@ -253,7 +257,7 @@ end
 always @(posedge cpu_clk)
 begin
 	// If the video core data reg is accessed and the CPU is reading
-	if (cpu_d_addr[15:14] == 2'b10 && cpu_rden == 1'b1)
+	if (cpu_userreg_en && cpu_rden)
 	begin
 		// If the button state has changed and is pressed
 		if ((btn_fire_prev ^ btn_fire_cdc_2) & btn_fire_cdc_2)
@@ -291,23 +295,56 @@ end
 
 assign user_input_state = {26'b0, btn_pulse_fire, btn_pulse_up, btn_pulse_down, btn_fire_cdc_2, btn_up_cdc_2, btn_down_cdc_2};
 
-// Memory map:
-// 0x00000000 - 0x00001fff => Video memory (Buffer 0)
-// 0x00002000 - 0x00003fff => Video memory (Buffer 1)
-// 0x00004000 - 0x00005fff => ROM data (not code)
-// 0x00006000 - 0x00007fff => ROM data (not code) - Mirrored
-// 0x00008000 - 0x0000bfff => USER input
-// 0x0000c000 - 0x0000ffff => Video core state machine state
+// Handle debug output port
+always @(posedge cpu_clk)
+begin
+	if (cpu_wren == 1'b1 && cpu_debugport_en)
+	begin
+		debug_port <= cpu_d_o_data[15:0];
+	end
+end
+
+assign GPIO[25:10] = debug_port;
+
+// Memory map (reading): (mirrored)
+// cpu_vga_i_data:
+//     0x00000000 - 0x00000fff => Video memory (Buffer 0)
+//     0x00001000 - 0x00001fff => Video memory (Buffer 1)
+//     0x00002000 - 0x00007fff => Free ram (for program use)
+// cpu_romdata:
+//     0x00008000 - 0x0000bfff => ROM data (not code)
+//     0x0000c000 - 0x0000ffff => ROM data (not code) - Mirrored
+// user_input_state:
+//     0x00010000 - 0x00017fff => USER input (mirrored)
+// vcore_state:
+//     0x00018000 - 0x0001ffff => Video core state machine state (mirrored)
+// 
+assign cpu_userreg_en = (cpu_d_addr[16:15] == 2'b10) ? 1'b1 : 1'b0;
+assign cpu_vstate_en = (cpu_d_addr[16:15] == 2'b11) ? 1'b1 : 1'b0;
+
 // Select which data to send to CPU
 zmips_mux432 MUX_MEMSEL(
 	.a(cpu_vga_i_data),
 	.b(cpu_romdata),
 	.c(user_input_state),	// Allow CPU to read input keys and screen state
 	.d(vcore_state),
-	.sel(cpu_d_addr[15:14]),
+	.sel(cpu_d_addr[16:15]),
 	.y(cpu_d_i_data)
 );
 
+// Memory map (writing): (not mirrored)
+// cpu_vmem_en:
+//	   0x00000000 - 0x00000fff => Video memory (Buffer 0)
+//     0x00001000 - 0x00001fff => Video memory (Buffer 1)
+//     0x00002000 - 0x00007fff => Free ram (for program use)
+// cpu_debugport_en:
+//     0x00008000 - 0x0000ffff => Debug output port (mirrored)
+//
+assign cpu_vmem_en = (~|cpu_d_addr[31:15]);
+assign cpu_debugport_en = (~|cpu_d_addr[31:16]) & cpu_d_addr[15];
+
+
+// Debug
 assign LEDR = cpu_i_addr[11:2];
 
 endmodule

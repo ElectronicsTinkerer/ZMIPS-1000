@@ -33,12 +33,12 @@
 ; ~~Animate enemy
 
 ; DEFINES
-=SCREEN_BASE            0x0000
-=RAM_BASE               0x2000
-=RAM_SIZE               0x2000
-=GAME_DATA_BASE         0x4000
-=INPUT_OFFSET           0x8000
-=VCORE_OFFSET           0xc000
+=SCREEN_BASE            0x00000
+=RAM_BASE               0x02000
+=RAM_SIZE               0x06000
+=GAME_DATA_BASE         0x08000
+=INPUT_OFFSET           0x10000
+=VCORE_OFFSET           0x18000
 
 ; Screen info
 =LINE_WIDTH             0x20 ; In words (8px/word)
@@ -598,7 +598,6 @@
     li VAR_PLAYER_Y
     lw r21, r0
     jpl draw_sprite_fast        ; And display it
-
 
 :active_frame_wait
     jpl rng
