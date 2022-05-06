@@ -127,12 +127,14 @@
 =PLAYER_MAX_Y           118
 =ENEMY_MIN_Y            24
 =ENEMY_MAX_Y            118
-=MAX_ENEMIES            4
+=MAX_ENEMIES            10
 =TOLERANCE_PEX          5           ; Tolerance for player-enemy collision checking (x-axis)
 =TOLERANCE_PEY          6           ; Tolerance for player-enemy collision checking (y-axis)
 =TOLERANCE_MEX          5           ; Tolerance for missile-enemy collision checking (x-axis)
 =TOLERANCE_MEY          6           ; Tolerance for missile-enemy collision checking (y-axis)
-=POINTS_HIT             0x100       ; In BCD
+=POINTS_HIT             100         ; Points gained if enemy hit
+=POINTS_ENEMY_PASS      -50         ; Points gained if enemy makes it past the player
+=POINTS_MISS            -25         ; Points gained if a missile makes it to the right side of the screen and doesn't hit
 =MAX_EXPLOSIONS         4           ; Number of explosions to allocate memory for
 =EXPLOSION_FRAMES       32          ; Number of frames an explosion will take
 =EXPLOSION_FRAMES_MASK  0x7
@@ -417,7 +419,9 @@
     li SPY_SCORE
     mov r2, r0
     li VAR_SCORE                ; Get the current score
-    lw r8, r0
+    lw r20, r0
+    jpl convert_bin_2_bcd
+    mov r8, r20                 ; Save return value
     li 0xf
     mov r3, r0
     li SPRITE_NUM0_DATA
@@ -635,12 +639,12 @@
     add r1, r1, r0
     li VAR_ENEMY_FRAME
     sw r0, r1                   
-    li 0x3f                     ; Update score (by 5 points) for staying alive for about second
-    and r1, r1, r0, z
-    bfc z, active_update_enemies
-    li 5                        ; Add 5 points
-    mov r20, r0
-    jpl update_score
+    ; li 0x3f                     ; Update score (by 5 points) for staying alive for about second
+    ; and r1, r1, r0, z
+    ; bfc z, active_update_enemies
+    ; li 5                        ; Add 5 points
+    ; mov r20, r0
+    ; jpl update_score
     
     ; Update enemy positions
     ; If enemy gets past player, subtract points (5)
@@ -710,11 +714,9 @@
     sub r1, r1, r0, Z           ; Enemy moving toward player
     bfc Z, active_ue_next       ; If not a edge of screen, update next
         ; If end of screen, subtract a few points and respawn
-    ; li 0x9999                   ; 10's complement of 10 has to be loaded in two separate operations
-    ; sll r1, r0, 16
-    ; li 0x9980
-    ; or r20, r1, r0
-    ; jpl update_score            ; Subtract 10 points from the score
+    li POINTS_ENEMY_PASS
+    mov r20, r0
+    jpl update_score            ; Subtract 10 points from the score
     jpl active_ue_rng_loop      ; Respawn the enemy if it's at the edge of the screen
 
 :active_ue_next
@@ -826,6 +828,9 @@
     mov r1, r0
     li VAR_MISSILES
     sw r0, r1
+    li POINTS_MISS              ; And handle points modification
+    mov r20, r0
+    jpl update_score
         ; Fallthrough to update and check second missile
 :active_um_2
     li VAR_MISSILES + 2         ; Each slot is two words
@@ -851,6 +856,9 @@
     mov r1, r0
     li VAR_MISSILES + 2
     sw r0, r1
+    li POINTS_MISS              ; And handle points modification
+    mov r20, r0
+    jpl update_score
 
     ; Move the player if a button is pressed
 :active_input_check
@@ -1192,6 +1200,67 @@
     lw r0, r29
     jmp r0
 
+; Convert a binary number to a BCD number
+; Args:
+;   r20 - Binary number to be converted
+; Uses:
+;   r0, r10..r15
+; Return:
+;   r20 - The input value, encoded using BCD (hex values 0..9)
+:convert_bin_2_bcd
+    li 32                       ; loop iterations
+    mov r10, r0
+    li 0                        ; Temp output var
+    mov r14, r0
+
+:convert_bin_2_bcd_loop
+
+    li 8                        ; Iteration count
+    mov r12, r0
+    li 5                        ; Correction value
+    mov r15, r0
+    li 3                        ; "Add" constant
+    mov r13, r0
+    li 0xf                      ; Field mask
+    mov r11, r0
+:convert_bin_2_bcd_columns
+    and r16, r14, r11           ; If column >= 5
+    cmp r16, r15, c
+    bfc c, convert_bin_2_bcd_columns_continue
+    ffl x                       ; Then add 3
+    add r16, r16, r13
+    and r16, r16, r11           ; Keep operation within column
+    li 0xffffffff               ; Invert the mask
+    eor r0, r11, r0
+    and r14, r14, r0            ; Apply it to the running value
+    or r14, r14, r16            ; Then update the column
+:convert_bin_2_bcd_columns_continue
+        
+    sll r15, r15, 4
+    sll r13, r13, 4
+    sll r11, r11, 4
+    li 1
+    ffl c
+    sub r12, r12, r0, z
+    bfc z, convert_bin_2_bcd_columns
+
+
+    sll r14, r14, 1
+    sll r20, r20, 1, c
+    bfc c, convert_bin_2_bcd_carry_skip
+    li 1
+    or r14, r14, r0
+:convert_bin_2_bcd_carry_skip
+
+    li 1
+    ffl c
+    sub r10, r10, r0, Z
+    bfc Z, convert_bin_2_bcd_loop
+
+    mov r20, r14                ; Setup return value
+    jmp r30                     ; Return
+
+
 ; Add a value to the score
 ; Args:
 ;   r20 - Value to be added to the score (in BCD)
@@ -1204,78 +1273,9 @@
     lw r10, r0
     ffl x
     add r10, r10, r20, N
-    bfc N, update_score_dig0    ; If underflow (or realy good score, reset to 0)
+    bfc N, update_score_done        ; If underflow (or realy good score, reset to 0)
     li 0
     mov r10, r0
-    
-    ; Go through all the digits and correct for binary-BCD conversion
-:update_score_dig0
-    li 0xf
-    mov r11, r0
-    li 6
-    mov r12, r0
-    li 10-1
-    mov r13, r0
-    and r0, r10, r11        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig1    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig1
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig2    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig2
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig3    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig3
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig4    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig4
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig5    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig5
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig6    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig6
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_dig7    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
-:update_score_dig7
-    sll r11, r11, 4         ; Update digit mask to current digit
-    sll r12, r12, 4
-    sll r13, r13, 4
-    and r0, r11, r10        ; Mask off current digit
-    cmp r13, r0, C          ; Is the digit over 10?
-    bfs C, update_score_done    ; No, do next digit
-    add r10, r10, r12       ; Yes, correct this digit
 :update_score_done
     li VAR_SCORE            ; Write back score
     sw r0, r10
