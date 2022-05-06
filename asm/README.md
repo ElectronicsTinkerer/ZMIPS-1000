@@ -104,8 +104,8 @@ INIT:
 
             enemy_spawn_delay += 1
             
-            if frame % 64 == 0:
-                updateScore(5)
+            # if frame % 64 == 0:
+            #     updateScore(5)
 
             if enemy_count < MAX_ENEMIES and enemy_spawn_delay % 64 == 0:
                 [inline] spawnNewEnemy(enemies)
@@ -116,6 +116,7 @@ INIT:
                 enemies[i].moveLeft(1)
                 if enemies[i].getX() == 0:
                     [inline] respawnEnemy(enemies, enemies[i])
+                    updateScore(POINTS_ENEMY_PASS)
                 if difficulty >= 1 and (frame & 7 == 0):
                     enemies[i].setY(enemies[i].getY() + (RNG() & 1)
 
@@ -132,6 +133,7 @@ INIT:
             missiles[1].moveRight(2)
             if missiles[1].getX > LINE_WIDTH - 8: # Past end of frame
                 missiles[1].state = INACTIVE
+                updateScore(POINTS_MISS)
             else:
                 checkMissileEnemyCollision(missile[1], enemies, enemy_count, explosions)
 
@@ -192,6 +194,8 @@ checkMissileEnemyCollision(missile, enemies, enemy_count, explosions):
 
     return
 
+bin2bcd(num):
+    return num.format(BCD) # Uses "Double dabble" / shift-and-add-3 algorithm
 
 updateScore(delta):
     score += delta
