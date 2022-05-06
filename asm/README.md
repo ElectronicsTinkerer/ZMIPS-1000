@@ -118,7 +118,7 @@ INIT:
                     [inline] respawnEnemy(enemies, enemies[i])
                     updateScore(POINTS_ENEMY_PASS)
                 if difficulty >= 1 and (frame & 7 == 0):
-                    enemies[i].setY(enemies[i].getY() + (RNG() & 1)
+                    enemies[i].setY(enemies[i].getY() + (RNG() & 1))
 
                 if abs(enemies[i].getX() - player.getX()) < TOLERANCE and abs(enemies[i].getY() < player.getY()):
                     goto PLAYER_HIT
