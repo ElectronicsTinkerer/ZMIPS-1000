@@ -152,7 +152,7 @@ INIT:
                 rng.seed += 13
 
     PLAYER_HIT:
-        signalExplosion(player.getX(), player.getY())
+        signalExplosion(player.getX(), player.getY(), SLOW)
         player.hasBeenHit = True # In reality, the explosion 'hit' timer stores this data
         player.hitTimer = PLAYER_EXPLOSION_DELAY
         goto NEXT_LIFE
@@ -185,7 +185,7 @@ checkMissileEnemyCollision(missile, enemies, enemy_count, explosions):
     
     for enemy in enemies:
         if abs(enemy.getX() - missile.getX()) < TOLERANCE and abs(enemy.getY() - missile.getY()) < TOLERANCE:
-            signalExplosion(enemy.getX(), enemy.getY())
+            signalExplosion(enemy.getX(), enemy.getY(), FAST)
                     
             enemy.state = INACTIVE
             missile.state = INACTIVE

@@ -136,8 +136,8 @@
 =POINTS_ENEMY_PASS      -50         ; Points gained if enemy makes it past the player
 =POINTS_MISS            -25         ; Points gained if a missile makes it to the right side of the screen and doesn't hit
 =MAX_EXPLOSIONS         4           ; Number of explosions to allocate memory for
-=EXPLOSION_FRAMES       32          ; Number of frames an explosion will take
-=EXPLOSION_FRAMES_MASK  0x7
+=EXPLOSION_FRAMES       16          ; Number of frames an explosion will take
+=EXPLOSION_FRAMES_MASK  0x3
 =PLAYER_EXPLOSION_DELAY EXPLOSION_FRAMES + 48   ; Length of time for the player's explosion + restart delay
 =DIFFICULTY_0           0           ; Level 0 difficulty
 =DIFFICULTY_1           1           ; Level 1 difficulty
@@ -175,10 +175,11 @@
                                         ; Like the missiles, if an X value is negative, then that explosion is not currently running
 =VAR_EXPLOSION          VAR_MISSILES + 4 ; X1
 ;VAR_EXPLOSION                          ; Y1
-;VAR_EXPLOSION                          ; Frame1
+;VAR_EXPLOSION                          ; Frame numbber (timer)
+;VAR_EXPLOSION                          ; Frame mask
 ;VAR_EXPLOSION                          ; sprite pointer
 
-=VAR_ENEMY_FRAME        VAR_EXPLOSION + 4 * MAX_EXPLOSIONS
+=VAR_ENEMY_FRAME        VAR_EXPLOSION + 5 * MAX_EXPLOSIONS
 =VAR_ENEMY_COUNT        VAR_ENEMY_FRAME + 1   ; Total enemies active on the screen
 =VAR_ENEMY              VAR_ENEMY_COUNT + 1   ; X1
 ;VAR_ENEMY              VAR_ENEMY_COUNT + 2   ; Y1
@@ -335,7 +336,8 @@
     mov r9, r0    
     ffl x
 :init_explosions_loop
-    sll r8, r9, 2               ; 4 words per explosion entry
+    sll r8, r9, 2               ; 5 words per explosion entry
+    add r8, r9, r8
     add r3, r1, r8              ; Add explosion array offset to index
     li -1
     add r9, r9, r0, N
@@ -507,18 +509,18 @@
 
     ; Draw explosions 
 :active_draw_explosions   
-    li VAR_EXPLOSION            ; Reset explosion data
-    mov r1, r0
     li MAX_EXPLOSIONS-1         ; Setup loop count
     mov r9, r0    
+    li VAR_EXPLOSION            ; Reset explosion data
+    mov r1, r0
 :active_dex_loop
     ffl x
-    sll r8, r9, 2               ; 4 words per explosion entry
+    sll r8, r9, 2               ; 5 words per explosion entry
+    add r8, r8, r9
     add r3, r1, r8              ; Add explosion array offset to index
     lw r0, r3                   ; Get X of explosion slot
-    mov r0, r0, N
+    mov r20, r0, N
     bfs N, active_dex_continue  ; Not active, don't draw it
-    mov r20, r0                 ; Setup X
     li 1
     add r3, r3, r0
     lw r0, r3
@@ -527,19 +529,22 @@
     add r3, r3, r0              ; Get a pointer to the frame count
     lw r4, r3                   ; And update the frame
     li -1
-    add r4, r4, r0, Z
-    sw r3, r4
-    bfc Z, active_dex_update_frame
+    add r4, r4, r0, N
+    bfc N, active_dex_update_frame
         ; Reset explosion
     li -2
     add r3, r3, r0
     sw r3, r0
     jpl active_dex_continue
+
 :active_dex_update_frame
+    nop
     sw r3, r4                   ; Save back updated frame number
-    li EXPLOSION_FRAMES_MASK
+    li 1                        ; Set pointer to the explosion frame mask
+    add r3, r3, r0
+    lw r0, r3                   ; Frame mask
     and r4, r4, r0, Z
-    bfc Z, active_dex_draw      ; If frame % 0x8 != 0, don't change animation state
+    bfc Z, active_dex_draw      ; If frame % (mask+1) != 0, don't change animation state
         ; Change animation state
     li 1
     add r3, r3, r0
@@ -946,6 +951,8 @@
     lw r21, r0
     li SPX_PLAYER
     mov r20, r0
+    li 1                        ; Slow (long) explosion
+    mov r22, r0
     jpl signal_explosion        ; And signal to draw it
 
     li PLAYER_EXPLOSION_DELAY   ; Delay before restarting level
@@ -1009,6 +1016,7 @@
 ; Args:
 ;   r20 - X pos
 ;   r21 - Y pos
+;   r22 - (bool) Long (1) or short(0) explosion
 ; Regs:
 ;   r0, r11, r12, r13, r14, r16, r17
 ; Return:
@@ -1022,16 +1030,15 @@
     mov r17, r0    
     ffl x
 :signal_explosion_loop
-    add r16, r17, r12           ; Account for zero-indexed array
-    sll r16, r16, 2             ; 4 words per explosion entry
-    add r13, r11, r16           ; Add explosion array offset to index
     add r17, r17, r12, N
+    sll r16, r17, 2             ; 5 words per explosion entry
+    add r16, r16, r17
+    add r13, r11, r16           ; Add explosion array offset to index
     bfs N, signal_explosion_return  ; If out of slots, don't keep checking. Just don't display the explosion
     lw r14, r13                 ; Get explosion state (or X value if active)
     mov r14, r14, N
     bfc N, signal_explosion_loop ; Keep looping until we find an open slot
         ; Found open slot, mark it with the current enemy's X and Y location
-        ; r19 has the enemy base address (X address)
     sw r13, r20                 ; Save X to explosion
     ffl x
     li 1
@@ -1041,7 +1048,20 @@
     li 1
     add r13, r13, r0
     li EXPLOSION_FRAMES         ; Reset explosion frame counter
-    sw r13, r0
+    mov r11, r0
+    li EXPLOSION_FRAMES_MASK
+    mov r12, r0
+    mov r22, r22, Z             ; Check how long the explosion should be
+    bfs Z, signal_explosion_short
+    sll r11, r11, 1             ; For long explosion, multiply timer by 2
+    sll r12, r12, 1             ; And left shift the mask to keep it in porportion to the timer
+    li 1
+    or r12, r12, r0
+:signal_explosion_short
+    sw r13, r11                 ; Save frame start (timer)
+    li 1
+    add r13, r13, r0
+    sw r13, r12                 ; Save animation next frame detection mask
     li 1
     add r13, r13, r0
     li SPRITE_EXPLOSION1_DATA   ; Setup sprite pointer
@@ -1134,6 +1154,8 @@
     add r14, r19, r0
     lw r0, r14                  ; Enemy Y
     mov r21, r0
+    li 0                        ; Fast (short) explosion
+    mov r22, r0
     jpl signal_explosion
     lw r20, r29                 ; And restore X position
 
