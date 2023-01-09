@@ -12,13 +12,13 @@ input clk;
 // Visible area: 1024 pixels
 localparam H_S_VIZ_COUNT = 1024;
 // Back porch:   160
-localparam H_S_B_PORCH = 160;                           // Count for single timing element
+localparam H_S_B_PORCH = 160-20;                           // Count for single timing element
 localparam H_A_B_PORCH = H_S_VIZ_COUNT - 1;             // Accumulated count value
 // Sync pulse:   136
 localparam H_S_SYNC = 136;
 localparam H_A_SYNC = H_A_B_PORCH + H_S_B_PORCH;
 // Front porch:  24
-localparam H_S_F_PORCH = 24;                            
+localparam H_S_F_PORCH = 24+20;                            
 localparam H_A_F_PORCH = H_A_SYNC + H_S_SYNC;     
 // Whole line:   1344
 localparam H_A_ENDLINE = H_A_F_PORCH + H_S_F_PORCH;
